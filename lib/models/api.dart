@@ -1,4 +1,5 @@
 class Api {
-  static const String address = "http://briddgy.herokuapp.com/";
-  static const userslist = address + "lox";
+  static const String address = "https://optify-back.herokuapp.com/";
+  static const userslistAndSignUp = address + "api/users/";
+  static const login = address + "api/api-token-auth/";
 }

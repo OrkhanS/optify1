@@ -53,17 +53,17 @@ class _AuthCardState extends State<AuthCard> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String deviceToken;
   _getToken() {
-    _firebaseMessaging.getToken().then((device) {
-      deviceToken = device;
-      print(deviceToken);
-    });
-    print(deviceToken);
+    // _firebaseMessaging.getToken().then((device) {
+    //   deviceToken = device;
+    //   print(deviceToken);
+    // });
+    // print(deviceToken);
   }
 
   @override
   void initState() {
     super.initState();
-    _getToken();
+    //_getToken();
   }
 
   void _showErrorDialog(String message) {

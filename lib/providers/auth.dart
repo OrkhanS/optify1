@@ -117,7 +117,7 @@ class Auth with ChangeNotifier {
 //      , String deviceID todo fix
       ) async {
     //return _authenticate(email, password, 'signupNewUser');
-    const url = 'https://optify-back.herokuapp.com/api/users/';
+    const url = Api.userslistAndSignUp;
     try {
       final response = await http.post(url,
           headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
@@ -165,7 +165,7 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password
 //      , String deviceID todo fix
       ) async {
-    const url = 'https://optify-back.herokuapp.com/api/api-token-auth/';
+    const url = Api.login;
     try {
       final response = await http.post(url,
           headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
@@ -218,7 +218,7 @@ class Auth with ChangeNotifier {
 
   Future<void> logout(context) async {
     print(_token);
-    const url = "http://briddgy.herokuapp.com/api/auth/";
+    const url = Api.login;
     http.patch(url,
         headers: {
           HttpHeaders.CONTENT_TYPE: "application/json",

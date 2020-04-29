@@ -56,32 +56,32 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     _currentIndex = 0;
     super.initState();
-    getToken();
+    //getToken();
     _pageController = PageController(initialPage: 0);
   }
 
   _configureFirebaseListerners(newmessage) {
-    _firebaseMessaging.configure(
-      // onMessage: (Map<String, dynamic> message) async {
-      //   neWMessage.addMessages = message;
-      // },
-      onLaunch: (Map<String, dynamic> message) async {
-        neWMessage.addMessages = message;
-      },
-      onResume: (Map<String, dynamic> message) async {
-        neWMessage.addMessages = message;
-      },
-    );
+    // _firebaseMessaging.configure(
+    //   // onMessage: (Map<String, dynamic> message) async {
+    //   //   neWMessage.addMessages = message;
+    //   // },
+    //   onLaunch: (Map<String, dynamic> message) async {
+    //     neWMessage.addMessages = message;
+    //   },
+    //   onResume: (Map<String, dynamic> message) async {
+    //     neWMessage.addMessages = message;
+    //   },
+    // );
   }
 
-  Future getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-    tokenforROOM = extractedUserData['token'];
-  }
+  // Future getToken() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   if (!prefs.containsKey('userData')) {
+  //     return false;
+  //   }
+  //   final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+  //   tokenforROOM = extractedUserData['token'];
+  // }
 
   Future onSelectNotification(String payload) async => await Navigator.push(
         context,
@@ -209,9 +209,9 @@ class _MyAppState extends State<MyApp> {
         orderstripsProvider,
         _,
       ) {
-        newmessage.fetchAndSetRooms(auth);
-        initCommunication(auth, newmessage);
-        _configureFirebaseListerners(newmessage);
+        // newmessage.fetchAndSetRooms(auth);
+        // initCommunication(auth, newmessage);
+        // _configureFirebaseListerners(newmessage);
         return MaterialApp(
           title: 'Optisend',
           theme: ThemeData(

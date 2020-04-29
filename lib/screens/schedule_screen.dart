@@ -48,11 +48,11 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
 
   @override
   void initState() {
-    fetchActivities().then((value) {
-      setState(() {
-        _activity.addAll(value);
-      });
-    });
+    // fetchActivities().then((value) {
+    //   setState(() {
+    //     _activity.addAll(value);
+    //   });
+    // });
     super.initState();
   }
 

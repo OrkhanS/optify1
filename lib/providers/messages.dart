@@ -25,22 +25,22 @@ class Messages extends ChangeNotifier {
   }
 
   Future fetchAndSetMessages(int i) async {
-    var token = tokenforROOM;
-    String url = "https://briddgy.herokuapp.com/api/chat/messages/?room_id=" + _chatRooms[i]["id"].toString();
-    try {
-      await http.get(
-        url,
-        headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + token,
-        },
-      ).then((response) {
-        var dataOrders = json.decode(response.body) as Map<String, dynamic>;
-        _messages[_chatRooms[i]["id"]] = dataOrders;
-        _isloadingMessages = false;
-        notifyListeners();
-      });
-    } catch (e) {}
+    // var token = tokenforROOM;
+    // String url = "https://briddgy.herokuapp.com/api/chat/messages/?room_id=" + _chatRooms[i]["id"].toString();
+    // try {
+    //   await http.get(
+    //     url,
+    //     headers: {
+    //       HttpHeaders.CONTENT_TYPE: "application/json",
+    //       "Authorization": "Token " + token,
+    //     },
+    //   ).then((response) {
+    //     var dataOrders = json.decode(response.body) as Map<String, dynamic>;
+    //     _messages[_chatRooms[i]["id"]] = dataOrders;
+    //     _isloadingMessages = false;
+    //     notifyListeners();
+    //   });
+    // } catch (e) {}
   }
 
   bool get messagesNotLoaded {
@@ -153,46 +153,46 @@ class Messages extends ChangeNotifier {
   }
 
   Future fetchAndSetRooms(auth) async {
-    fetchAndSetUserDetails(auth);
-    var f;
-    auth.removeListener(f);
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    // fetchAndSetUserDetails(auth);
+    // var f;
+    // auth.removeListener(f);
+    // final prefs = await SharedPreferences.getInstance();
+    // if (!prefs.containsKey('userData')) {
+    //   return false;
+    // }
+    // final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
 
-    auth.token = extractedUserData['token'];
-    tokenforROOM = extractedUserData['token'];
-    try {
-      if (extractedUserData['token'] != null) {
-        const url = "http://briddgy.herokuapp.com/api/chats/";
-        final response = await http.get(
-          url,
-          headers: {
-            HttpHeaders.CONTENT_TYPE: "application/json",
-            "Authorization": "Token " + extractedUserData['token'],
-          },
-        ).then((value) {
-          final dataOrders = json.decode(value.body) as Map<String, dynamic>;
-          allChatRoomDetails = dataOrders;
-          _chatRooms = dataOrders["results"];
-          if (_chatRooms.length == 0) {
-            for (var i = 0; i < _chatRooms.length; i++) {
-              newMessage[_chatRooms[i]["id"]] = _chatRooms[i]["members"][1]["unread_count"];
-            }
-          }
-          isChatsLoading = false;
-          isUserlogged = false;
-        });
-        return _chatRooms;
-      } else {
-        isUserlogged = true;
-        return null;
-      }
-    } catch (e) {
-      return;
-    }
+    // auth.token = extractedUserData['token'];
+    // tokenforROOM = extractedUserData['token'];
+    // try {
+    //   if (extractedUserData['token'] != null) {
+    //     const url = "http://briddgy.herokuapp.com/api/chats/";
+    //     final response = await http.get(
+    //       url,
+    //       headers: {
+    //         HttpHeaders.CONTENT_TYPE: "application/json",
+    //         "Authorization": "Token " + extractedUserData['token'],
+    //       },
+    //     ).then((value) {
+    //       final dataOrders = json.decode(value.body) as Map<String, dynamic>;
+    //       allChatRoomDetails = dataOrders;
+    //       _chatRooms = dataOrders["results"];
+    //       if (_chatRooms.length == 0) {
+    //         for (var i = 0; i < _chatRooms.length; i++) {
+    //           newMessage[_chatRooms[i]["id"]] = _chatRooms[i]["members"][1]["unread_count"];
+    //         }
+    //       }
+    //       isChatsLoading = false;
+    //       isUserlogged = false;
+    //     });
+    //     return _chatRooms;
+    //   } else {
+    //     isUserlogged = true;
+    //     return null;
+    //   }
+    // } catch (e) {
+    //   return;
+    // }
   }
 
   set addChats(Map mesaj) {
@@ -222,29 +222,29 @@ class Messages extends ChangeNotifier {
   }
 
   Future fetchAndSetUserDetails(auth) async {
-    var f;
-    auth.removeListener(f);
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    // var f;
+    // auth.removeListener(f);
+    // final prefs = await SharedPreferences.getInstance();
+    // if (!prefs.containsKey('userData')) {
+    //   return false;
+    // }
+    // final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
 
-    auth.token = extractedUserData['token'];
-    var token = extractedUserData['token'];
-    try {
-      const url = "http://briddgy.herokuapp.com/api/users/me/";
+    // auth.token = extractedUserData['token'];
+    // var token = extractedUserData['token'];
+    // try {
+    //   const url = "http://briddgy.herokuapp.com/api/users/me/";
 
-      final response = await http.get(
-        url,
-        headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + token,
-        },
-      ).then((response) {
-        var dataOrders = json.decode(response.body) as Map<String, dynamic>;
-        user_detail = dataOrders;
-      });
-    } catch (error) {}
+    //   final response = await http.get(
+    //     url,
+    //     headers: {
+    //       HttpHeaders.CONTENT_TYPE: "application/json",
+    //       "Authorization": "Token " + token,
+    //     },
+    //   ).then((response) {
+    //     var dataOrders = json.decode(response.body) as Map<String, dynamic>;
+    //     user_detail = dataOrders;
+    //   });
+    // } catch (error) {}
   }
 }
