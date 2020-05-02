@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:optifyapp/screens/contracts.dart';
 import 'package:optifyapp/screens/my_items.dart';
 import 'package:optifyapp/screens/my_trips.dart';
 import 'package:optifyapp/screens/profile_screen.dart';
@@ -171,57 +170,6 @@ class _AccountPageState extends State<AccountPage> {
                               builder: (__) => MyItems(
                                     token: widget.token,
                                     orderstripsProvider: widget.provider,
-                                  )),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.accountMultiple),
-                      title: Text(
-                        "My Contacts",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (__) => MyTrips(
-                                    token: widget.token,
-                                    orderstripsProvider: widget.provider,
-                                  )),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.scriptTextOutline),
-                      title: Text(
-                        "My Groups",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (__) => Contracts(
-                                    token: widget.token,
                                   )),
                         );
                       },

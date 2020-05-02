@@ -86,21 +86,25 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
         centerTitle: true,
         elevation: 1,
       ),
-      floatingActionButton: AnimatedFloatingActionButton(
-          //Fab list
-          fabButtons: <Widget>[float1(context), float2()],
-          colorStartAnimation: Colors.blue,
-          colorEndAnimation: Colors.red,
-          animatedIconData: AnimatedIcons.menu_close //To principal button
-          ),
-//        floatingActionButton: AnimatedFloatingActionButton(
-//          onPressed: () {},
-//          tooltip: 'Add',
-//          child: AnimatedIcon(
-//            icon: AnimatedIcons.event_add,
-//            progress: null,
+      floatingActionButton:
+//      AnimatedFloatingActionButton(
+//          //Fab list
+//          fabButtons: <Widget>[float1(context), float2()],
+//          colorStartAnimation: Colors.blue,
+//          colorEndAnimation: Colors.red,
+//          animatedIconData: AnimatedIcons.menu_close //To principal button
 //          ),
-//        ),
+          FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => NewActivityPage()));
+        },
+        tooltip: 'Add',
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Container(
         margin: EdgeInsets.all(10),

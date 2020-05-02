@@ -21,7 +21,6 @@ import 'package:web_socket_channel/io.dart';
 import 'package:optifyapp/providers/messages.dart';
 import 'package:optifyapp/providers/ordersandtrips.dart';
 import 'package:optifyapp/screens/my_items.dart';
-import 'package:optifyapp/screens/contracts.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:badges/badges.dart';
@@ -29,6 +28,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:optifyapp/screens/auth_screen.dart';
 
 import 'package:optifyapp/screens/schedule_screen.dart';
+import 'package:optifyapp/screens/social_screen.dart';
+import 'package:optifyapp/screens/contacts_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -230,7 +231,7 @@ class _MyAppState extends State<MyApp> {
                       },
                       children: <Widget>[
                         ScheduleScreen(),
-                        ScheduleScreen(),
+                        SocialScreen(),
 //                  OrdersScreen(orderstripsProvider: orderstripsProvider, room: newmessage, auth: auth, token: tokenforROOM),
 //                  TripsScreen(orderstripsProvider: orderstripsProvider, room: newmessage, auth: auth, token: tokenforROOM),
 //                  ChatsScreen(provider: newmessage, auth: auth, token: tokenforROOM),
@@ -245,6 +246,7 @@ class _MyAppState extends State<MyApp> {
           routes: {
             OrdersScreen.routeName: (ctx) => OrdersScreen(),
             TripsScreen.routeName: (ctx) => TripsScreen(),
+            ChatsScreen.routeName: (ctx) => ChatsScreen(),
             ChatWindow.routeName: (ctx) => ChatWindow(),
             ItemScreen.routeName: (ctx) => ItemScreen(),
             AddItemScreen.routeName: (ctx) => AddItemScreen(),
@@ -252,8 +254,9 @@ class _MyAppState extends State<MyApp> {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
-            Contracts.routeName: (ctx) => Contracts(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: orderstripsProvider),
+            SocialScreen.routeName: (ctx) => SocialScreen(),
+            ContactsScreen.routeName: (ctx) => ContactsScreen(),
           },
         );
       }),
