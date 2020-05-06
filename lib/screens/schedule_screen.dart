@@ -24,7 +24,7 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class ScheduleScreenMain extends State<ScheduleScreen> {
-  List _activity;
+  List _activity = [];
   String nextOrderURL;
 
   loadMyActivites() async {
@@ -174,7 +174,7 @@ _activity[0]["activity"]["durations"][0]
 }
 
 class FullTime extends StatefulWidget {
-  final List activityList;
+  List activityList;
   FullTime({Key key, @required this.activityList}) : super(key: key);
 
   @override
@@ -201,7 +201,8 @@ class FullTimeState extends State<FullTime> {
             check = scaleHeight;
           }
         },
-        child: Container(
+        child:
+        Container(
           child: ListView(
             children: [
               Stack(children: [
@@ -216,7 +217,8 @@ class FullTimeState extends State<FullTime> {
                             time: "0${i.toString()}:00", vertical: scaleHeight)
                   ],
                 ),
-                for (var x in widget.activityList)
+                
+                if(widget.activityList != null) for(var x in widget.activityList)
                   activityBoxObject(x, scaleHeight / 60),
 //                activityBox(
 //                    height: scaleHeight / 60,

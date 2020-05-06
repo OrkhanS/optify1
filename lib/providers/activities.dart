@@ -55,6 +55,12 @@ class Activities with ChangeNotifier {
 
   Future fetchAndSetMyActivities(myToken, schedule_id) async {
     var token = myToken;
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    token = extractedUserData['token'];
     String url = Api.myActivities+schedule_id.toString()+"/activities/";;
     http.get(
       url,
