@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -6,6 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:optifyapp/ActivityListScreen.dart';
 import 'AcivityAI.dart';
 import 'models/api.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MaterialApp(
       home: newActivityPersonal(),
@@ -22,9 +27,9 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
   double _discreteValue = 10.0;
   DateTime _dateTimeStart, _dateTimeEnd;
   var snackBar;
-  TimeOfDay _timeStart,
-      _timeEnd; //After we get time, add it into FROM and UNTIL section below, no need to ask it again below
-
+  String tokenforROOM;
+  TimeOfDay _timeStart, _timeEnd; //After we get time, add it into FROM and UNTIL section below, no need to ask it again below
+  String schedule_id;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   @override
@@ -43,6 +48,60 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
         ),
       ),
     );
+  }
+
+  post() {
+    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + tokenforROOM,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({
+              "activity": {
+                "title": _ActivityName,
+                "start_times": [_start_times],
+                "end_times": [_end_times],
+                "weekdays": ["Monday"],
+              },
+              "priority": _discreteValue.toInt(),
+              "privacy": {"privacy": "personal"}
+            }))
+        .then((response) {
+      if (response.statusCode == 201) {
+        Navigator.pop(context);
+        Flushbar(
+          title: "Done",
+          message: "Activity added",
+          aroundPadding: const EdgeInsets.all(30),
+          borderRadius: 10,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      } else {
+        print(response.statusCode);
+        snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
+      }
+    });
+  }
+
+  Future function1() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    tokenforROOM = extractedUserData['token'];
+    final prefs2 = await SharedPreferences.getInstance();
+    if (!prefs2.containsKey('scheduleData')) {
+      return false;
+    }
+    final extractedscheduleData = json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
+    schedule_id = extractedscheduleData['schedule_id'];
+    print("I am here");
+    print(tokenforROOM);
+    print(schedule_id);
   }
 
   Widget FormUI() {
@@ -81,28 +140,29 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                     color: Colors.white,
                     onPressed: () {
                       showTimePicker(
-                              context: context, initialTime: TimeOfDay.now())
-                          .then((time) {
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      ).then((time) {
                         _timeStart = time;
-                        _start_times =
-                            _dateTimeStart.toString().substring(0, 11) +
-                                _timeStart.toString().substring(10, 15);
+                        _start_times = _dateTimeStart.toString().substring(0, 11) + _timeStart.toString().substring(10, 15);
                       });
                       showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2222))
-                          .then((date) {
-                        _dateTimeStart = date;
-                      });
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2222),
+                      ).then(
+                        (date) {
+                          _dateTimeStart = date;
+                        },
+                      );
                     },
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 15.0),
                     child: MaterialButton(
                       shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(18.0),
+                        borderRadius: BorderRadius.circular(18.0),
                       ),
                       height: 60,
                       minWidth: 130,
@@ -111,20 +171,18 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                       color: Colors.white,
                       onPressed: () {
                         showTimePicker(
-                                context: context, initialTime: TimeOfDay.now())
-                            .then((time) {
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        ).then((time) {
                           _timeEnd = time;
-                          _end_times =
-                              _dateTimeEnd.toString().substring(0, 11) +
-                                  _timeEnd.toString().substring(10, 15);
-                          print(_end_times);
+                          _end_times = _dateTimeEnd.toString().substring(0, 11) + _timeEnd.toString().substring(10, 15);
                         });
                         showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2222))
-                            .then((date) {
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2222),
+                        ).then((date) {
                           _dateTimeEnd = date;
                         });
                       },
@@ -134,9 +192,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
               ),
             ),
           ),
-          Container(
-              margin: EdgeInsets.only(top: 30.0),
-              child: const Text('Priority')),
+          Container(margin: EdgeInsets.only(top: 30.0), child: const Text('Priority')),
           Container(
             width: 330.0,
             child: Slider(
@@ -160,8 +216,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                 Container(
                   child: DropdownButton<String>(
                     hint: new Text("Duration"),
-                    items: <String>['Montly', 'Weekly', 'Daily']
-                        .map((String value) {
+                    items: <String>['Montly', 'Weekly', 'Daily'].map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,
                         child: new Text(value),
@@ -174,13 +229,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                   margin: EdgeInsets.only(left: 20.0),
                   child: new DropdownButton<String>(
                     hint: Text('Type'),
-                    items: <String>[
-                      'Work',
-                      'Recriational',
-                      'Entertainment',
-                      'Education',
-                      'Social'
-                    ].map((String value) {
+                    items: <String>['Work', 'Recriational', 'Entertainment', 'Education', 'Social'].map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,
                         child: new Text(value),
@@ -199,34 +248,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                 tooltip: 'Save',
                 child: Icon(Icons.save),
                 onPressed: () {
-                  String url = Api.newActivityPersonal +
-                      widget.schedule_id.toString()+"/activities/";
-                  http
-                      .post(url,
-                          headers: {
-                            "Authorization": "Token " + widget.token,
-                            HttpHeaders.CONTENT_TYPE: "application/json",
-                          },
-                          body: json.encode({
-                            "activity": {
-                              "title": _ActivityName,
-                              "start_times": [_start_times],
-                              "end_times": [_end_times],
-                              "weekdays": ["Monday"],
-                            },
-                            "priority": _discreteValue.toInt(),
-                            "privacy": {"privacy": "personal"}
-                          }))
-                      .then((response) {
-                    if (response.statusCode == 201) {
-                      snackBar = SnackBar(content: Text('Added Successfully'));
-                      navigateToActivity(context);
-                    } else {
-                      print(response.statusCode);
-                      snackBar = SnackBar(
-                          content: Text('Wrong creditentials, try again'));
-                    }
-                  });
+                  function1().whenComplete(post);
                 },
               )),
         ],
@@ -249,11 +271,9 @@ Widget float2(context) {
 }
 
 void navigateToActivity(BuildContext context) {
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
 }
 
 void navigateToActivityAI(BuildContext context) {
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => ActivityAI()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityAI()));
 }

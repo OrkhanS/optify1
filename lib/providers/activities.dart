@@ -25,15 +25,15 @@ class Activities with ChangeNotifier {
   bool get notLoadingActivities {
     return isLoadingActivities;
   }
-  
-  bool get notLoadedMyorders{
+
+  bool get notLoadedMyorders {
     return isLoadingMyOrders;
   }
-  
+
   bool get notLoaded {
     return isLoading;
   }
-  
+
   List get activities {
     return _activites;
   }
@@ -44,6 +44,7 @@ class Activities with ChangeNotifier {
   Map get detailsOrder {
     return allOrdersDetails;
   }
+
   Map get detailsMyOrder {
     return allMyOrderDetails;
   }
@@ -55,13 +56,8 @@ class Activities with ChangeNotifier {
 
   Future fetchAndSetMyActivities(myToken, schedule_id) async {
     var token = myToken;
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-    token = extractedUserData['token'];
-    String url = Api.myActivities+schedule_id.toString()+"/activities/";;
+    String url = Api.myActivities + schedule_id.toString() + "/activities/";
+    ;
     http.get(
       url,
       headers: {
@@ -69,59 +65,57 @@ class Activities with ChangeNotifier {
         "Authorization": "Token " + token,
       },
     ).then((onValue) {
-      final dataOrders = json.decode(onValue.body)  as List;
+      final dataOrders = json.decode(onValue.body) as List;
       //_activites = dataOrders["results"];
       _activites = dataOrders;
       //allMyOrderDetails = dataOrders;
       isLoadingMyOrders = false;
     });
   }
-  // set myorders(List temporders) {
-  //   _myorders = temporders;
-  //   notifyListeners();
-  // }
+// set myorders(List temporders) {
+//   _myorders = temporders;
+//   notifyListeners();
+// }
 
+// Future fetchAndSetOrders() async {
+//   const url = "http://briddgy.herokuapp.com/api/orders/";
+//   final prefs = await SharedPreferences.getInstance();
+//   if (!prefs.containsKey('userData')) {
+//     http.get(
+//       url,
+//       headers: {
+//         HttpHeaders.CONTENT_TYPE: "application/json",
+//       },
+//     ).then((onValue) {
+//       final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+//       orders = dataOrders["results"];
+//       allOrdersDetails = dataOrders;
+//       isLoadingOrders = false;
+//     });
+//   } else {
+//     final extractedUserData =
+//         json.decode(prefs.getString('userData')) as Map<String, Object>;
+//     token = extractedUserData['token'];
 
-  // Future fetchAndSetOrders() async {
-  //   const url = "http://briddgy.herokuapp.com/api/orders/";
-  //   final prefs = await SharedPreferences.getInstance();
-  //   if (!prefs.containsKey('userData')) {
-  //     http.get(
-  //       url,
-  //       headers: {
-  //         HttpHeaders.CONTENT_TYPE: "application/json",
-  //       },
-  //     ).then((onValue) {
-  //       final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
-  //       orders = dataOrders["results"];
-  //       allOrdersDetails = dataOrders;
-  //       isLoadingOrders = false;
-  //     });
-  //   } else {
-  //     final extractedUserData =
-  //         json.decode(prefs.getString('userData')) as Map<String, Object>;
-  //     token = extractedUserData['token'];
+//     http.get(
+//       url,
+//       headers: {
+//         HttpHeaders.CONTENT_TYPE: "application/json",
+//         "Authorization": "Token " + token,
+//       },
+//     ).then((onValue) {
+//       final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+//       orders = dataOrders["results"];
+//       allOrdersDetails = dataOrders;
+//       isLoadingOrders = false;
+//     });
+//   }
 
-  //     http.get(
-  //       url,
-  //       headers: {
-  //         HttpHeaders.CONTENT_TYPE: "application/json",
-  //         "Authorization": "Token " + token,
-  //       },
-  //     ).then((onValue) {
-  //       final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
-  //       orders = dataOrders["results"];
-  //       allOrdersDetails = dataOrders;
-  //       isLoadingOrders = false;
-  //     });
-  //   }
+//   //notifyListeners();
+//   return _orders;
+// }
 
-  //   //notifyListeners();
-  //   return _orders;
-  // }
-
-
-  //_________________________________________________________TRIPS__________________________________________________________
+//_________________________________________________________TRIPS__________________________________________________________
 //   set trips(List temptrips) {
 //     _trips = temptrips;
 //     notifyListeners();
@@ -203,5 +197,5 @@ class Activities with ChangeNotifier {
 //       isLoading = false;
 //     });
 //   }
-// 
+//
 }

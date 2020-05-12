@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:optifyapp/screens/contracts.dart';
 import 'package:optifyapp/screens/my_items.dart';
 import 'package:optifyapp/screens/my_trips.dart';
 import 'package:optifyapp/screens/profile_screen.dart';
@@ -72,12 +71,12 @@ class _AccountPageState extends State<AccountPage> {
           child: Column(
             children: <Widget>[
               InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (__) => ProfileScreen(user: widget.auth.userdetail)),
-                  );
-                },
+//                onTap: () {
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (__) => ProfileScreen(auth: widget.auth.userdetail)),
+//                  );
+//                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Row(
@@ -90,7 +89,7 @@ class _AccountPageState extends State<AccountPage> {
 
                         backgroundImage: NetworkImage(
                             // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
-                            "https://picsum.photos/250?image=9"), //Todo: UserPic
+                            "https://robohash.org/" + Provider.of<Auth>(context, listen: false).token.toString()), //Todo: UserPic
 //                  child: Image.network(
 //                    'https://images-na.ssl-images-amazon.com/images/I/81NIli1PuqL._AC_SL1500_.jpg',
 //                    fit: BoxFit.cover,
@@ -138,95 +137,6 @@ class _AccountPageState extends State<AccountPage> {
                 child: Divider(
                   color: Colors.grey[600],
                   height: 40,
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                elevation: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(MdiIcons.calendarCheck),
-                      title: Text(
-                        "Upcoming Activities",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (__) => MyItems(
-                                    token: widget.token,
-                                    orderstripsProvider: widget.provider,
-                                  )),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.accountMultiple),
-                      title: Text(
-                        "My Contacts",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (__) => MyTrips(
-                                    token: widget.token,
-                                    orderstripsProvider: widget.provider,
-                                  )),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.scriptTextOutline),
-                      title: Text(
-                        "My Groups",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (__) => Contracts(
-                                    token: widget.token,
-                                  )),
-                        );
-                      },
-                    ),
-                  ],
                 ),
               ),
               Card(
