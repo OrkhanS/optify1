@@ -135,7 +135,7 @@ class Auth with ChangeNotifier {
 //      if (responseData['error'] != null) {
 //        throw HttpException(responseData['error']['message']);
 //      }
-      _token = responseData;
+      _token = responseData["token"];
 //      _token = responseData['idToken'];
 //      _userId = responseData['localId'];
 //      _expiryDate = DateTime.now().add(
@@ -179,12 +179,13 @@ class Auth with ChangeNotifier {
       _token = responseData["token"];
 
       print(responseData);
+      getScheduleID(_token);
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
-          'token': responseData,
+          'token': _token,
 //          'userId': _userId,
 //          'expiryDate': _expiryDate.toIso8601String(),
         },
@@ -194,7 +195,29 @@ class Auth with ChangeNotifier {
     } catch (error) {
       throw error;
     }
-    //return _authenticate(email, password, 'verifyPassword');
+  }
+
+  Future<void> getScheduleID(String token) async {
+    const url = Api.myScheduleInfo;
+    try {
+      final response = await http.get(
+        url,
+        headers: {HttpHeaders.CONTENT_TYPE: "application/json", "Authorization": "Token " + token},
+      );
+
+      final responseData = json.decode(response.body);
+      String schedule_id = responseData["id"].toString();
+      final prefs = await SharedPreferences.getInstance();
+      final scheduleData = json.encode(
+        {
+          'schedule_id': schedule_id.toString(),
+        },
+      );
+
+      prefs.setString('scheduleData', scheduleData);
+    } catch (error) {
+      throw error;
+    }
   }
 
   Future<bool> tryAutoLogin() async {

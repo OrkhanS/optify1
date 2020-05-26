@@ -15,7 +15,7 @@ import 'package:badges/badges.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ChatsScreen extends StatefulWidget {
-  static const routeName = '/social/chatsscreen';
+  static const routeName = '/chat';
   final StreamController<String> streamController = StreamController<String>.broadcast();
   var provider, token, auth;
   ChatsScreen({this.provider, this.token, this.auth});

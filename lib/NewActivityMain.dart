@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'NewActivityJoint.dart' as joint;
 import 'newActivityPersonal.dart' as personal;
 
@@ -7,6 +10,8 @@ void main() => runApp(MaterialApp(
     ));
 
 class NewActivityPage extends StatefulWidget {
+  var token, schedule_id;
+  NewActivityPage({this.token, this.schedule_id});
   NewActivityMain createState() => NewActivityMain();
 }
 
@@ -35,12 +40,9 @@ class NewActivityMain extends State<NewActivityPage> with SingleTickerProviderSt
     return Scaffold(
       appBar: AppBar(
         title: Text('New Activity'),
-        backgroundColor: Theme.of(context).primaryColor,
         bottom: new TabBar(
-          indicatorColor: Colors.white,
+          indicatorColor: Colors.lime,
           controller: controller,
-//          unselectedLabelColor: Theme.of(context).primaryColorDark,
-
           tabs: <Widget>[
             new Tab(
               text: "Personal",
@@ -53,7 +55,7 @@ class NewActivityMain extends State<NewActivityPage> with SingleTickerProviderSt
       ),
       body: new TabBarView(
         controller: controller,
-        children: <Widget>[new personal.newActivityPersonal(), new joint.NewActivityJoint()],
+        children: <Widget>[new personal.newActivityPersonal(token: widget.token, schedule_id: widget.schedule_id), new joint.NewActivityJoint()],
       ),
     );
   }

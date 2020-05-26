@@ -5,8 +5,6 @@ import 'members.dart';
 import 'package:optifyapp/providers/users.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
-import 'login.dart';
-import 'routes.dart';
 
 void main() => runApp(MaterialApp(
       home: SignUpPage(),

@@ -30,6 +30,7 @@ import 'package:optifyapp/screens/auth_screen.dart';
 import 'package:optifyapp/screens/schedule_screen.dart';
 import 'package:optifyapp/screens/social_screen.dart';
 import 'package:optifyapp/screens/contacts_screen.dart';
+import 'package:optifyapp/providers/activities.dart';
 
 void main() => runApp(MyApp());
 
@@ -52,13 +53,11 @@ class _MyAppState extends State<MyApp> {
   Map valueMessages = {};
   bool socketConnected = false;
   var neWMessage;
-
+  String schedule_id;
   @override
   void initState() {
-    _currentIndex = 0;
     super.initState();
-    //getToken();
-    _pageController = PageController(initialPage: 0);
+    getToken();
   }
 
   _configureFirebaseListerners(newmessage) {
@@ -75,14 +74,24 @@ class _MyAppState extends State<MyApp> {
     // );
   }
 
-  // Future getToken() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   if (!prefs.containsKey('userData')) {
-  //     return false;
-  //   }
-  //   final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-  //   tokenforROOM = extractedUserData['token'];
-  // }
+  Future getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    tokenforROOM = extractedUserData['token'];
+    getscheduleId();
+  }
+
+  Future getscheduleId() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('scheduleData')) {
+      return false;
+    }
+    final extractedscheduleData = json.decode(prefs.getString('scheduleData')) as Map<String, Object>;
+    schedule_id = extractedscheduleData['schedule_id'];
+  }
 
   Future onSelectNotification(String payload) async => await Navigator.push(
         context,
@@ -147,7 +156,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -162,7 +170,6 @@ class _MyAppState extends State<MyApp> {
       selectedFontSize: 11,
       onTap: (index) {
         setState(() => _currentIndex = index);
-        _pageController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.ease);
       },
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
@@ -171,9 +178,14 @@ class _MyAppState extends State<MyApp> {
           activeIcon: Icon(MdiIcons.mapClock),
         ),
         BottomNavigationBarItem(
-          title: Text('Social'),
+          title: Text('People'),
           icon: Icon(MdiIcons.accountGroupOutline),
           activeIcon: Icon(MdiIcons.accountGroup),
+        ),
+        BottomNavigationBarItem(
+          title: Text('Chats'),
+          icon: Icon(MdiIcons.forumOutline),
+          activeIcon: Icon(MdiIcons.forum),
         ),
         BottomNavigationBarItem(
           title: Text('Profile'),
@@ -189,6 +201,8 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  static List<Widget> currentScreen = [ScheduleScreen(), SocialScreen(), SocialScreen(), ProfileScreen()];
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -197,22 +211,27 @@ class _MyAppState extends State<MyApp> {
           builder: (_) => Auth(),
         ),
         ChangeNotifierProvider(
-          builder: (_) => OrdersTripsProvider(),
+          builder: (_) => Activities(),
         ),
         ChangeNotifierProvider(
           builder: (_) => Messages(),
         ),
       ],
-      child: Consumer3<Auth, Messages, OrdersTripsProvider>(builder: (
+      child: Consumer3<Auth, Messages, Activities>(builder: (
         ctx,
         auth,
         newmessage,
-        orderstripsProvider,
+        activitiesProvider,
         _,
       ) {
         // newmessage.fetchAndSetRooms(auth);
         // initCommunication(auth, newmessage);
         // _configureFirebaseListerners(newmessage);
+
+        auth.tryAutoLogin();
+        activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id);
+//        auth.fetchAndSetUserDetails();
+        if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
           theme: ThemeData(
@@ -221,26 +240,14 @@ class _MyAppState extends State<MyApp> {
             accentColor: Colors.lightGreenAccent,
             fontFamily: 'Lato',
           ),
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
           home: auth.isAuth
-              ? Scaffold(
-                  body: SizedBox.expand(
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() => _currentIndex = index);
-                      },
-                      children: <Widget>[
-                        ScheduleScreen(),
-                        SocialScreen(),
-//                  OrdersScreen(orderstripsProvider: orderstripsProvider, room: newmessage, auth: auth, token: tokenforROOM),
-//                  TripsScreen(orderstripsProvider: orderstripsProvider, room: newmessage, auth: auth, token: tokenforROOM),
-//                  ChatsScreen(provider: newmessage, auth: auth, token: tokenforROOM),
-//                  NotificationScreen(),
-                        AccountScreen(token: tokenforROOM, auth: auth, orderstripsProvider: orderstripsProvider),
-                      ],
-                    ),
+              ? SafeArea(
+                  child: Scaffold(
+                    bottomNavigationBar: navbar(newmessage),
+                    body: currentScreen[_currentIndex],
                   ),
-                  bottomNavigationBar: navbar(newmessage),
                 )
               : AuthScreen(),
           routes: {
@@ -254,7 +261,7 @@ class _MyAppState extends State<MyApp> {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
-            AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: orderstripsProvider),
+            AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
             SocialScreen.routeName: (ctx) => SocialScreen(),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
           },

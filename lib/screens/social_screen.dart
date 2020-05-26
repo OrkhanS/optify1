@@ -28,44 +28,44 @@ class _SocialScreenState extends State<SocialScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      SocialCard(
-                        context,
-                        "Contacts",
-                        Icon(
-                          MdiIcons.humanGreeting,
-                          size: 30,
-                          color: Colors.grey[700],
-                        ),
-                        '/social/contacts',
-                      ),
-                      SocialCard(
-                        context,
-                        "Groups",
-                        Icon(
-                          MdiIcons.humanMaleFemale,
-                          size: 30,
-                          color: Colors.grey[700],
-                        ),
-                        '/social/contacts',
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      SocialCard(
-                        context,
-                        "Chats",
-                        Icon(
-                          MdiIcons.forum,
-                          size: 30,
-                          color: Colors.grey[700],
-                        ),
-                        '/social/chatsscreen',
-                      ),
-                    ],
-                  ),
+//                  Row(
+//                    children: <Widget>[
+//                      SocialCard(
+//                        context,
+//                        "Contacts",
+//                        Icon(
+//                          MdiIcons.humanGreeting,
+//                          size: 30,
+//                          color: Colors.grey[700],
+//                        ),
+//                        '/social/contacts',
+//                      ),
+//                      SocialCard(
+//                        context,
+//                        "Groups",
+//                        Icon(
+//                          MdiIcons.humanMaleFemale,
+//                          size: 30,
+//                          color: Colors.grey[700],
+//                        ),
+//                        '/social/contacts',
+//                      ),
+//                    ],
+//                  ),
+//                  Row(
+//                    children: <Widget>[
+//                      SocialCard(
+//                        context,
+//                        "Chats",
+//                        Icon(
+//                          MdiIcons.forum,
+//                          size: 30,
+//                          color: Colors.grey[700],
+//                        ),
+//                        '/social/chatsscreen',
+//                      ),
+//                    ],
+//                  ),
                 ],
               ),
             ),

@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 import 'package:optifyapp/ActivityClass.dart';
 
-Widget activityBoxObject(Activity myActivity,height) {
-  final RandomColor _randomColor = RandomColor();
-  DateTime date = DateTime.parse(myActivity.start_times.substring(1,20));
-  double hour = double.parse(myActivity.start_times.substring(12,14));
-  double minute = double.parse(myActivity.start_times.substring(15,17))/60.0;
-//  Color _color =
+Widget activityBoxObject(myActivity, height) {
+//  final RandomColor _randomColor = RandomColor();
+  final DateTime startDate = DateTime.parse(myActivity["activity"]["start_times"][0].toString());
+  final DateTime endDate = DateTime.parse(myActivity["activity"]["end_times"][0].toString());
+  final double weekDay = startDate.weekday.toDouble();
+  final double top = startDate.hour.toDouble() * 60 + startDate.minute.toDouble();
+  final double duration = -startDate.hour.toDouble() * 60 + endDate.hour.toDouble() * 60 - startDate.minute.toDouble() + endDate.minute.toDouble();
+  final int priority = int.parse(myActivity["priority"].toString());
+
 //  _randomColor.randomColor(colorBrightness: ColorBrightness.light);
+  print(myActivity);
   return AnimatedPositioned(
     duration: Duration(milliseconds: 300),
     curve: Curves.decelerate,
-    left: 48.0 * date.weekday,
-    top: height * 60.0 * (hour + minute - 8.0),
-    height: height * (double.parse(myActivity.duration.toString().substring(1,3))*60 + double.parse(myActivity.duration.toString().substring(4,6))),
-    width: 1.0 * 52,
+    left: 50.0 * weekDay,
+    top: top * height,
+    height: duration * height,
+    width: 57.0 * 1.0,
     child: Opacity(
       opacity: .9,
       child: Card(
-        color: Colors.lightGreen[int.parse(myActivity.priority)*9-(int.parse(myActivity.priority)*9)%100+100],
+        color: Colors.lightGreen[priority * 9 - (priority * 9) % 100 + 100],
         elevation: 5,
         margin: const EdgeInsets.all(5),
         child: Container(
@@ -43,7 +47,7 @@ Widget activityBoxObject(Activity myActivity,height) {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(myActivity.title, style: TextStyle(fontSize: 10.0)),
+                    Text(myActivity["activity"]["title"].toString(), style: TextStyle(fontSize: 10.0)),
 //                    Text(
 //                      "description",
 //                      style: TextStyle(fontSize: 12.0),
@@ -59,7 +63,6 @@ Widget activityBoxObject(Activity myActivity,height) {
   );
 }
 
-
 Widget activityBox({
   @required final double height,
   @required final double duration,
@@ -71,8 +74,7 @@ Widget activityBox({
 }) {
   final RandomColor _randomColor = RandomColor();
 
-  Color _color =
-      _randomColor.randomColor(colorBrightness: ColorBrightness.light);
+  Color _color = _randomColor.randomColor(colorBrightness: ColorBrightness.light);
   return AnimatedPositioned(
     duration: Duration(milliseconds: 300),
     curve: Curves.decelerate,
@@ -95,8 +97,7 @@ Widget activityBox({
                 flex: 1,
                 child: Container(
                   child: new LayoutBuilder(builder: (context, constraint) {
-                    return new Icon(Icons.library_books,
-                        size: constraint.biggest.width - 20);
+                    return new Icon(Icons.library_books, size: constraint.biggest.width - 20);
                   }),
                 ),
               ),

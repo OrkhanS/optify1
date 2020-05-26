@@ -43,8 +43,7 @@ class ActivityListScreenState extends State<ActivityListScreen> {
 
   Future<List<Activity>> fetchActivities() async {
     var token = "d5c2711bdf2d1bf83000d86fe518887483dd1eb5";
-    const url1 =
-        'http://optify-dev.us-west-2.elasticbeanstalk.com/api/schedules/1/activities/';
+    const url1 = 'http://optify-dev.us-west-2.elasticbeanstalk.com/api/schedules/1/activities/';
     http.Response response = await http.get(
       url1,
       headers: {
@@ -80,35 +79,31 @@ class ActivityListScreenState extends State<ActivityListScreen> {
 
     return MaterialApp(
       title: title,
-
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         drawer: drawer(context),
         floatingActionButton: AnimatedFloatingActionButton(
-          //Fab list
+            //Fab list
             fabButtons: <Widget>[float1(context), float2()],
             colorStartAnimation: Colors.blue,
             colorEndAnimation: Colors.red,
             animatedIconData: AnimatedIcons.menu_close //To principal button
-        ),
-
+            ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
         appBar: AppBar(
           title: Text(title),
         ),
         body: ListView(
 
-
-          //final item = _activity[index];
+            //final item = _activity[index];
 
             children: <Widget>[
               for (int i = _activity.length - 1; i >= 0; i--)
                 Dismissible(
-                  // Each Dismissible must contain a Key. Keys allow Flutter to
-                  // uniquely identify widgets.
+                    // Each Dismissible must contain a Key. Keys allow Flutter to
+                    // uniquely identify widgets.
                     key: Key(_activity[i].id),
                     // Provide a function that tells the app
                     // what to do after an item has been swiped away.
@@ -116,26 +111,22 @@ class ActivityListScreenState extends State<ActivityListScreen> {
                       // Remove the item from the data source.
                       setState(() {
                         var token = "d5c2711bdf2d1bf83000d86fe518887483dd1eb5";
-                        var url2 =
-                            'http://optify-dev.us-west-2.elasticbeanstalk.com/api/schedules/1/activities/' +
-                                _activity[i].id.toString()+
-                        '/';
+                        var url2 = 'http://optify-dev.us-west-2.elasticbeanstalk.com/api/schedules/1/activities/' + _activity[i].id.toString() + '/';
                         print(url2);
                         http.delete(
-                        url2,
-                        headers: {
-                        HttpHeaders.CONTENT_TYPE: "application/json",
-                        "Authorization": "Token " + token,
-                        },
+                          url2,
+                          headers: {
+                            HttpHeaders.CONTENT_TYPE: "application/json",
+                            "Authorization": "Token " + token,
+                          },
                         ).then((response) {
-                        print(response.body);
+                          print(response.body);
                         });
                       });
                       _activity.removeAt(i);
 
                       // Then show a snackbar.
-                      Scaffold.of(context)
-                          .showSnackBar(SnackBar(content: Text(" dismissed")));
+                      Scaffold.of(context).showSnackBar(SnackBar(content: Text(" dismissed")));
                     },
                     // Show a red background as the item is swiped away.
                     background: Container(color: Colors.red),
@@ -158,12 +149,7 @@ class ActivityListScreenState extends State<ActivityListScreen> {
                                       fontSize: 20,
                                     ),
                                   ),
-                                  Text('Time: ' +
-                                      _activity[i]
-                                          .start_times
-                                          .substring(12, 17) +
-                                      " - " +
-                                      _activity[i].end_times.substring(12, 17)),
+                                  Text('Time: ' + _activity[i].start_times.substring(12, 17) + " - " + _activity[i].end_times.substring(12, 17)),
                                   Text('Priority: ' + _activity[i].priority),
                                 ],
                               ),
@@ -172,8 +158,7 @@ class ActivityListScreenState extends State<ActivityListScreen> {
                           Flexible(
                             child: Container(
                               height: 80,
-                              child: Image.network(
-                                  'https://www.nhs-health-trainers.co.uk/wp-content/uploads/2019/05/physical-activity.jpg'),
+                              child: Image.network('https://www.nhs-health-trainers.co.uk/wp-content/uploads/2019/05/physical-activity.jpg'),
                             ),
                           ),
                         ],
@@ -250,9 +235,8 @@ Widget float1(context) {
     child: FloatingActionButton(
       heroTag: "btn1",
       onPressed: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => NewActivityPage()));
-        },
+        Navigator.push(context, MaterialPageRoute(builder: (context) => NewActivityPage()));
+      },
       tooltip: 'First button',
       child: Icon(Icons.add),
     ),
