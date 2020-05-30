@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'widgets/activityListElement.dart';
-import 'routes.dart';
 import 'NewActivityMain.dart';
 import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 
@@ -83,7 +81,6 @@ class ActivityListScreenState extends State<ActivityListScreen> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        drawer: drawer(context),
         floatingActionButton: AnimatedFloatingActionButton(
             //Fab list
             fabButtons: <Widget>[float1(context), float2()],

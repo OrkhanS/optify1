@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:optifyapp/widgets/bottomNavBar.dart';
-import 'widgets/drawer.dart';
 import 'screens/schedule_screen.dart';
 import 'package:optifyapp/ProfileScreen.dart';
 import 'MapScreen.dart';

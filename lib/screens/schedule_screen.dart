@@ -14,7 +14,6 @@ import 'package:optifyapp/models/api.dart';
 import 'package:optifyapp/providers/activities.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../widgets/drawer.dart';
 import '../widgets/activityBox.dart';
 import 'package:optifyapp/ActivityClass.dart';
 import 'package:optifyapp/newActivityMain.dart' as activityPageNew;

@@ -1,11 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:math';
-import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
-import 'package:http/http.dart' as http;
-import 'widgets/drawer.dart';
-import 'widgets/drawActivity.dart';
 
 void main() => runApp(ProfileScreen());
 
@@ -20,7 +13,6 @@ class ProfileScreen extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: appBar,
-        drawer: drawer(context),
         /*bottomNavigationBar: BottomNavigationBar(
           currentIndex: 0, // this will be set when a new tab is tapped
 
@@ -52,7 +44,6 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),*/
         body: Container(
-
           margin: EdgeInsets.all(10),
           child: Column(
             children: <Widget>[
@@ -62,8 +53,7 @@ class ProfileScreen extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       height: 150,
-                      child: Image.network(
-                          'https://pixls.us/articles/faces-of-open-source/Brian_Kernighan_by_Peter_Adams_w640.jpg'),
+                      child: Image.network('https://pixls.us/articles/faces-of-open-source/Brian_Kernighan_by_Peter_Adams_w640.jpg'),
                     ),
                     Expanded(
                       child: Column(
@@ -132,8 +122,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: 200,
                 margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    border: Border.all(), color: Colors.blue.shade100),
+                decoration: BoxDecoration(border: Border.all(), color: Colors.blue.shade100),
                 child: ListTile(
                   title: Center(child: Text('Contacts: 10')),
                 ),
@@ -141,8 +130,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: 200,
                 margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    border: Border.all(), color: Colors.blue.shade100),
+                decoration: BoxDecoration(border: Border.all(), color: Colors.blue.shade100),
                 child: ListTile(
                   title: Center(child: Text('Groups: 2')),
                 ),
@@ -150,13 +138,12 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: 200,
                 margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    border: Border.all(), color: Colors.blue.shade100),
+                decoration: BoxDecoration(border: Border.all(), color: Colors.blue.shade100),
                 child: ListTile(
                   title: Center(child: Text('Events: 3')),
                 ),
               ),
-            /*  Container(
+              /*  Container(
                 width: 200,
                 margin: EdgeInsets.all(5),
                 decoration: BoxDecoration(

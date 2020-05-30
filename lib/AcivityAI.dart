@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:optifyapp/ActivityListScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'routes.dart';
 
 void main() => runApp(MaterialApp(
       home: ActivityAI(),
@@ -178,7 +176,7 @@ class ActivityAIPage extends State<ActivityAI> {
                         .then((response) {
                       if (response.statusCode == 201) {
                         snackBar = SnackBar(content: Text('Added Successfully'));
-                        navigateToActivity(context);
+//                        navigateToActivity(context);
                       } else {
                         print(response.statusCode);
                         snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
@@ -191,8 +189,4 @@ class ActivityAIPage extends State<ActivityAI> {
       ),
     );
   }
-}
-
-void navigateToActivity(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
 }

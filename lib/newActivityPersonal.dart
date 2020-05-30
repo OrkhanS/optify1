@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:optifyapp/ActivityListScreen.dart';
 import 'AcivityAI.dart';
 import 'models/api.dart';
 import 'dart:async';
@@ -265,10 +264,6 @@ Widget float2(context) {
       child: Icon(Icons.search),
     ),
   );
-}
-
-void navigateToActivity(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
 }
 
 void navigateToActivityAI(BuildContext context) {
