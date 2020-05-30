@@ -51,22 +51,18 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
     }
     final extractedscheduleData = json.decode(prefs.getString('scheduleData')) as Map<String, Object>;
     String schedule_id = extractedscheduleData['schedule_id'];
-
-    //todo orxan check
-//    if (widget.activitiesProvider.activities.isEmpty) {
-    widget.activitiesProvider.fetchAndSetMyActivities(widget.token, schedule_id);
-//    }
+    if(widget.activitiesProvider != null){
+      if (widget.activitiesProvider.isLoadingActivities == true && token != null && token != "null") {
+        widget.activitiesProvider.fetchAndSetMyActivities(token, schedule_id);
+      }
+    }
+    
   }
 
   @override
   void initState() {
     getToken();
     loadMyActivites();
-    // fetchActivities().then((value) {
-    //   setState(() {
-    //     _activity.addAll(value);
-    //   });
-    // });
     super.initState();
   }
 
@@ -88,11 +84,10 @@ _activity[0]["activity"]["durations"][0]
         if (activitiesProvider.activities.length != 0) {
           _activity = activitiesProvider.activities;
           if (nextOrderURL == "FirstCall") {
-            //nextOrderURL = activitiesProvider.detailsMyOrder["next"];
-            nextOrderURL = ""; //
+            nextOrderURL = activitiesProvider.detailsActivities["next"];
+            
           }
         } else {
-          print(_activity);
           //messageLoader = true;
         }
         return Scaffold(

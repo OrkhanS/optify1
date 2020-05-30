@@ -115,11 +115,11 @@ class _MyAppState extends State<MyApp> {
 
         auth.token = extractedUserData['token'];
 
-        if (extractedUserData['token'] != null) {
-          widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + extractedUserData['token']);
-          widget._channel.stream.listen(_onReceptionOfMessageFromServer);
-          print("Alert Connected");
-        }
+        // if (extractedUserData['token'] != null) {
+        //   widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + extractedUserData['token']);
+        //   widget._channel.stream.listen(_onReceptionOfMessageFromServer);
+        //   print("Alert Connected");
+        // }
       } catch (e) {
         print("Error Occured");
         reset();
@@ -229,7 +229,7 @@ class _MyAppState extends State<MyApp> {
         // _configureFirebaseListerners(newmessage);
 
         auth.tryAutoLogin();
-        activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id);
+        activitiesProvider.isLoadingActivities == true ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id) : activitiesProvider.activities;        
 //        auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(

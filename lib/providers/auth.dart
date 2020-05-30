@@ -44,73 +44,73 @@ class Auth with ChangeNotifier {
   }
 
   Future fetchAndSetUserDetails() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+//     final prefs = await SharedPreferences.getInstance();
+//     if (!prefs.containsKey('userData')) {
+//       return false;
+//     }
+//     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
 
-    const url = Api.address + "api/users/me/";
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + extractedUserData['token'],
-        },
-      ).then((response) {
-        final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-        user = dataOrders;
-        isLoadingUser = false;
-        notifyListeners();
-      });
-    } catch (e) {
-      return;
-    }
-  }
+//     const url = Api.address + "api/users/me/";
+//     try {
+//       final response = await http.get(
+//         url,
+//         headers: {
+//           HttpHeaders.CONTENT_TYPE: "application/json",
+//           "Authorization": "Token " + extractedUserData['token'],
+//         },
+//       ).then((response) {
+//         final dataOrders = json.decode(response.body) as Map<String, dynamic>;
+//         user = dataOrders;
+//         isLoadingUser = false;
+//         notifyListeners();
+//       });
+//     } catch (e) {
+//       return;
+//     }
+//   }
 
-  Future<void> _authenticate(String email, String password, String urlSegment) async {
-//    final url =
-//        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyC13spCwP_f_SalxEbkB-wjedoF8iYENlQ';
-    const url = "http://briddgy.herokuapp.com/api/auth/";
-    try {
-      final response = await http.post(
-        url,
-        body: json.encode(
-          {
-            'email': email,
-            'password': password,
-            'returnSecureToken': true,
-          },
-        ),
-      );
-      final responseData = json.decode(response.body);
-      if (responseData['error'] != null) {
-        throw HttpException(responseData['error']['message']);
-      }
-      _token = responseData['idToken'];
-      _userId = responseData['localId'];
-      _expiryDate = DateTime.now().add(
-        Duration(
-          seconds: int.parse(
-            responseData['expiresIn'],
-          ),
-        ),
-      );
-//      _autoLogout();
-      notifyListeners();
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode(
-        {
-          'token': _token,
-          'userId': _userId,
-          'expiryDate': _expiryDate.toIso8601String(),
-        },
-      );
-      prefs.setString('userData', userData);
-    } catch (error) {
-      throw error;
-    }
+//   Future<void> _authenticate(String email, String password, String urlSegment) async {
+// //    final url =
+// //        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyC13spCwP_f_SalxEbkB-wjedoF8iYENlQ';
+//     const url = "http://briddgy.herokuapp.com/api/auth/";
+//     try {
+//       final response = await http.post(
+//         url,
+//         body: json.encode(
+//           {
+//             'email': email,
+//             'password': password,
+//             'returnSecureToken': true,
+//           },
+//         ),
+//       );
+//       final responseData = json.decode(response.body);
+//       if (responseData['error'] != null) {
+//         throw HttpException(responseData['error']['message']);
+//       }
+//       _token = responseData['idToken'];
+//       _userId = responseData['localId'];
+//       _expiryDate = DateTime.now().add(
+//         Duration(
+//           seconds: int.parse(
+//             responseData['expiresIn'],
+//           ),
+//         ),
+//       );
+// //      _autoLogout();
+//       notifyListeners();
+//       final prefs = await SharedPreferences.getInstance();
+//       final userData = json.encode(
+//         {
+//           'token': _token,
+//           'userId': _userId,
+//           'expiryDate': _expiryDate.toIso8601String(),
+//         },
+//       );
+//       prefs.setString('userData', userData);
+//     } catch (error) {
+//       throw error;
+//     }
   }
 
   Future<void> signup(String email, String password, String firstname, String lastname

@@ -2,15 +2,19 @@ import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:optifyapp/ActivityListScreen.dart';
 import 'AcivityAI.dart';
+import 'ActivityClass.dart';
 import 'models/api.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'providers/activities.dart';
 
 void main() => runApp(MaterialApp(
       home: newActivityPersonal(),
@@ -70,6 +74,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
+        //Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(
           title: "Done",
@@ -110,15 +115,12 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: 275.0,
-            child: new TextFormField(
-              decoration: const InputDecoration(labelText: 'Activity Name'),
-              keyboardType: TextInputType.text,
-              onChanged: (String val) {
-                _ActivityName = val;
-              },
-            ),
+          TextFormField(
+            decoration: const InputDecoration(labelText: 'Activity Name'),
+            keyboardType: TextInputType.text,
+            onChanged: (String val) {
+              _ActivityName = val;
+            },
           ),
           Container(
             margin: EdgeInsets.only(top: 15),
