@@ -5,4 +5,5 @@ class Api {
   static const myScheduleInfo = address + "api/schedules/my/";
   static const newActivityPersonal = address + "api/schedules/";
   static const myActivities = address + "api/schedules/";
+  static const myContacts = address + "api/contacts/";
 }

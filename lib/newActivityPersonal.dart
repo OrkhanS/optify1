@@ -34,7 +34,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
   DateTime _dateTimeStart, _dateTimeEnd;
   var snackBar;
   String tokenforROOM;
-  TimeOfDay _timeStart, _timeEnd; //After we get time, add it into FROM and UNTIL section below, no need to ask it again below
+  TimeOfDay _timeStart, _timeEnd;
   String schedule_id;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
@@ -75,20 +75,20 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
               "privacy": {"privacy": "personal"}
             }))
         .then((response) {
-      if (response.statusCode == 201) {
-        //Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
-        Navigator.pop(context);
-        Flushbar(
-          title: "Done",
-          message: "Activity added",
-          aroundPadding: const EdgeInsets.all(30),
-          borderRadius: 10,
-          duration: Duration(seconds: 5),
-        )..show(context);
-      } else {
-        print(response.statusCode);
-        snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
-      }
+        if (response.statusCode == 201) {
+          Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
+          Navigator.pop(context);
+          Flushbar(
+            title: "Done",
+            message: "Activity added",
+            aroundPadding: const EdgeInsets.all(30),
+            borderRadius: 10,
+            duration: Duration(seconds: 5),
+          )..show(context);
+        } else {
+          print(response.statusCode);
+          snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
+        }
     });
   }
 
