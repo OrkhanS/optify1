@@ -30,7 +30,6 @@ class Activities with ChangeNotifier {
     var token = myToken;
     if (token != null && token != "null") {
       String url = Api.myActivities + schedule_id.toString() + "/activities/";
-      print(url);
       http.get(
         url,
         headers: {
@@ -43,11 +42,13 @@ class Activities with ChangeNotifier {
           _activites = dataOrders["results"];
           allActivityDetails = dataOrders;
           isLoadingActivities = false;
+          notifyListeners();
         }
         else{
           _activites = [];
           allActivityDetails = {};
           isLoadingActivities = false;
+          notifyListeners();
         }
 
       });

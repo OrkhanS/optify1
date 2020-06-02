@@ -228,9 +228,9 @@ class _MyAppState extends State<MyApp> {
         // initCommunication(auth, newmessage);
         // _configureFirebaseListerners(newmessage);
 
-        auth.tryAutoLogin();
+        auth.isAuth == false ? auth.tryAutoLogin() : auth.isAuth;
         activitiesProvider.isLoadingActivities == true ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id) : activitiesProvider.activities;        
-//        auth.fetchAndSetUserDetails();
+        //auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
