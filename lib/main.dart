@@ -98,36 +98,36 @@ class _MyAppState extends State<MyApp> {
         MaterialPageRoute(builder: (context) => ChatsScreen()),
       );
 
-  initCommunication(auth, newmessage) async {
-    if (socketConnected == false) {
-      socketConnected = true;
-      reset();
-      try {
-        var f, d;
-        auth.removeListener(f);
-        newmessage.removeListener(d);
-        neWMessage = newmessage;
-        final prefs = await SharedPreferences.getInstance();
-        if (!prefs.containsKey('userData')) {
-          return false;
-        }
-        final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-
-        auth.token = extractedUserData['token'];
-
-        // if (extractedUserData['token'] != null) {
-        //   widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + extractedUserData['token']);
-        //   widget._channel.stream.listen(_onReceptionOfMessageFromServer);
-        //   print("Alert Connected");
-        // }
-      } catch (e) {
-        print("Error Occured");
-        reset();
-      }
-    } else {
-      return;
-    }
-  }
+//  initCommunication(auth, newmessage) async {
+//    if (socketConnected == false) {
+//      socketConnected = true;
+//      reset();
+//      try {
+//        var f, d;
+//        auth.removeListener(f);
+//        newmessage.removeListener(d);
+//        neWMessage = newmessage;
+//        final prefs = await SharedPreferences.getInstance();
+//        if (!prefs.containsKey('userData')) {
+//          return false;
+//        }
+//        final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+//
+//        auth.token = extractedUserData['token'];
+//
+//        // if (extractedUserData['token'] != null) {
+//        //   widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + extractedUserData['token']);
+//        //   widget._channel.stream.listen(_onReceptionOfMessageFromServer);
+//        //   print("Alert Connected");
+//        // }
+//      } catch (e) {
+//        print("Error Occured");
+//        reset();
+//      }
+//    } else {
+//      return;
+//    }
+//  }
 
   /// ----------------------------------------------------------
   /// Closes the WebSocket communication
@@ -229,8 +229,10 @@ class _MyAppState extends State<MyApp> {
         // _configureFirebaseListerners(newmessage);
 
         auth.isAuth == false ? auth.tryAutoLogin() : auth.isAuth;
-        activitiesProvider.isLoadingActivities == true ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id) : activitiesProvider.activities;        
-        //auth.fetchAndSetUserDetails();
+        activitiesProvider.isLoadingActivities == true
+            ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id)
+            : activitiesProvider.activities;
+//        auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',

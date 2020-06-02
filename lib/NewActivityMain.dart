@@ -25,7 +25,7 @@ class NewActivityMain extends State<NewActivityPage> with SingleTickerProviderSt
   TabController controller;
   @override
   void initState() {
-    controller = new TabController(length: 2, vsync: this);
+    controller = TabController(length: 2, vsync: this);
     super.initState();
   }
 
@@ -39,23 +39,44 @@ class NewActivityMain extends State<NewActivityPage> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New Activity'),
-        bottom: new TabBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: Icon(
+            Icons.chevron_left,
+            size: 30,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text(
+          'Add Activity',
+          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+        ),
+        bottom: TabBar(
           indicatorColor: Colors.lime,
           controller: controller,
           tabs: <Widget>[
-            new Tab(
-              text: "Personal",
+            Tab(
+              child: Text(
+                "Personal",
+                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+              ),
             ),
-            new Tab(
-              text: "Joint",
+            Tab(
+              child: Text(
+                "Joint",
+                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+              ),
             )
           ],
         ),
       ),
-      body: new TabBarView(
+      body: TabBarView(
         controller: controller,
-        children: <Widget>[new personal.newActivityPersonal(token: widget.token, schedule_id: widget.schedule_id), new joint.NewActivityJoint()],
+        children: <Widget>[personal.newActivityPersonal(token: widget.token, schedule_id: widget.schedule_id), joint.NewActivityJoint()],
       ),
     );
   }

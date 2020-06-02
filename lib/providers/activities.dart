@@ -37,25 +37,21 @@ class Activities with ChangeNotifier {
           "Authorization": "Token " + token,
         },
       ).then((onValue) {
-        if(onValue.statusCode == 200){
+        if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
           _activites = dataOrders["results"];
           allActivityDetails = dataOrders;
           isLoadingActivities = false;
-          notifyListeners();
-        }
-        else{
+        } else {
           _activites = [];
           allActivityDetails = {};
           isLoadingActivities = false;
-          notifyListeners();
         }
-
       });
     }
   }
 
-  addActivityFromPostRequest(newactivity){
+  addActivityFromPostRequest(newactivity) {
     _activites.add(newactivity);
     notifyListeners();
   }

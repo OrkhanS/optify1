@@ -7,7 +7,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/NewActivityMain.dart';
 import 'package:optifyapp/models/api.dart';
@@ -51,12 +53,11 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
     }
     final extractedscheduleData = json.decode(prefs.getString('scheduleData')) as Map<String, Object>;
     String schedule_id = extractedscheduleData['schedule_id'];
-    if(widget.activitiesProvider != null){
+    if (widget.activitiesProvider != null) {
       if (widget.activitiesProvider.isLoadingActivities == true && token != null && token != "null") {
         widget.activitiesProvider.fetchAndSetMyActivities(token, schedule_id);
       }
     }
-    
   }
 
   @override
@@ -85,7 +86,6 @@ _activity[0]["activity"]["durations"][0]
           _activity = activitiesProvider.activities;
           if (nextOrderURL == "FirstCall") {
             nextOrderURL = activitiesProvider.detailsActivities["next"];
-            
           }
         } else {
           //messageLoader = true;
@@ -319,19 +319,44 @@ _activity[0]["activity"]["durations"][0]
                           child: InkWell(
                             onTap: () => null,
                             child: Container(
-                              height: 140,
+//                              height: 140,
                               child: Card(
                                 elevation: 1,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
                                     Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      child: Stack(
+                                        alignment: Alignment.center,
                                         children: <Widget>[
-                                          /* todo RASUL
+                                          Transform.rotate(
+                                            angle: 3.18,
+                                            child: CircularProgressIndicator(
+//                                          value: Tween<Double>(0.0, int.parse(_activity[i]["priority"].toString()).toDouble() / 100).animate(parent),
+                                              value: int.parse(_activity[i]["priority"].toString()).toDouble() / 100,
+                                              strokeWidth: 4,
+                                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                                Colors.lightGreen[_activity[i]["priority"] * 9 - (_activity[i]["priority"] * 9) % 100 + 100],
+                                              ),
+                                              backgroundColor: Colors.grey[100],
+                                            ),
+                                          ),
+                                          Text(
+                                            _activity[i]["priority"].toString(),
+                                            style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            /* todo RASUL
 _activity[0]["priority"]
 _activity[0]["activity"]["title"]
 _activity[0]["activity"]["start_times"][0]
@@ -339,64 +364,73 @@ _activity[0]["activity"]["end_times"][0]
 _activity[0]["activity"]["weekdays"][0]
 _activity[0]["activity"]["durations"][0]
 */
-                                          Text(
-                                            _activity[i]["activity"]["title"],
-                                            style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.timer,
-                                                color: Theme.of(context).primaryColor,
-                                              ),
-                                              RichText(
-                                                text: TextSpan(
-                                                  text: DateTime.parse(_activity[i]["activity"]["start_times"][0]).hour.toString() +
-                                                      ":" +
-                                                      DateTime.parse(_activity[i]["activity"]["start_times"][0]).minute.toString() +
-                                                      " - " +
-                                                      DateTime.parse(_activity[i]["activity"]["end_times"][0]).hour.toString() +
-                                                      ":" +
-                                                      DateTime.parse(_activity[i]["activity"]["end_times"][0]).minute.toString(),
-                                                  style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                  _activity[i]["activity"]["title"],
+                                                  style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.date_range,
-                                                color: Theme.of(context).primaryColor,
-                                              ),
-                                              Text(
-                                                _activity[i]["activity"]["start_times"][0].toString(),
-                                                style: TextStyle(color: Colors.grey[600]),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Icon(
-                                                MdiIcons.weightKilogram, //todo: icon
-//                                            (FontAwesome.suitcase),
-                                                color: Theme.of(context).primaryColor,
-                                              ),
-                                              Text(
-                                                _activity[i]["priority"].toString(),
-                                                style: TextStyle(color: Colors.grey[600]),
-                                              ),
-                                            ],
-                                          )
-                                        ],
+                                                Text(
+                                                  DateFormat.yMMMd().format(DateTime.parse(_activity[i]["activity"]["start_times"][0])).toString(),
+                                                  style: TextStyle(color: Colors.grey[600]),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.timer,
+                                                  color: Theme.of(context).primaryColor,
+                                                ),
+                                                RichText(
+                                                  text: TextSpan(
+                                                    text: DateFormat.Hm()
+                                                            .format(DateTime.parse(_activity[i]["activity"]["start_times"][0]))
+                                                            .toString() +
+                                                        " - " +
+                                                        DateFormat.Hm().format(DateTime.parse(_activity[i]["activity"]["end_times"][0])).toString(),
+                                                    style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+//                                          Row(
+//                                            children: <Widget>[
+//                                              Icon(
+//                                                Icons.date_range,
+//                                                color: Theme.of(context).primaryColor,
+//                                              ),
+//                                              Text(
+//                                                DateFormat.yMMMd().format(DateTime.parse(_activity[i]["activity"]["start_times"][0])).toString(),
+//                                                style: TextStyle(color: Colors.grey[600]),
+//                                              ),
+//                                            ],
+//                                          ),
+//                                          Row(
+//                                            children: <Widget>[
+//                                              Icon(
+//                                                MdiIcons.weightKilogram, //todo: icon
+////                                            (FontAwesome.suitcase),
+//                                                color: Theme.of(context).primaryColor,
+//                                              ),
+//                                              Text(
+//                                                _activity[i]["priority"].toString(),
+//                                                style: TextStyle(color: Colors.grey[600]),
+//                                              ),
+//                                            ],
+//                                          )
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    Image(
-                                      image: NetworkImage("https://img.icons8.com/wired/2x/passenger-with-baggage.png"),
-                                      height: 60,
-                                      width: 60,
-                                    ),
+
+//                                    Image(
+//                                      image: NetworkImage("https://img.icons8.com/wired/2x/passenger-with-baggage.png"),
+//                                      height: 60,
+//                                      width: 60,
+//                                    ),
                                   ],
                                 ),
                               ),
@@ -426,8 +460,11 @@ class FullTimeState extends State<FullTime> {
   double scaleHeight = 40;
   double check = 40;
 
+  final _scrollController = ScrollController(initialScrollOffset: 300);
+  final _height = 40 * 8;
   @override
   Widget build(BuildContext context) {
+//    _animateToIndex(8.0);
     return Flexible(
       child: GestureDetector(
         onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
@@ -441,20 +478,20 @@ class FullTimeState extends State<FullTime> {
           }
         },
         child: Container(
-          child: ListView(
-            children: [
-              Stack(children: [
-                Column(
-                  children: <Widget>[
-                    for (var i = 0; i < 24; i++)
-                      if (i > 9)
-                        hourRow(time: "${i.toString()}:00", vertical: scaleHeight)
-                      else
-                        hourRow(time: "0${i.toString()}:00", vertical: scaleHeight)
-                  ],
-                ),
-                if (widget.activityList != null)
-                  for (var x in widget.activityList) activityBoxObject(x, scaleHeight / 60),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Stack(children: [
+              Column(
+                children: <Widget>[
+                  for (var i = 0; i < 24; i++)
+                    if (i > 9)
+                      hourRow(time: "${i.toString()}:00", vertical: scaleHeight)
+                    else
+                      hourRow(time: "0${i.toString()}:00", vertical: scaleHeight)
+                ],
+              ),
+              if (widget.activityList != null)
+                for (var x in widget.activityList) activityBoxObject(x, scaleHeight / 60),
 //                activityBox(
 //                    height: scaleHeight / 60,
 //                    duration: 120,
@@ -479,13 +516,17 @@ class FullTimeState extends State<FullTime> {
 //                    startday: 3, //1 - monday, 5 friday
 //                    name: "Gym",
 //                    description: "Workout at gym"),
-              ]),
-            ],
+            ]),
           ),
+//            ],
         ),
       ),
     );
   }
+
+  _animateToIndex(i) => _scrollController.animateTo(_height * i, // Scroll this many pixels to the element.
+      duration: Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn);
 }
 
 Widget weekDay({@required final String day}) {
