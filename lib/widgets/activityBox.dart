@@ -12,7 +12,6 @@ Widget activityBoxObject(myActivity, height) {
   final int priority = int.parse(myActivity["priority"].toString());
 
 //  _randomColor.randomColor(colorBrightness: ColorBrightness.light);
-  print(myActivity);
   return AnimatedPositioned(
     duration: Duration(milliseconds: 300),
     curve: Curves.decelerate,

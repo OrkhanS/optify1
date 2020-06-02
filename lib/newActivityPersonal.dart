@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,9 +106,6 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
     }
     final extractedscheduleData = json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
     schedule_id = extractedscheduleData['schedule_id'];
-    print("I am here");
-    print(tokenforROOM);
-    print(schedule_id);
   }
 
   Widget FormUI() {
@@ -133,12 +132,14 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                 children: <Widget>[
                   MaterialButton(
                     shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(18.0),
+                      borderRadius: BorderRadius.circular(18.0),
                     ),
-                    height: 60,
-                    minWidth: 130,
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Start Date'),
+                    //
+                    child: _start_times == null
+                        ? Text('Start Date')
+                        : Text(DateFormat.MMMd().format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_start_times).toString())).toString() +
+                            "\n" +
+                            DateFormat.Hm().format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_start_times).toString())).toString()),
                     color: Colors.white,
                     onPressed: () {
                       showTimePicker(
@@ -147,6 +148,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                       ).then((time) {
                         _timeStart = time;
                         _start_times = _dateTimeStart.toString().substring(0, 11) + _timeStart.toString().substring(10, 15);
+                        setState(() {});
                       });
                       showDatePicker(
                         context: context,
@@ -166,11 +168,19 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
                       ),
-                      height: 60,
-                      minWidth: 130,
                       padding: EdgeInsets.all(8.0),
-                      child: Text('End Date'),
-                      color: Colors.white,
+                      child: _end_times == null
+                          ? Text(
+                              'End Date',
+                              style: TextStyle(color: Colors.white),
+                            )
+                          : Text(
+                              DateFormat.MMMd().format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_end_times).toString())).toString() +
+                                  "\n" +
+                                  DateFormat.Hm().format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_end_times).toString())).toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                      color: Theme.of(context).primaryColor,
                       onPressed: () {
                         showTimePicker(
                           context: context,
@@ -178,6 +188,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                         ).then((time) {
                           _timeEnd = time;
                           _end_times = _dateTimeEnd.toString().substring(0, 11) + _timeEnd.toString().substring(10, 15);
+                          setState(() {});
                         });
                         showDatePicker(
                           context: context,
@@ -194,31 +205,38 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
               ),
             ),
           ),
-          Container(margin: EdgeInsets.only(top: 30.0), child: const Text('Priority')),
-          Container(
-            width: 330.0,
-            child: Slider(
-              value: _discreteValue,
-              min: 0.0,
-              max: 100.0,
-              divisions: 100,
-              label: '${_discreteValue.round()}',
-              onChanged: (double value) {
-                setState(() {
-                  _discreteValue = value;
-                });
-              },
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Priority',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+              ),
+              Expanded(
+                child: Slider(
+                  value: _discreteValue,
+                  activeColor: Theme.of(context).primaryColor,
+                  min: 0.0,
+                  max: 100.0,
+                  divisions: 100,
+                  label: '${_discreteValue.round()}',
+                  onChanged: (double value) {
+                    setState(() {
+                      _discreteValue = value;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
           Container(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
                   child: DropdownButton<String>(
                     hint: new Text("Duration"),
-                    items: <String>['Montly', 'Weekly', 'Daily'].map((String value) {
+                    items: <String>['Monthly', 'Weekly', 'Daily'].map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,
                         child: new Text(value),
@@ -231,7 +249,7 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                   margin: EdgeInsets.only(left: 20.0),
                   child: new DropdownButton<String>(
                     hint: Text('Type'),
-                    items: <String>['Work', 'Recriational', 'Entertainment', 'Education', 'Social'].map((String value) {
+                    items: <String>['Work', 'Recreational', 'Entertainment', 'Education', 'Social'].map((String value) {
                       return new DropdownMenuItem<String>(
                         value: value,
                         child: new Text(value),
@@ -240,19 +258,25 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
                     onChanged: (_) {},
                   ),
                 ),
+                FlatButton(
+                  color: Theme.of(context).primaryColor,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.save, color: Colors.white),
+                      Text(
+                        "  Save",
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    function1().whenComplete(post);
+                  },
+                ),
               ],
             ),
           ),
-          Container(
-              width: 50.0,
-              height: 50.0,
-              child: FloatingActionButton(
-                tooltip: 'Save',
-                child: Icon(Icons.save),
-                onPressed: () {
-                  function1().whenComplete(post);
-                },
-              )),
         ],
       ),
     );
@@ -262,12 +286,13 @@ class newActivityPersonalPage extends State<newActivityPersonal> {
 Widget float2(context) {
   return Container(
     child: FloatingActionButton(
+      backgroundColor: Theme.of(context).primaryColor,
       heroTag: "btn2",
       onPressed: () {
         navigateToActivityAI(context);
       },
       tooltip: 'Second button',
-      child: Icon(Icons.search),
+      child: Icon(MdiIcons.brain, color: Colors.white),
     ),
   );
 }
