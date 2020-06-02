@@ -461,7 +461,6 @@ class FullTimeState extends State<FullTime> {
   double check = 40;
 
   final _scrollController = ScrollController(initialScrollOffset: 300);
-  final _height = 40 * 8;
   @override
   Widget build(BuildContext context) {
 //    _animateToIndex(8.0);
@@ -523,10 +522,6 @@ class FullTimeState extends State<FullTime> {
       ),
     );
   }
-
-  _animateToIndex(i) => _scrollController.animateTo(_height * i, // Scroll this many pixels to the element.
-      duration: Duration(seconds: 2),
-      curve: Curves.fastOutSlowIn);
 }
 
 Widget weekDay({@required final String day}) {

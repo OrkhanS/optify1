@@ -16,8 +16,8 @@ Widget activityBoxObject(myActivity, height) {
     duration: Duration(milliseconds: 300),
     curve: Curves.decelerate,
     left: 50.0 * weekDay,
-    top: top * height,
-    height: duration * height,
+    top: top * (height) * 1.02,
+    height: duration * (height) * 1.05,
     width: 57.0 * 1.0,
     child: Opacity(
       opacity: .9,
