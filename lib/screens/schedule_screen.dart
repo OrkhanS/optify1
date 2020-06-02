@@ -184,7 +184,10 @@ _activity[0]["activity"]["durations"][0]
 //          float1(context, widget.token, widget.schedule_id),
 
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: isSwitched
+          body: 
+
+            Provider.of<Activities>(context, listen: true).isLoadingActivities == true ? Center(child: CircularProgressIndicator())
+            : isSwitched
               ? Container(
                   child: Padding(
                     padding: EdgeInsets.all(1),

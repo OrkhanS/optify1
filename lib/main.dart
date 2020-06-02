@@ -16,7 +16,6 @@ import './screens/chats_screen.dart';
 import './screens/chat_window.dart';
 import 'package:optifyapp/screens/profile_screen.dart';
 import 'package:optifyapp/screens/item_screen.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:optifyapp/providers/messages.dart';
 import 'package:optifyapp/providers/ordersandtrips.dart';
@@ -31,6 +30,8 @@ import 'package:optifyapp/screens/schedule_screen.dart';
 import 'package:optifyapp/screens/social_screen.dart';
 import 'package:optifyapp/screens/contacts_screen.dart';
 import 'package:optifyapp/providers/activities.dart';
+import 'package:optifyapp/providers/contactsgroups.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -216,12 +217,16 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           builder: (_) => Messages(),
         ),
+        ChangeNotifierProvider(
+          builder: (_) => ContactsGroups(),
+        ),
       ],
-      child: Consumer3<Auth, Messages, Activities>(builder: (
+      child: Consumer4<Auth, Messages, Activities, ContactsGroups>(builder: (
         ctx,
         auth,
         newmessage,
         activitiesProvider,
+        contactsGroupsProvider,
         _,
       ) {
         // newmessage.fetchAndSetRooms(auth);
@@ -232,7 +237,8 @@ class _MyAppState extends State<MyApp> {
         activitiesProvider.isLoadingActivities == true
             ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id)
             : activitiesProvider.activities;
-//        auth.fetchAndSetUserDetails();
+        contactsGroupsProvider.isLoadingContacts == true ? contactsGroupsProvider.fetchAndSetMyContacts(tokenforROOM) : contactsGroupsProvider.contacts;
+        //auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
@@ -264,7 +270,7 @@ class _MyAppState extends State<MyApp> {
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(),
+            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider ),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
           },
         );

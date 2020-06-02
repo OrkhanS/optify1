@@ -8,28 +8,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
-class Activities with ChangeNotifier {
-  List _activites = [];
-  bool isLoadingActivities = true;
+class ContactsGroups with ChangeNotifier {
+  List _contacts = [];
+  bool isLoadingContacts = true;
   String token;
-  Map allActivityDetails = {};
+  Map allContactsDetails = {};
 
-  bool get notLoadingActivities {
-    return isLoadingActivities;
+  bool get notLoadingContacts {
+    return isLoadingContacts;
   }
 
-  List get activities {
-    return _activites;
+  List get contacts {
+    return _contacts;
   }
 
-  Map get detailsActivities {
-    return allActivityDetails;
+  Map get detailsContacts {
+    return allContactsDetails;
   }
 
-  Future fetchAndSetMyActivities(myToken, schedule_id) async {
+  Future fetchAndSetMyContacts(myToken) async {
     var token = myToken;
     if (token != null && token != "null") {
-      String url = Api.myActivities + schedule_id.toString() + "/activities/";
+      String url = Api.userslistAndSignUp;
       http.get(
         url,
         headers: {
@@ -39,23 +39,24 @@ class Activities with ChangeNotifier {
       ).then((onValue) {
         if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
-          _activites = dataOrders["results"];
-          allActivityDetails = dataOrders;
-          isLoadingActivities = false;
+          _contacts = dataOrders["results"];
+          allContactsDetails = dataOrders;
+          isLoadingContacts = false;
           notifyListeners();
         } else {
-          _activites = [];
-          allActivityDetails = {};
-          isLoadingActivities = false;
+          _contacts = [];
+          allContactsDetails = {};
+          isLoadingContacts = false;
           notifyListeners();
         }
       });
     }
   }
 
-  addActivityFromPostRequest(newactivity) {
-    _activites.add(newactivity);
-    notifyListeners();
-  }
+
+  // addActivityFromPostRequest(newactivity) {
+  //   _contacts.add(newactivity);
+  //   notifyListeners();
+  // }
   
 }
