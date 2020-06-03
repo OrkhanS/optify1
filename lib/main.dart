@@ -270,7 +270,7 @@ class _MyAppState extends State<MyApp> {
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider ),
+            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
           },
         );
