@@ -33,12 +33,10 @@ class _SocialScreenState extends State<SocialScreen> {
   bool expands = false;
   var filterColor = Colors.white;
   var _itemCount = 0;
-  String weight, price;
   bool _isfetchingnew = false;
   final formKey = new GlobalKey<FormState>();
   String nextOrderURL;
   List _suggested = [];
-  List _cities = [];
   List _contacts = [];
   String token;
   final TextEditingController _typeAheadController = TextEditingController();
