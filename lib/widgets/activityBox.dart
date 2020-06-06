@@ -15,7 +15,7 @@ Widget activityBoxObject(myActivity, height) {
   return AnimatedPositioned(
     duration: Duration(milliseconds: 300),
     curve: Curves.decelerate,
-    left: 50.0 * weekDay,
+    left: 49.0 * weekDay,
     top: top * (height) * 1.02,
     height: duration * (height) * 1.05,
     width: 57.0 * 1.0,
