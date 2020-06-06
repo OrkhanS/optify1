@@ -127,6 +127,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       if (response.statusCode == 200) {
         setState(
           () {
+            Provider.of<ContactsGroups>(context).fetchAndSetMyContacts(token);
             requestSent = true;
           },
         );

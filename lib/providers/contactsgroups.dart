@@ -52,7 +52,11 @@ class ContactsGroups with ChangeNotifier {
       });
     }
   }
-
+ 
+removeContact(i){
+_contacts.removeAt(i);
+notifyListeners();
+}
 
   // addActivityFromPostRequest(newactivity) {
   //   _contacts.add(newactivity);

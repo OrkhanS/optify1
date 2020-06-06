@@ -75,13 +75,8 @@ class _SocialScreenState extends State<SocialScreen> {
         HttpHeaders.CONTENT_TYPE: "application/json",
         "Authorization": "Token " + token,
       },
-    ).then((response) {
-      setState(
-        () {
-          _contacts.remove(i);
-        },
-      );
-    });
+    );
+    Provider.of<ContactsGroups>(context).removeContact(i);
   }
 
   @override
@@ -360,7 +355,45 @@ class _SocialScreenState extends State<SocialScreen> {
                                                           ? RaisedButton(
                                                               color:
                                                                   Colors.white,
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (ctx) =>
+                                                                      AlertDialog(
+                                                                    content:
+                                                                        Text(
+                                                                      "Do you want to cancel Request?",
+                                                                    ),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'No.'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(ctx)
+                                                                              .pop();
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'Yes, cancel!',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.redAccent,
+                                                                            )),
+                                                                        onPressed:
+                                                                            () {
+                                                                              Navigator.of(ctx)
+                                                                              .pop();
+                                                                          removeContact(i);
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              },
                                                               child: Padding(
                                                                 padding: const EdgeInsets
                                                                         .symmetric(
@@ -387,7 +420,6 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                       "Pending",
                                                                       style:
                                                                           TextStyle(
-//                                                        fontWeight: FontWeight.bold,
                                                                         color: Theme.of(context)
                                                                             .primaryColor,
                                                                       ),
@@ -429,7 +461,6 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                       "Remove",
                                                                       style:
                                                                           TextStyle(
-//                                                        fontWeight: FontWeight.bold,
                                                                         color: Theme.of(context)
                                                                             .primaryColor,
                                                                       ),
@@ -477,7 +508,6 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                       "Accept",
                                                                       style:
                                                                           TextStyle(
-//                                                        fontWeight: FontWeight.bold,
                                                                         color: Theme.of(context)
                                                                             .primaryColor,
                                                                       ),
