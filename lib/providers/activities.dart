@@ -53,9 +53,9 @@ class Activities with ChangeNotifier {
     }
   }
 
-  addActivityFromPostRequest(newactivity) {
-    _activites.add(newactivity);
-    notifyListeners();
-  }
+  // addActivityFromPostRequest(newactivity) {
+  //   _activites.add(newactivity);
+  //   notifyListeners();
+  // }
   
 }

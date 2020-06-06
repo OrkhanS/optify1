@@ -284,7 +284,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
-        Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
+        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(tokenforROOM, schedule_id);
         Navigator.pop(context);
         Flushbar(
           title: "Done",
