@@ -177,17 +177,14 @@ class Auth with ChangeNotifier {
 
       final responseData = json.decode(response.body);
       _token = responseData["token"];
-
-      print(responseData);
-      getScheduleID(_token);
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
           'token': _token,
-//          'userId': _userId,
-//          'expiryDate': _expiryDate.toIso8601String(),
+          'user_id': responseData["user_id"],
+          "schedule_id": responseData["schedule_id"]
         },
       );
 

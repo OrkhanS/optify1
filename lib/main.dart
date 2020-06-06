@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/screens/add_item_screen.dart';
 import 'package:optifyapp/screens/add_trip_screen.dart';
+import 'package:optifyapp/screens/globalSearch.dart';
 import 'package:optifyapp/screens/my_trips.dart';
 import 'package:optifyapp/screens/trip_screen.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +55,7 @@ class _MyAppState extends State<MyApp> {
   Map valueMessages = {};
   bool socketConnected = false;
   var neWMessage;
-  String schedule_id;
+  String schedule_id, user_id;
   @override
   void initState() {
     super.initState();
@@ -82,16 +83,8 @@ class _MyAppState extends State<MyApp> {
     }
     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     tokenforROOM = extractedUserData['token'];
-    getscheduleId();
-  }
-
-  Future getscheduleId() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('scheduleData')) {
-      return false;
-    }
-    final extractedscheduleData = json.decode(prefs.getString('scheduleData')) as Map<String, Object>;
-    schedule_id = extractedscheduleData['schedule_id'];
+    user_id = extractedUserData['user_id'].toString();
+    schedule_id = extractedUserData['schedule_id'].toString();
   }
 
   Future onSelectNotification(String payload) async => await Navigator.push(
@@ -270,8 +263,9 @@ class _MyAppState extends State<MyApp> {
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider),
+            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider, user_id: user_id),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
+            GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen()
           },
         );
       }),

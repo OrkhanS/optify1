@@ -29,7 +29,7 @@ class ContactsGroups with ChangeNotifier {
   Future fetchAndSetMyContacts(myToken) async {
     var token = myToken;
     if (token != null && token != "null") {
-      String url = Api.userslistAndSignUp;
+      String url = Api.myContacts;
       http.get(
         url,
         headers: {
