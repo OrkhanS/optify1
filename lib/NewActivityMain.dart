@@ -76,7 +76,7 @@ class NewActivityMain extends State<NewActivityPage> with SingleTickerProviderSt
       ),
       body: TabBarView(
         controller: controller,
-        children: <Widget>[personal.newActivityPersonal(token: widget.token, schedule_id: widget.schedule_id), joint.NewActivityJoint()],
+        children: <Widget>[personal.NewActivityPersonal(token: widget.token, schedule_id: widget.schedule_id), joint.NewActivityJoint()],
       ),
     );
   }
