@@ -37,6 +37,8 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
   String nextOrderURL;
   bool isSwitched = true;
   String token;
+  String schedule_id;
+
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
@@ -44,15 +46,11 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
     }
     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     token = extractedUserData['token'];
+    schedule_id = extractedUserData['schedule_id'].toString();
+    loadMyActivites();
   }
 
   loadMyActivites() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('scheduleData')) {
-      return false;
-    }
-    final extractedscheduleData = json.decode(prefs.getString('scheduleData')) as Map<String, Object>;
-    String schedule_id = extractedscheduleData['schedule_id'];
     if (widget.activitiesProvider != null) {
       if (widget.activitiesProvider.isLoadingActivities == true && token != null && token != "null") {
         widget.activitiesProvider.fetchAndSetMyActivities(token, schedule_id);
@@ -63,7 +61,6 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
   @override
   void initState() {
     getToken();
-    loadMyActivites();
     super.initState();
   }
 
@@ -176,7 +173,7 @@ _activity[0]["activity"]["durations"][0]
             backgroundColor: Theme.of(context).primaryColor,
             heroTag: "btn1",
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => NewActivityPage(token: widget.token, schedule_id: widget.schedule_id)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NewActivityPage(token: token, schedule_id: schedule_id)));
             },
             tooltip: 'First button',
             child: Icon(Icons.add, color: Colors.white),

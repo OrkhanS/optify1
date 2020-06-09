@@ -24,11 +24,28 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
   double _discreteValue = 10.0;
   DateTime _dateTimeStart, _dateTimeEnd;
   var snackBar;
-  String tokenforROOM;
+  String token;
   TimeOfDay _timeStart, _timeEnd;
   String schedule_id;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
+
+  Future getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    token = extractedUserData['token'];
+    schedule_id = extractedUserData['schedule_id'].toString();
+  }
+
+  @override
+  void initState() {
+    getToken();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,7 +269,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
                       ],
                     ),
                     onPressed: () {
-                      function1().whenComplete(post);
+                      post();
                     },
                   ),
                 ],
@@ -264,12 +281,21 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
     );
   }
 
-  post() {
-    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
+  Future post() async {
+    if(schedule_id == null || token == null ){
+      final prefs = await SharedPreferences.getInstance();
+      if (!prefs.containsKey('userData')) {
+        return false;
+      }
+      final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+      token = extractedUserData['token'];
+      schedule_id = extractedUserData['schedule_id'].toString();
+    }
+    String url = Api.newActivityPersonal + widget.schedule_id.toString() + "/activities/";
     http
         .post(url,
             headers: {
-              "Authorization": "Token " + tokenforROOM,
+              "Authorization": "Token " + token,
               HttpHeaders.CONTENT_TYPE: "application/json",
             },
             body: json.encode({
@@ -284,7 +310,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
-        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(tokenforROOM, schedule_id);
+        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
         Navigator.pop(context);
         Flushbar(
           title: "Done",
@@ -299,23 +325,6 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
       }
     });
   }
-
-  Future function1() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-    tokenforROOM = extractedUserData['token'];
-    final prefs2 = await SharedPreferences.getInstance();
-    if (!prefs2.containsKey('scheduleData')) {
-      return false;
-    }
-    final extractedscheduleData = json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
-    schedule_id = extractedscheduleData['schedule_id'];
-  }
-}
 
 Widget float2(context) {
   return Container(
@@ -337,4 +346,5 @@ void navigateToActivity(BuildContext context) {
 
 void navigateToActivityAI(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityAI()));
+}
 }
