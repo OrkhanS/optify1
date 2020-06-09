@@ -57,10 +57,11 @@ class _MyAppState extends State<MyApp> {
   bool socketConnected = false;
   var neWMessage;
   String schedule_id, user_id;
+
   @override
   void initState() {
     super.initState();
-    getToken();
+    //getToken();
   }
 
   _configureFirebaseListerners(newmessage) {
@@ -229,10 +230,10 @@ class _MyAppState extends State<MyApp> {
 
         auth.isAuth == false ? auth.tryAutoLogin() : auth.isAuth;
         activitiesProvider.isLoadingActivities == true
-            ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id)
+            ? activitiesProvider.fetchAndSetMyActivities(auth.myToken, auth.myScheduleId)
             : activitiesProvider.activities;
         contactsGroupsProvider.isLoadingContacts == true
-            ? contactsGroupsProvider.fetchAndSetMyContacts(tokenforROOM)
+            ? contactsGroupsProvider.fetchAndSetMyContacts(auth.myToken)
             : contactsGroupsProvider.contacts;
         //auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
@@ -268,8 +269,8 @@ class _MyAppState extends State<MyApp> {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
-            AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider: contactsGroupsProvider, user_id: user_id),
+            AccountScreen.routeName: (ctx) => AccountScreen(token: auth.myToken, orderstripsProvider: activitiesProvider),
+            SocialScreen.routeName: (ctx) => SocialScreen(token: auth.myToken, contactsGroupsProvider: contactsGroupsProvider, user_id: auth.myUserId),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
             GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen(),
             ActivityScreen.routeName: (ctx) => ActivityScreen(),

@@ -64,23 +64,14 @@ class _SocialScreenState extends State<SocialScreen> {
       user_id = extractedUserData['user_id'].toString();
     });
   }
-
-  Future removeContact(i) {
-    String url = Api.removeContactRequst + _contacts[i]["id"].toString() + "/";
-    http.delete(
-      url,
-      headers: {
-        HttpHeaders.CONTENT_TYPE: "application/json",
-        "Authorization": "Token " + token,
-      },
-    );
-    Provider.of<ContactsGroups>(context).removeContact(i);
-  }
-
+  
   @override
   void initState() {
     if (widget.token == null || widget.user_id == null) {
-      getToken();
+      if(widget.token == null){
+      token = Provider.of<Auth>(context).myToken;
+      user_id = Provider.of<Auth>(context).myScheduleId;
+    }
     } else {
       token = widget.token;
       user_id = widget.user_id;
@@ -148,8 +139,6 @@ class _SocialScreenState extends State<SocialScreen> {
           print("Some Error");
         }
         setState(() {
-//        items.addAll( ['item 1']);
-//        print('items: '+ items.toString());
           _isfetchingnew = false;
         });
       } else {
@@ -251,10 +240,10 @@ class _SocialScreenState extends State<SocialScreen> {
                                   },
                                   child: ListView.builder(
                                     itemBuilder: (context, int i) {
-                                      if (_contacts[i]["requester"]["id"] == user_id) {
-                                        _contactsDetails = _contacts[i]["requester"];
-                                      } else {
+                                      if (_contacts[i]["requester"]["id"].toString() == user_id.toString()) {
                                         _contactsDetails = _contacts[i]["reciever"];
+                                      } else {
+                                        _contactsDetails = _contacts[i]["requester"];
                                       }
                                       var nameSur = _contactsDetails["first_name"].toString() + " " + _contactsDetails["last_name"].toString();
                                       if (nameSur == " ") nameSur = "Hidden Name";
@@ -286,7 +275,6 @@ class _SocialScreenState extends State<SocialScreen> {
                                                         Icon(
                                                           Icons.alternate_email,
                                                           size: 10,
-//                                            (FontAwesome.suitcase),
                                                           color: Theme.of(context).primaryColor,
                                                         ),
                                                         Text(
@@ -298,11 +286,22 @@ class _SocialScreenState extends State<SocialScreen> {
                                                   ],
                                                 ),
                                               ),
-                                              _contacts[i]["requester"]["id"].toString() == user_id.toString()
-                                                  ? Padding(
+
+
+            _contacts[i]["requester"]["id"].toString() == user_id.toString()  // Here check if I requested or someone sent me friend request.
+                                                  
+                                                  ? 
+                  /// Start of: I sent friend request                                                  
+                                                  Padding(//If I sent friend request
                                                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-                                                      child: _contacts[i]["state"] == "req"
-                                                          ? RaisedButton(
+                                                      child: 
+                                                      
+                                                      
+                                                      _contacts[i]["state"] == "req"   // If another person hasn't accepted my request yet.
+                                                          
+                                                          ? 
+                                      /// My Pending request
+                                                          RaisedButton(   // If I want to cancel my Pending 
                                                               color: Colors.white,
                                                               onPressed: () {
                                                                 showDialog(
@@ -325,14 +324,15 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                             )),
                                                                         onPressed: () {
                                                                           Navigator.of(ctx).pop();
-                                                                          removeContact(i);
+                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
                                                                         },
                                                                       ),
                                                                     ],
                                                                   ),
                                                                 );
                                                               },
-                                                              child: Padding(
+                                                        child: 
+                                                            Padding(
                                                                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
                                                                   mainAxisSize: MainAxisSize.max,
@@ -353,10 +353,42 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                 ),
                                                               ),
                                                             )
-                                                          : RaisedButton(
+
+                                      /// End of my Pending request                                                             
+                                                             
+                                                          :
+                 
+                                      /// My Contact (which I sent request)
+                                      
+                                                           RaisedButton(
                                                               color: Colors.white,
                                                               onPressed: () {
-                                                                removeContact(i);
+                                                                showDialog(
+                                                                  context: context,
+                                                                  builder: (ctx) => AlertDialog(
+                                                                    content: Text(
+                                                                      "Do you want to remove Request?",
+                                                                    ),
+                                                                    actions: <Widget>[
+                                                                      FlatButton(
+                                                                        child: Text('No.'),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        child: Text('Yes!',
+                                                                            style: TextStyle(
+                                                                              color: Colors.redAccent,
+                                                                            )),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
                                                               },
                                                               child: Padding(
                                                                 padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -379,13 +411,61 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                 ),
                                                               ),
                                                             ),
+                                      /// End My Contact              
+                                                    
                                                     )
-                                                  : Padding(
+                  
+                  /// End of: I sent friend request
+                  
+
+                  /// Start of: Someone sent me request
+                  
+                                                  : 
+                                                  
+                                                  Padding(
                                                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-                                                      child: _contacts[i]["state"] == "req"
-                                                          ? RaisedButton(
+                                                      child: 
+                                                        _contacts[i]["state"] == "req" // If I haven't accepted my request yet.
+
+                                                          ? 
+                                      /// Respond to request
+                                                          RaisedButton(
                                                               color: Colors.white,
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                 showDialog(
+                                                                  context: context,
+                                                                  builder: (ctx) => AlertDialog(
+                                                                    content: Text(
+                                                                      "Do you want to Accept or Remove the request?",
+                                                                    ),
+                                                                    actions: <Widget>[
+                                                                      FlatButton(
+                                                                        child: Text('Accept.'),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                          Provider.of<ContactsGroups>(context).acceptContactRequest(i, token);
+                                                                          setState(
+                                                                              () {
+                                                                                _contacts[i]["state"] = "acc";
+                                                                              },
+                                                                            );
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        child: Text('Remove.',
+                                                                            style: TextStyle(
+                                                                              color: Colors.redAccent,
+                                                                            )),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                         
+                                                              },
                                                               child: Padding(
                                                                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
@@ -393,12 +473,12 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                                   children: <Widget>[
                                                                     Icon(
-                                                                      Icons.access_time,
+                                                                      Icons.query_builder,
                                                                       color: Theme.of(context).primaryColor,
                                                                       size: 20,
                                                                     ),
                                                                     Text(
-                                                                      "Accept",
+                                                                      "Respond",
                                                                       style: TextStyle(
                                                                         color: Theme.of(context).primaryColor,
                                                                       ),
@@ -407,9 +487,40 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                 ),
                                                               ),
                                                             )
-                                                          : RaisedButton(
+                                      /// End of Respond to request                   
+                                                       : 
+                                      /// My Contact (which someone sent to me)         
+                                                          RaisedButton(
                                                               color: Colors.white,
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                  showDialog(
+                                                                  context: context,
+                                                                  builder: (ctx) => AlertDialog(
+                                                                    content: Text(
+                                                                      "Do you want to remove Contact?",
+                                                                    ),
+                                                                    actions: <Widget>[
+                                                                      FlatButton(
+                                                                        child: Text('No.'),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        child: Text('Yes!',
+                                                                            style: TextStyle(
+                                                                              color: Colors.redAccent,
+                                                                            )),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
+                                                                         Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                         
+                                                              },
                                                               child: Padding(
                                                                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
@@ -422,9 +533,8 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                       size: 20,
                                                                     ),
                                                                     Text(
-                                                                      "Remove2",
+                                                                      "Remove",
                                                                       style: TextStyle(
-//                                                        fontWeight: FontWeight.bold,
                                                                         color: Theme.of(context).primaryColor,
                                                                       ),
                                                                     )
@@ -432,7 +542,12 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                 ),
                                                               ),
                                                             ),
+                                      /// End My Contact
+                                      
                                                     ),
+                  
+                  /// End of: Someone sent me request
+                  
                                             ],
                                           ),
                                         ),

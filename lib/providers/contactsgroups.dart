@@ -54,9 +54,40 @@ class ContactsGroups with ChangeNotifier {
   }
  
 removeContact(i){
-_contacts.removeAt(i);
-notifyListeners();
+  _contacts.removeAt(i);
+  notifyListeners();
 }
+
+
+Future acceptContactRequest(i, token){
+    String url = Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({"response": "acc"}))
+        .then((response) {
+      if (response.statusCode == 200) {
+        _contacts[i]["state"] = "acc";
+        notifyListeners();
+      }
+    });
+  }
+
+
+  Future removeContactOrRequest(i, token) {
+    String url = Api.removeContactRequst + _contacts[i]["id"].toString() + "/";
+    http.delete(
+      url,
+      headers: {
+        HttpHeaders.CONTENT_TYPE: "application/json",
+        "Authorization": "Token " + token,
+      },
+    );
+    removeContact(i);
+  }
 
   // addActivityFromPostRequest(newactivity) {
   //   _contacts.add(newactivity);

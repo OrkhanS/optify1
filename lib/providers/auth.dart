@@ -16,6 +16,34 @@ class Auth with ChangeNotifier {
   Map user = {};
   bool isLoadingUser = true;
 
+  String myTokenFromStorage;
+  String myScheduleidFromStorage;
+  String myUseridFromStorage;
+
+
+  Future getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;    
+      myTokenFromStorage = extractedUserData["token"];
+      myUseridFromStorage = extractedUserData['user_id'].toString();
+      myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
+  }
+
+  String get myToken{
+    return myTokenFromStorage;
+  }
+
+  String get myScheduleId{
+    return myScheduleidFromStorage;
+  }
+
+  String get myUserId{
+    return myUseridFromStorage;
+  }
+
   bool get isAuth {
     return _token != null;
   }
@@ -232,6 +260,10 @@ class Auth with ChangeNotifier {
 //      return false;
 //    }
     _token = extractedUserData['token'];
+    myTokenFromStorage = extractedUserData["token"];
+    myUseridFromStorage = extractedUserData['user_id'].toString();
+    myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
+
 //    _userId = extractedUserData['userId'];
 //    _expiryDate = expiryDate;
     notifyListeners();

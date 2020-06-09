@@ -60,7 +60,7 @@ class ScheduleScreenMain extends State<ScheduleScreen> {
 
   @override
   void initState() {
-    getToken();
+    // getToken();
     super.initState();
   }
 

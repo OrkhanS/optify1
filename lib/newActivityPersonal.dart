@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:optifyapp/providers/auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
   double _discreteValue = 10.0;
   DateTime _dateTimeStart, _dateTimeEnd;
   var snackBar;
-  String token;
+  String token ;
   TimeOfDay _timeStart, _timeEnd;
   String schedule_id;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -42,7 +43,9 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
 
   @override
   void initState() {
-    getToken();
+    if(widget.token == null){
+      getToken();
+    }
     super.initState();
   }
 
@@ -291,7 +294,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
       token = extractedUserData['token'];
       schedule_id = extractedUserData['schedule_id'].toString();
     }
-    String url = Api.newActivityPersonal + widget.schedule_id.toString() + "/activities/";
+    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
     http
         .post(url,
             headers: {
@@ -309,6 +312,8 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
               "privacy": {"privacy": "personal"}
             }))
         .then((response) {
+          
+        print(response.statusCode);
       if (response.statusCode == 201) {
         Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
         Navigator.pop(context);
@@ -320,7 +325,6 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
           duration: Duration(seconds: 5),
         )..show(context);
       } else {
-        print(response.statusCode);
         snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
       }
     });
