@@ -7,4 +7,6 @@ class Api {
   static const myActivities = address + "api/schedules/";
   static const myContacts = address + "api/contacts/";
   static const removeContactRequst = address + "api/contacts/";
+  static const respondContactRequst = address + "api/contacts/";
+  
 }

@@ -40,6 +40,7 @@ class _SocialScreenState extends State<SocialScreen> {
   List _suggested = [];
   List _contacts = [];
   String token, user_id;
+  bool contactRequestAccepted = false;
   Map _contactsDetails = {};
   final TextEditingController _typeAheadController = TextEditingController();
   final TextEditingController _typeAheadController2 = TextEditingController();
@@ -67,7 +68,7 @@ class _SocialScreenState extends State<SocialScreen> {
     });
   }
 
-  Future removeContact(i) {
+  Future removeContact(i) async {
     String url = Api.removeContactRequst + _contacts[i]["id"].toString() + "/";
     http.delete(
       url,
@@ -76,6 +77,28 @@ class _SocialScreenState extends State<SocialScreen> {
         "Authorization": "Token " + token,
       },
     );
+    Provider.of<ContactsGroups>(context).removeContact(i);
+  }
+
+  Future respondContactRequest(i) async {
+    String url = Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({"response":"acc"}))
+        .then((response) {
+      if (response.statusCode == 200) {
+        setState(
+          () {
+            // Provider.of<ContactsGroups>(context).fetchAndSetMyContacts(token);
+            contactRequestAccepted = true;
+          },
+        );
+      }
+    });
     Provider.of<ContactsGroups>(context).removeContact(i);
   }
 
@@ -432,8 +455,7 @@ class _SocialScreenState extends State<SocialScreen> {
                                                               color:
                                                                   Colors.white,
                                                               onPressed: () {
-                                                                removeContact(
-                                                                    i);
+                                                                removeContact(i);
                                                               },
                                                               child: Padding(
                                                                 padding: const EdgeInsets
@@ -476,47 +498,10 @@ class _SocialScreenState extends State<SocialScreen> {
                                                           vertical: 10.0,
                                                           horizontal: 5),
                                                       child: _contacts[i]
-                                                                  ["state"] ==
+                                                                  ["state"] !=
                                                               "req"
-                                                          ? RaisedButton(
-                                                              color:
-                                                                  Colors.white,
-                                                              onPressed: () {},
-                                                              child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Icon(
-                                                                      Icons
-                                                                          .access_time,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
-                                                                      size: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      "Accept",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : RaisedButton(
+                                                          ? 
+                                                            RaisedButton(
                                                               color:
                                                                   Colors.white,
                                                               onPressed: () {},
@@ -546,7 +531,126 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                       "Remove2",
                                                                       style:
                                                                           TextStyle(
-//                                                        fontWeight: FontWeight.bold,
+                                                                        color: Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ) :
+
+                                                            contactRequestAccepted ? 
+                                                            RaisedButton(
+                                                              color:
+                                                                  Colors.white,
+                                                              onPressed: () {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (ctx) =>
+                                                                      AlertDialog(
+                                                                    content:
+                                                                        Text(
+                                                                      "Do you want to remove Contact?",
+                                                                    ),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'No.'),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(ctx)
+                                                                              .pop();
+                                                                        },
+                                                                      ),
+                                                                      FlatButton(
+                                                                        child: Text(
+                                                                            'Yes, remove!',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.redAccent,
+                                                                            )),
+                                                                        onPressed:
+                                                                            () {
+                                                                              Navigator.of(ctx)
+                                                                              .pop();
+                                                                          removeContact(i);
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                          
+                                                              },
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical:
+                                                                        5.0),
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceAround,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Icon(
+                                                                      Icons
+                                                                          .access_time,
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .primaryColor,
+                                                                      size: 20,
+                                                                    ),
+                                                                    Text(
+                                                                      "Friends",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            )
+                                                         
+                                                        : RaisedButton(
+                                                              color:
+                                                                  Colors.white,
+                                                              onPressed: () {
+                                                                respondContactRequest(i);
+                                                              },
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical:
+                                                                        5.0),
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceAround,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Icon(
+                                                                      Icons
+                                                                          .access_time,
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .primaryColor,
+                                                                      size: 20,
+                                                                    ),
+                                                                    Text(
+                                                                      "Accept",
+                                                                      style:
+                                                                          TextStyle(
                                                                         color: Theme.of(context)
                                                                             .primaryColor,
                                                                       ),

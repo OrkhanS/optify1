@@ -181,8 +181,6 @@ _activity[0]["activity"]["durations"][0]
             tooltip: 'First button',
             child: Icon(Icons.add, color: Colors.white),
           ),
-//          float1(context, widget.token, widget.schedule_id),
-
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           body: Provider.of<Activities>(context, listen: true).isLoadingActivities == true
               ? Center(child: CircularProgressIndicator())
@@ -260,7 +258,7 @@ _activity[0]["activity"]["durations"][0]
                         );
                       },
                     )
-                  : Container(
+                  : _activity.isEmpty ? Center(child: Text("No Activity")) : Container(
                       child: ListView.builder(
                         itemBuilder: (context, int i) {
                           return Padding(

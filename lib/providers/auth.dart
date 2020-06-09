@@ -165,6 +165,9 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password
 //      , String deviceID todo fix
       ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userData');
+    prefs.commit();
     const url = Api.login;
     try {
       final response = await http.post(url,
@@ -247,17 +250,11 @@ class Auth with ChangeNotifier {
         body: json.encode({"token": _token}));
 
     _token = null;
-//    _userId = null;
-//    _expiryDate = null;
-//    if (_authTimer != null) {
-//      _authTimer.cancel();
-//      _authTimer = null;
-//    }
     Navigator.of(context).pop();
-    notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove('userData');
-    prefs.clear();
+    await prefs.remove('userData');
+    prefs.commit();
+    notifyListeners();
   }
 
 //  void _autoLogout() {
