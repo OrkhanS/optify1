@@ -89,6 +89,13 @@ Future acceptContactRequest(i, token){
     removeContact(i);
   }
 
+
+  removeAllDataOfProvider(){
+    _contacts = [];
+    allContactsDetails = {};
+    isLoadingContacts = true;
+  }
+
   // addActivityFromPostRequest(newactivity) {
   //   _contacts.add(newactivity);
   //   notifyListeners();

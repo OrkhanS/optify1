@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:optifyapp/providers/activities.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/http_exception.dart';
@@ -286,6 +288,10 @@ class Auth with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userData');
     prefs.commit();
+    prefs.clear();
+    Provider.of<Activities>(context).removeAllDataOfProvider();
+    Provider.of<Activities>(context).removeAllDataOfProvider();
+    
     notifyListeners();
   }
 
