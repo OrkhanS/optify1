@@ -53,8 +53,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData =
-        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     token = extractedUserData["token"];
   }
 
@@ -147,14 +146,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         return Scaffold(
           resizeToAvoidBottomPadding: true,
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Center(
-              child: Text(
-                "Social",
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
+                Icons.chevron_left,
+                size: 30,
+                color: Theme.of(context).primaryColor,
               ),
+            ),
+            backgroundColor: Colors.white,
+            centerTitle: true,
+            title: Text(
+              "Social",
+              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
             ),
             elevation: 1,
           ),
@@ -205,10 +211,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                           ? Center(child: CircularProgressIndicator())
                           : ListView.builder(
                               itemBuilder: (context, int i) {
-                                var nameSur =
-                                    contacts[i]["first_name"].toString() +
-                                        " " +
-                                        contacts[i]["last_name"].toString();
+                                var nameSur = contacts[i]["first_name"].toString() + " " + contacts[i]["last_name"].toString();
                                 if (nameSur == " ") nameSur = "Hidden Name";
                                 return Container(
                                   height: 100,
@@ -216,47 +219,33 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                   child: Card(
                                     elevation: 4,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Image(
-                                          image: NetworkImage(
-                                              "https://robohash.org/" +
-                                                  contacts[i]["id"].toString()),
+                                          image: NetworkImage("https://robohash.org/" + contacts[i]["id"].toString()),
                                           height: 80,
                                           width: 90,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 14.0, horizontal: 2),
+                                          padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(
                                                 nameSur,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.grey[600],
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
                                               ),
                                               Row(
                                                 children: <Widget>[
                                                   Icon(
                                                     Icons.alternate_email,
                                                     size: 10,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
+                                                    color: Theme.of(context).primaryColor,
                                                   ),
                                                   Text(
-                                                    contacts[i]["username"]
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.grey[600]),
+                                                    contacts[i]["username"].toString(),
+                                                    style: TextStyle(color: Colors.grey[600]),
                                                   ),
                                                 ],
                                               )
@@ -264,39 +253,28 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 5),
+                                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
                                           child: requestSent == false
                                               ? RaisedButton(
                                                   color: Colors.white,
                                                   onPressed: () {
-                                                    requestContact(
-                                                        contacts[i]["id"]);
+                                                    requestContact(contacts[i]["id"]);
                                                   },
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 5.0),
+                                                    padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                     child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                       children: <Widget>[
                                                         Icon(
                                                           Icons.add,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                          color: Theme.of(context).primaryColor,
                                                           size: 20,
                                                         ),
                                                         Text(
                                                           "Add",
                                                           style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor,
+                                                            color: Theme.of(context).primaryColor,
                                                           ),
                                                         )
                                                       ],
@@ -306,36 +284,26 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                               : RaisedButton(
                                                   color: Colors.white,
                                                   onPressed: () {
-                                                    removeRequest(
-                                                        contacts[i]["id"]);
+                                                    removeRequest(contacts[i]["id"]);
                                                   },
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 5.0),
+                                                    padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                     child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                       children: <Widget>[
                                                         Icon(
                                                           Icons.done,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                          color: Theme.of(context).primaryColor,
                                                           size: 20,
                                                         ),
                                                         Text(
                                                           "Sent",
                                                           style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor,
+                                                            color: Theme.of(context).primaryColor,
                                                           ),
                                                         )
-                                                      ], 
+                                                      ],
                                                     ),
                                                   ),
                                                 ),

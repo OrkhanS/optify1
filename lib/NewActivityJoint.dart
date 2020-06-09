@@ -60,8 +60,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Activity Name'),
+                    decoration: const InputDecoration(labelText: 'Activity Name'),
                     keyboardType: TextInputType.text,
                     onChanged: (String val) {
                       _ActivityName = val;
@@ -72,12 +71,10 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                     children: <Widget>[
                       const Text(
                         'Start Date',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w300),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                       ),
                       OutlineButton(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor, width: 2),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
 
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
@@ -85,24 +82,16 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                         //
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: _start_times == null
-                            ? Container(
-                                width: 200,
-                                child: Center(child: Text('Not Set')))
+                            ? Container(width: 200, child: Center(child: Text('Not Set')))
                             : Container(
                                 width: 200,
                                 child: Center(
                                   child: Text(DateFormat.MMMd()
-                                          .format(DateTime.parse(
-                                              DateFormat("yyyy-MM-dd hh:mm")
-                                                  .parse(_start_times)
-                                                  .toString()))
+                                          .format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_start_times).toString()))
                                           .toString() +
                                       " , " +
                                       DateFormat.Hm()
-                                          .format(DateTime.parse(
-                                              DateFormat("yyyy-MM-dd hh:mm")
-                                                  .parse(_start_times)
-                                                  .toString()))
+                                          .format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_start_times).toString()))
                                           .toString()),
                                 ),
                               ),
@@ -113,9 +102,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                             initialTime: TimeOfDay.now(),
                           ).then((time) {
                             _timeStart = time;
-                            _start_times =
-                                _dateTimeStart.toString().substring(0, 11) +
-                                    _timeStart.toString().substring(10, 15);
+                            _start_times = _dateTimeStart.toString().substring(0, 11) + _timeStart.toString().substring(10, 15);
                             setState(() {});
                           });
                           showDatePicker(
@@ -138,12 +125,10 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                     children: <Widget>[
                       const Text(
                         'End Date ',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w300),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                       ),
                       OutlineButton(
-                        borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor, width: 2),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                         ),
@@ -162,18 +147,10 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                                 width: 200,
                                 child: Center(
                                   child: Text(
-                                    DateFormat.MMMd()
-                                            .format(DateTime.parse(
-                                                DateFormat("yyyy-MM-dd hh:mm")
-                                                    .parse(_end_times)
-                                                    .toString()))
-                                            .toString() +
+                                    DateFormat.MMMd().format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_end_times).toString())).toString() +
                                         " , " +
                                         DateFormat.Hm()
-                                            .format(DateTime.parse(
-                                                DateFormat("yyyy-MM-dd hh:mm")
-                                                    .parse(_end_times)
-                                                    .toString()))
+                                            .format(DateTime.parse(DateFormat("yyyy-MM-dd hh:mm").parse(_end_times).toString()))
                                             .toString(),
 //                        style: TextStyle(color: Colors.white),
                                   ),
@@ -185,9 +162,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                             initialTime: TimeOfDay.now(),
                           ).then((time) {
                             _timeEnd = time;
-                            _end_times =
-                                _dateTimeEnd.toString().substring(0, 11) +
-                                    _timeEnd.toString().substring(10, 15);
+                            _end_times = _dateTimeEnd.toString().substring(0, 11) + _timeEnd.toString().substring(10, 15);
                             setState(() {});
                           });
                           showDatePicker(
@@ -208,8 +183,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                     children: <Widget>[
                       const Text(
                         'Priority',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w300),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                       ),
                       Expanded(
                         child: Slider(
@@ -225,6 +199,48 @@ class NewActivityJointPage extends State<NewActivityJoint> {
                             });
                           },
                         ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      const Text(
+                        'Members',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 1,
+                        ),
+                      ),
+                      Column(
+                        children: <Widget>[
+                          //todo display members
+                          Chip(
+                            backgroundColor: Colors.green[100],
+                            deleteIcon: Icon(Icons.cancel),
+                            avatar: CircleAvatar(
+                              backgroundColor: Colors.grey.shade800,
+                              child: Text('KS'),
+                            ),
+                            label: Text('Kazato Suriname'), //todo fix Name
+                          ),
+                          OutlineButton(
+                            onPressed: () {},
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.add,
+                                  size: 15,
+                                ),
+                                Text(
+                                  " Add participants",
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -305,8 +321,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
   }
 
   post() {
-    String url =
-        Api.newActivityPersonal + schedule_id.toString() + "/activities/";
+    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
     http
         .post(url,
             headers: {
@@ -325,8 +340,7 @@ class NewActivityJointPage extends State<NewActivityJoint> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
-        Provider.of<Activities>(context, listen: false)
-            .fetchAndSetMyActivities(tokenforROOM, schedule_id);
+        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(tokenforROOM, schedule_id);
         //Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(
@@ -349,25 +363,21 @@ class NewActivityJointPage extends State<NewActivityJoint> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData =
-        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     tokenforROOM = extractedUserData['token'];
     final prefs2 = await SharedPreferences.getInstance();
     if (!prefs2.containsKey('scheduleData')) {
       return false;
     }
-    final extractedscheduleData =
-        json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
+    final extractedscheduleData = json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
     schedule_id = extractedscheduleData['schedule_id'];
   }
 }
 
 void navigateToActivity(BuildContext context) {
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
 }
 
 void navigateToActivityAI(BuildContext context) {
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => ActivityAI()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityAI()));
 }
