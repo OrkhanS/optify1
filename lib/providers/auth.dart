@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:optifyapp/providers/activities.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/http_exception.dart';
@@ -15,6 +17,34 @@ class Auth with ChangeNotifier {
   String _userId;
   Map user = {};
   bool isLoadingUser = true;
+
+  String myTokenFromStorage;
+  String myScheduleidFromStorage;
+  String myUseridFromStorage;
+
+
+  Future getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;    
+      myTokenFromStorage = extractedUserData["token"];
+      myUseridFromStorage = extractedUserData['user_id'].toString();
+      myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
+  }
+
+  String get myToken{
+    return myTokenFromStorage;
+  }
+
+  String get myScheduleId{
+    return myScheduleidFromStorage;
+  }
+
+  String get myUserId{
+    return myUseridFromStorage;
+  }
 
   bool get isAuth {
     return _token != null;
@@ -232,6 +262,10 @@ class Auth with ChangeNotifier {
 //      return false;
 //    }
     _token = extractedUserData['token'];
+    myTokenFromStorage = extractedUserData["token"];
+    myUseridFromStorage = extractedUserData['user_id'].toString();
+    myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
+
 //    _userId = extractedUserData['userId'];
 //    _expiryDate = expiryDate;
     notifyListeners();
@@ -254,6 +288,10 @@ class Auth with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userData');
     prefs.commit();
+    prefs.clear();
+    Provider.of<Activities>(context).removeAllDataOfProvider();
+    Provider.of<Activities>(context).removeAllDataOfProvider();
+    
     notifyListeners();
   }
 

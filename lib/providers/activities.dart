@@ -57,5 +57,12 @@ class Activities with ChangeNotifier {
   //   _activites.add(newactivity);
   //   notifyListeners();
   // }
-  
+
+  removeAllDataOfProvider(){
+    _activites = [];
+    allActivityDetails={};
+    isLoadingActivities = true;
+  } 
+
+
 }
