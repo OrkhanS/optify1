@@ -1,7 +1,7 @@
 class Strings {
   Strings._();
 
-                      // main.dart
+  // main.dart
   static const String welcomeScreenTitle = ''' Smart Scheduling ''';
   static const String LoginButton = 'Login';
   static const String RegisterButton = 'Sign up';
@@ -9,14 +9,10 @@ class Strings {
   static const String MapButton = 'Map';
   static const String ScheduleButton = 'Schedule';
 
-
-                      // login.dart
   static const String LoginScreenTitle = 'Login';
   static const String EmailPlaceHolder = 'Email';
   static const String PasswordPlaceHolder = 'Password';
 
-
-                      // members.dart
   static const String JoinRequestsTabBarName = 'Join Requests';
   static const String UsersTabBarName = 'Users';
   static const String GroupsTabBarName = 'Groups';
@@ -31,9 +27,8 @@ class Strings {
   static const String MyGroupsInMembers = 'My Groups';
   static const String InviteWord = 'Invite';
 
-
-                      // NewActivity.dart
-  static const String ActivityName= 'Activity Name';
+  // NewActivity.dart
+  static const String ActivityName = 'Activity Name';
   static const String StartDateButton = 'Start Date';
   static const String EndDateButton = 'End Date';
   static const String PriorityButton = 'Priority';
@@ -50,6 +45,4 @@ class Strings {
 
   //                                                            //
   static const String MembersButton = 'Members';
-
-
 }
