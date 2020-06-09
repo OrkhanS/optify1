@@ -2,9 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:optifyapp/screens/activity_screen.dart';
 import 'package:optifyapp/screens/add_item_screen.dart';
 import 'package:optifyapp/screens/add_trip_screen.dart';
-import 'package:optifyapp/screens/globalSearch.dart';
+import 'package:optifyapp/screens/global_search.dart';
 import 'package:optifyapp/screens/my_trips.dart';
 import 'package:optifyapp/screens/trip_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ import 'package:optifyapp/screens/social_screen.dart';
 import 'package:optifyapp/screens/contacts_screen.dart';
 import 'package:optifyapp/providers/activities.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
-
+import 'package:optifyapp/screens/activity_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -230,12 +231,17 @@ class _MyAppState extends State<MyApp> {
         activitiesProvider.isLoadingActivities == true
             ? activitiesProvider.fetchAndSetMyActivities(tokenforROOM, schedule_id)
             : activitiesProvider.activities;
-        contactsGroupsProvider.isLoadingContacts == true ? contactsGroupsProvider.fetchAndSetMyContacts(tokenforROOM) : contactsGroupsProvider.contacts;
+        contactsGroupsProvider.isLoadingContacts == true
+            ? contactsGroupsProvider.fetchAndSetMyContacts(tokenforROOM)
+            : contactsGroupsProvider.contacts;
         //auth.fetchAndSetUserDetails();
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
           theme: ThemeData(
+            cardTheme: CardTheme(
+              margin: EdgeInsets.all(0),
+            ),
             primarySwatch: Colors.lightGreen,
             primaryColor: Colors.lightGreen[900],
             accentColor: Colors.lightGreenAccent,
@@ -263,9 +269,10 @@ class _MyAppState extends State<MyApp> {
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: tokenforROOM, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider:contactsGroupsProvider, user_id: user_id),
+            SocialScreen.routeName: (ctx) => SocialScreen(token: tokenforROOM, contactsGroupsProvider: contactsGroupsProvider, user_id: user_id),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
-            GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen()
+            GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen(),
+            ActivityScreen.routeName: (ctx) => ActivityScreen(),
           },
         );
       }),

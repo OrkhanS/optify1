@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/models/api.dart';
 import 'package:optifyapp/providers/auth.dart';
-import 'package:optifyapp/screens/globalSearch.dart';
+import 'package:optifyapp/screens/global_search.dart';
 import 'package:optifyapp/screens/item_screen.dart';
 import 'package:optifyapp/main.dart';
 import 'package:optifyapp/screens/add_item_screen.dart';
@@ -48,8 +48,7 @@ class _SocialScreenState extends State<SocialScreen> {
 
   loadMycontacts() {
     if (Provider.of<ContactsGroups>(context, listen: true).contacts.isEmpty) {
-      Provider.of<ContactsGroups>(context, listen: true)
-          .fetchAndSetMyContacts(widget.token);
+      Provider.of<ContactsGroups>(context, listen: true).fetchAndSetMyContacts(widget.token);
     }
   }
 
@@ -58,8 +57,7 @@ class _SocialScreenState extends State<SocialScreen> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData =
-        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
 
     setState(() {
       token = extractedUserData["token"];
@@ -132,8 +130,7 @@ class _SocialScreenState extends State<SocialScreen> {
       user_id = widget.user_id;
     }
     Future _loadData() async {
-      if (nextOrderURL.toString() != "null" &&
-          nextOrderURL.toString() != "FristCall") {
+      if (nextOrderURL.toString() != "null" && nextOrderURL.toString() != "FristCall") {
         String url = nextOrderURL;
         try {
           await http.get(
@@ -180,9 +177,7 @@ class _SocialScreenState extends State<SocialScreen> {
             title: Center(
               child: Text(
                 "Social",
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
               ),
             ),
             elevation: 1,
@@ -191,13 +186,8 @@ class _SocialScreenState extends State<SocialScreen> {
             backgroundColor: Theme.of(context).primaryColor,
             heroTag: "btn1",
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => GlobalSearchScreen(
-                          token: token,
-                          contactsGroupsProvider:
-                              widget.contactsGroupsProvider)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GlobalSearchScreen(token: token, contactsGroupsProvider: widget.contactsGroupsProvider)));
             },
             tooltip: 'First button',
             child: Icon(Icons.search, color: Colors.white),
@@ -211,49 +201,47 @@ class _SocialScreenState extends State<SocialScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Card(
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextFormField(
 //                                controller: _typeAheadController4,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                  ),
-                                  labelText: 'Search',
-                                  hintText: 'Username',
-                                  hintStyle: TextStyle(color: Colors.grey[300]),
-                                  suffixIcon: IconButton(
-                                    padding: EdgeInsets.only(
-                                      top: 5,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.search,
                                     ),
-                                    icon: Icon(
-                                      Icons.close,
-                                      size: 15,
+                                    labelText: 'Search',
+                                    hintText: 'Username',
+                                    hintStyle: TextStyle(color: Colors.grey[300]),
+                                    suffixIcon: IconButton(
+                                      padding: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      icon: Icon(
+                                        Icons.close,
+                                        size: 15,
+                                      ),
+                                      onPressed: () {},
                                     ),
-                                    onPressed: () {},
                                   ),
+                                  onFieldSubmitted: (value) {},
                                 ),
-                                onFieldSubmitted: (value) {},
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: contactsGroupsProvider.notLoadingContacts ||
-                              user_id == null
+                      child: contactsGroupsProvider.notLoadingContacts || user_id == null
                           ? Center(child: CircularProgressIndicator())
                           : contactsGroupsProvider.contacts.isEmpty
                               ? Center(child: Text("No contacts"))
                               : NotificationListener<ScrollNotification>(
-                                  onNotification:
-                                      (ScrollNotification scrollInfo) {
-                                    if (!_isfetchingnew &&
-                                        scrollInfo.metrics.pixels ==
-                                            scrollInfo
-                                                .metrics.maxScrollExtent) {
+                                  onNotification: (ScrollNotification scrollInfo) {
+                                    if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                                       // start loading data
                                       setState(() {
                                         _isfetchingnew = true;
@@ -263,60 +251,35 @@ class _SocialScreenState extends State<SocialScreen> {
                                   },
                                   child: ListView.builder(
                                     itemBuilder: (context, int i) {
-                                      if (_contacts[i]["requester"]["id"] ==
-                                          user_id) {
-                                        _contactsDetails =
-                                            _contacts[i]["requester"];
+                                      if (_contacts[i]["requester"]["id"] == user_id) {
+                                        _contactsDetails = _contacts[i]["requester"];
                                       } else {
-                                        _contactsDetails =
-                                            _contacts[i]["reciever"];
+                                        _contactsDetails = _contacts[i]["reciever"];
                                       }
-                                      var nameSur =
-                                          _contactsDetails["first_name"]
-                                                  .toString() +
-                                              " " +
-                                              _contactsDetails["last_name"]
-                                                  .toString();
-                                      if (nameSur == " ")
-                                        nameSur = "Hidden Name";
+                                      var nameSur = _contactsDetails["first_name"].toString() + " " + _contactsDetails["last_name"].toString();
+                                      if (nameSur == " ") nameSur = "Hidden Name";
                                       return Container(
                                         height: 100,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
+                                        padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Card(
                                           elevation: 4,
                                           child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                               Image(
-                                                image: NetworkImage(
-                                                    "https://robohash.org/" +
-                                                        _contactsDetails["id"]
-                                                            .toString()),
+                                                image: NetworkImage("https://robohash.org/" + _contactsDetails["id"].toString()),
                                                 height: 80,
                                                 width: 90,
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 14.0,
-                                                        horizontal: 2),
+                                                padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
                                                 child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: <Widget>[
                                                     Text(
                                                       nameSur,
-                                                      style: TextStyle(
-                                                          fontSize: 20,
-                                                          color:
-                                                              Colors.grey[600],
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                      style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
                                                     ),
                                                     Row(
                                                       children: <Widget>[
@@ -324,69 +287,44 @@ class _SocialScreenState extends State<SocialScreen> {
                                                           Icons.alternate_email,
                                                           size: 10,
 //                                            (FontAwesome.suitcase),
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                          color: Theme.of(context).primaryColor,
                                                         ),
                                                         Text(
-                                                          _contactsDetails[
-                                                                  "username"]
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .grey[600]),
+                                                          _contactsDetails["username"].toString(),
+                                                          style: TextStyle(color: Colors.grey[600]),
                                                         ),
                                                       ],
                                                     )
                                                   ],
                                                 ),
                                               ),
-                                              _contacts[i]["requester"]["id"]
-                                                          .toString() ==
-                                                      user_id.toString()
+                                              _contacts[i]["requester"]["id"].toString() == user_id.toString()
                                                   ? Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 10.0,
-                                                          horizontal: 5),
-                                                      child: _contacts[i]
-                                                                  ["state"] ==
-                                                              "req"
+                                                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+                                                      child: _contacts[i]["state"] == "req"
                                                           ? RaisedButton(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                               onPressed: () {
                                                                 showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder: (ctx) =>
-                                                                      AlertDialog(
-                                                                    content:
-                                                                        Text(
-                                                                      "Do you want to cancel Request?",
+                                                                  context: context,
+                                                                  builder: (ctx) => AlertDialog(
+                                                                    content: Text(
+                                                                      "Do you want to remove Request?",
                                                                     ),
-                                                                    actions: <
-                                                                        Widget>[
+                                                                    actions: <Widget>[
                                                                       FlatButton(
-                                                                        child: Text(
-                                                                            'No.'),
-                                                                        onPressed:
-                                                                            () {
-                                                                          Navigator.of(ctx)
-                                                                              .pop();
+                                                                        child: Text('No.'),
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
                                                                         },
                                                                       ),
                                                                       FlatButton(
-                                                                        child: Text(
-                                                                            'Yes, cancel!',
-                                                                            style:
-                                                                                TextStyle(
+                                                                        child: Text('Yes!',
+                                                                            style: TextStyle(
                                                                               color: Colors.redAccent,
                                                                             )),
-                                                                        onPressed:
-                                                                            () {
-                                                                              Navigator.of(ctx)
-                                                                              .pop();
+                                                                        onPressed: () {
+                                                                          Navigator.of(ctx).pop();
                                                                           removeContact(i);
                                                                         },
                                                                       ),
@@ -395,33 +333,20 @@ class _SocialScreenState extends State<SocialScreen> {
                                                                 );
                                                               },
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0),
+                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <
-                                                                      Widget>[
+                                                                  mainAxisSize: MainAxisSize.max,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                  children: <Widget>[
                                                                     Icon(
-                                                                      Icons
-                                                                          .access_time,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
+                                                                      Icons.access_time,
+                                                                      color: Theme.of(context).primaryColor,
                                                                       size: 20,
                                                                     ),
                                                                     Text(
                                                                       "Pending",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
+                                                                      style: TextStyle(
+                                                                        color: Theme.of(context).primaryColor,
                                                                       ),
                                                                     )
                                                                   ],
@@ -429,40 +354,25 @@ class _SocialScreenState extends State<SocialScreen> {
                                                               ),
                                                             )
                                                           : RaisedButton(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                               onPressed: () {
-                                                                removeContact(
-                                                                    i);
+                                                                removeContact(i);
                                                               },
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0),
+                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <
-                                                                      Widget>[
+                                                                  mainAxisSize: MainAxisSize.max,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                  children: <Widget>[
                                                                     Icon(
-                                                                      Icons
-                                                                          .remove_circle_outline,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
+                                                                      Icons.remove_circle_outline,
+                                                                      color: Theme.of(context).primaryColor,
                                                                       size: 20,
                                                                     ),
                                                                     Text(
                                                                       "Remove",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
+                                                                      style: TextStyle(
+                                                                        color: Theme.of(context).primaryColor,
                                                                       ),
                                                                     )
                                                                   ],
@@ -471,45 +381,26 @@ class _SocialScreenState extends State<SocialScreen> {
                                                             ),
                                                     )
                                                   : Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 10.0,
-                                                          horizontal: 5),
-                                                      child: _contacts[i]
-                                                                  ["state"] ==
-                                                              "req"
+                                                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+                                                      child: _contacts[i]["state"] == "req"
                                                           ? RaisedButton(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                               onPressed: () {},
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0),
+                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <
-                                                                      Widget>[
+                                                                  mainAxisSize: MainAxisSize.max,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                  children: <Widget>[
                                                                     Icon(
-                                                                      Icons
-                                                                          .access_time,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
+                                                                      Icons.access_time,
+                                                                      color: Theme.of(context).primaryColor,
                                                                       size: 20,
                                                                     ),
                                                                     Text(
                                                                       "Accept",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
+                                                                      style: TextStyle(
+                                                                        color: Theme.of(context).primaryColor,
                                                                       ),
                                                                     )
                                                                   ],
@@ -517,38 +408,24 @@ class _SocialScreenState extends State<SocialScreen> {
                                                               ),
                                                             )
                                                           : RaisedButton(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                               onPressed: () {},
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    vertical:
-                                                                        5.0),
+                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                                 child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <
-                                                                      Widget>[
+                                                                  mainAxisSize: MainAxisSize.max,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                  children: <Widget>[
                                                                     Icon(
-                                                                      Icons
-                                                                          .remove_circle_outline,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .primaryColor,
+                                                                      Icons.remove_circle_outline,
+                                                                      color: Theme.of(context).primaryColor,
                                                                       size: 20,
                                                                     ),
                                                                     Text(
                                                                       "Remove2",
-                                                                      style:
-                                                                          TextStyle(
+                                                                      style: TextStyle(
 //                                                        fontWeight: FontWeight.bold,
-                                                                        color: Theme.of(context)
-                                                                            .primaryColor,
+                                                                        color: Theme.of(context).primaryColor,
                                                                       ),
                                                                     )
                                                                   ],

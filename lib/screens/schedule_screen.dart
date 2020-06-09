@@ -506,18 +506,33 @@ class FullTimeState extends State<FullTime> {
           child: SingleChildScrollView(
             controller: _scrollController,
             child: Center(
-              child: Stack(children: [
-                Column(
-                  children: <Widget>[
-                    for (var i = 0; i < 24; i++)
-                      if (i > 9)
-                        hourRow(time: "${i.toString()}:00", vertical: scaleHeight)
-                      else
-                        hourRow(time: "0${i.toString()}:00", vertical: scaleHeight)
-                  ],
-                ),
-                if (widget.activityList != null)
-                  for (var x in widget.activityList) activityBoxObject(x, scaleHeight / 60),
+              child: Stack(
+                children: [
+                  Column(
+                    children: <Widget>[
+                      for (var i = 0; i < 24; i++)
+                        if (i > 9)
+                          hourRow(time: "${i.toString()}:00", vertical: scaleHeight)
+                        else
+                          hourRow(time: "0${i.toString()}:00", vertical: scaleHeight),
+                    ],
+                  ),
+
+                  if (widget.activityList != null)
+                    for (var x = widget.activityList.length - 1; x >= 0; x--)
+                      ActivityBox(
+                        context: context,
+                        myActivity: widget.activityList[x],
+                        height: scaleHeight / 60,
+                      ),
+//                  if (widget.activityList != null)
+//                    for (var x in widget.activityList)
+//                      ActivityBox(
+//                        context: context,
+//                        myActivity: x,
+//                        height: scaleHeight / 60,
+//                      ),
+//                activityBoxObject(context, x, scaleHeight / 60),
 //                activityBox(
 //                    height: scaleHeight / 60,
 //                    duration: 120,
@@ -526,7 +541,8 @@ class FullTimeState extends State<FullTime> {
 //                    startday: 1, //1 - monday, 5 friday
 //                    name: "Work",
 //                    description: "Workout at gym"),
-              ]),
+                ],
+              ),
             ),
           ),
 //            ],
