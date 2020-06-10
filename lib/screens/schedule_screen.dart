@@ -215,7 +215,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           Text(
-                                            "May", //todo: Month
+                                            index.toString(), //todo: Month
                                             style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                                           ),
                                           Text(

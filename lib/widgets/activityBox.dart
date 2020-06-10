@@ -44,7 +44,7 @@ class _ActivityBoxState extends State<ActivityBox> {
     return AnimatedPositioned(
       duration: Duration(milliseconds: 300),
       curve: Curves.decelerate,
-      left: (tapped && (left + 150 > MediaQuery.of(context).size.width)) ? left - 150 : left,
+      left: (tapped && (left + 200 > MediaQuery.of(context).size.width)) ? left - (left + 220 - MediaQuery.of(context).size.width) : left,
       top: top * (widget.height),
       child: InkWell(
         onTap: () {
