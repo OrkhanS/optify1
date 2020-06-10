@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:menu/menu.dart';
+import 'package:optifyapp/providers/auth.dart';
 import 'package:optifyapp/screens/chat_window.dart';
 import 'package:optifyapp/screens/profile_screen_another.dart';
 import 'package:optifyapp/screens/report_user_screen.dart';
@@ -17,8 +18,6 @@ import 'package:timeago/timeago.dart' as timeago;
 class ChatsScreen extends StatefulWidget {
   static const routeName = '/chat';
   final StreamController<String> streamController = StreamController<String>.broadcast();
-  var provider, token, auth;
-  ChatsScreen({this.provider, this.token, this.auth});
   @override
   _ChatsScreenState createState() => _ChatsScreenState();
 }
@@ -31,10 +30,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
   bool isMessagesLoaded = false;
   Future<int> roomLength;
   List _rooms = [];
-  String myid;
+  String myid, secondId;
   bool _isfetchingnew = false;
   String nextMessagesURL = "FirstCall";
-
+  var messageProvider, auth;
+  bool a= false;
   @override
   void initState() {
     pageController = PageController(viewportFraction: viewportFraction);
@@ -43,7 +43,15 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    myid = widget.provider.userDetails["id"].toString();
+    if(auth == null){
+      messageProvider = Provider.of<Messages>(context);
+      auth = Provider.of<Auth>(context);
+      myid = auth.myUserId;
+    }
+    
+    // if(a == false){
+    //   messageProvider.createRooms("2", auth);
+    // }
     // getAvatarUrl(String a) {
     //   String helper = 'https://briddgy.herokuapp.com/media/';
     //   imageUrl =
@@ -70,7 +78,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             url,
             headers: {
               HttpHeaders.CONTENT_TYPE: "application/json",
-              "Authorization": "Token " + widget.token,
+              "Authorization": "Token " + auth.myToken,
             },
           ).then((response) {
             var dataOrders = json.decode(response.body) as Map<String, dynamic>;
@@ -91,11 +99,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
 
     return Consumer<Messages>(
-      builder: (context, provider, child) {
-        if (widget.provider.chats.length != 0) {
-          _rooms = widget.provider.chatDetails["results"];
+      builder: (context, messageProvider, child) {
+        if (messageProvider.chats.length != 0) {
+          _rooms = messageProvider.allChatRoomDetails["results"];
+         
           if (nextMessagesURL == "FirstCall") {
-            nextMessagesURL = widget.provider.chatDetails["next"];
+            nextMessagesURL = messageProvider.allChatRoomDetails["next"];
           }
           //messageLoader = false;
         } else {
@@ -113,9 +122,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
             elevation: 1,
           ),
           body: Container(
-            child: widget.provider.userNotLogged == true || widget.provider.chats == null
+            child: messageProvider.chats == null
                 ? Center(child: Text('No Chats'))
-                : widget.provider.chatsNotLoaded == true
+                : messageProvider.isChatsLoading == true
                     ? Center(child: CircularProgressIndicator())
                     : NotificationListener<ScrollNotification>(
                         onNotification: (ScrollNotification scrollInfo) {
@@ -134,6 +143,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
                               child: ListView.builder(
                                 itemCount: _rooms.length,
                                 itemBuilder: (context, int index) {
+                                   if(_rooms[index]["members"][0]["user"]["id"].toString() == myid.toString()){
+                                      secondId = _rooms[index]["members"][1]["user"]["id"].toString();
+                                  }else{
+                                      secondId = _rooms[index]["members"][0]["user"]["id"].toString();
+                                  }
                                   return Column(
                                     children: <Widget>[
                                       Divider(
@@ -151,12 +165,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                               child: ListTile(
                                                 leading: CircleAvatar(
                                                     radius: 24.0,
-                                                    child: FadeInImage(
-                                                      image: NetworkImage(
-                                                          'https://toppng.com/uploads/preview/person-icon-white-icon-11553393970jgwtmsc59i.png'),
-                                                      placeholder: NetworkImage(
-                                                          'https://toppng.com/uploads/preview/person-icon-white-icon-11553393970jgwtmsc59i.png'),
-                                                    )),
+                                                    child: Image(
+                                                    image: NetworkImage(
+                                                         "https://robohash.org/" + secondId.toString()),
+                                                    height: 80,
+                                                    width: 90,
+                                                  ),
+                                                    ),
                                                 title: Row(
                                                   children: <Widget>[
                                                     Text(
@@ -203,10 +218,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                                     )
                                                   ],
                                                 ),
-                                                trailing: widget.provider.newMessages[_rooms[index]["id"]].toString() != "0" &&
-                                                        widget.provider.newMessages[_rooms[index]["id"]].toString() != "null"
+                                                trailing: messageProvider.newMessages[_rooms[index]["id"]].toString() != "0" &&
+                                                        messageProvider.newMessages[_rooms[index]["id"]].toString() != "null"
                                                     ? Badge(
-                                                        badgeContent: Text(widget.provider.newMessages[_rooms[index]["id"]].toString()),
+                                                        badgeContent: Text(messageProvider.newMessages[_rooms[index]["id"]].toString()),
                                                         child: Icon(Icons.arrow_forward_ios),
                                                       )
                                                     : Icon(
@@ -214,19 +229,19 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                                         size: 14.0,
                                                       ),
                                                 onTap: () {
-                                                  widget.provider.readMessages(_rooms[index]["id"]);
+                                                  messageProvider.readMessages(_rooms[index]["id"]);
                                                   Provider.of<Messages>(context).newMessage[_rooms[index]["id"]] = 0;
-                                                  widget.provider.fetchAndSetMessages(index);
+                                                  messageProvider.fetchAndSetMessages(index);
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (__) => ChatWindow(
-                                                            provider: widget.provider,
+                                                            provider: messageProvider,
                                                             room: _rooms[index]["id"],
                                                             user: _rooms[index]["members"][1]["user"]["id"].toString() != myid
                                                                 ? _rooms[index]["members"][1]["user"]
                                                                 : _rooms[index]["members"][0]["user"],
-                                                            token: widget.token)),
+                                                            token: auth.myToken)),
                                                   );
                                                 },
                                               ),

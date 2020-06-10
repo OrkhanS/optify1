@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:optifyapp/models/api.dart';
+import 'package:optifyapp/providers/auth.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +33,7 @@ class _ChatWindowState extends State<ChatWindow> {
   bool _isloading = false;
   bool newMessageMe = false;
   String id;
+  String token;
   String nextMessagesURL = "FirstCall";
   var file;
   final String phpEndPoint = 'http://192.168.43.171/phpAPI/image.php'; //todo delete
@@ -40,6 +43,11 @@ class _ChatWindowState extends State<ChatWindow> {
     textEditingController = TextEditingController();
     scrollController = ScrollController();
     id = widget.room.toString();
+    if(Provider.of<Auth>(context).myToken == null){
+      Provider.of<Auth>(context).getToken();
+    }else{
+      token = Provider.of<Auth>(context).myToken.toString();
+    }    
     initCommunication(id);
     super.initState();
   }
@@ -48,7 +56,7 @@ class _ChatWindowState extends State<ChatWindow> {
     reset();
     try {
       _channelRoom =
-          new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/chatrooms/' + id.toString() + '/?token=' + widget.provider.getToken);
+          new IOWebSocketChannel.connect(Api.roomSocket + id.toString() + '/?token=' + token);
       _channelRoom.stream.listen(_onReceptionOfMessageFromServer);
     } catch (e) {}
   }
