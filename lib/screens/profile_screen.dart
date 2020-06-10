@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CircleAvatar(
                           radius: 70,
                           backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage("https://robohash.org/" + auth.token.toString()), //Todo
+                          backgroundImage: NetworkImage("https://robohash.org/" + auth.myUserId.toString()), //Todo
                         ),
                         Column(
 //                          mainAxisSize: MainAxisSize.max,
@@ -104,11 +104,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 //                                  Provider.of<Auth>(context, listen: false).userdetail["first_name"].toString() +
 //                                  " " +
 //                                  Provider.of<Auth>(context, listen: false).userdetail["last_name"].toString(),
-                              "Kazato Suriname",
+                              auth.userdetail["first_name"].toString() + " " + auth.userdetail["last_name"].toString(),
                               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Theme.of(context).primaryColor),
                             ),
                             Text(
-                              Provider.of<Auth>(context, listen: false).userdetail["username"].toString(), //todo fix
+                              auth.userdetail["username"].toString(), //todo fix
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey[600],

@@ -46,6 +46,20 @@ class Auth with ChangeNotifier {
     return myUseridFromStorage;
   }
 
+  set myToken(string){
+    myTokenFromStorage = string;
+  }
+
+  set myScheduleId(string){
+    myScheduleidFromStorage = string;
+  }
+
+  set myUserId(string){
+    myUseridFromStorage = string;
+  }
+
+
+
   bool get isAuth {
     return _token != null;
   }
@@ -73,74 +87,27 @@ class Auth with ChangeNotifier {
     return isLoadingUser;
   }
 
-  Future fetchAndSetUserDetails() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     if (!prefs.containsKey('userData')) {
-//       return false;
-//     }
-//     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-
-//     const url = Api.address + "api/users/me/";
-//     try {
-//       final response = await http.get(
-//         url,
-//         headers: {
-//           HttpHeaders.CONTENT_TYPE: "application/json",
-//           "Authorization": "Token " + extractedUserData['token'],
-//         },
-//       ).then((response) {
-//         final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-//         user = dataOrders;
-//         isLoadingUser = false;
-//         notifyListeners();
-//       });
-//     } catch (e) {
-//       return;
-//     }
-//   }
-
-//   Future<void> _authenticate(String email, String password, String urlSegment) async {
-// //    final url =
-// //        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyC13spCwP_f_SalxEbkB-wjedoF8iYENlQ';
-//     const url = "http://briddgy.herokuapp.com/api/auth/";
-//     try {
-//       final response = await http.post(
-//         url,
-//         body: json.encode(
-//           {
-//             'email': email,
-//             'password': password,
-//             'returnSecureToken': true,
-//           },
-//         ),
-//       );
-//       final responseData = json.decode(response.body);
-//       if (responseData['error'] != null) {
-//         throw HttpException(responseData['error']['message']);
-//       }
-//       _token = responseData['idToken'];
-//       _userId = responseData['localId'];
-//       _expiryDate = DateTime.now().add(
-//         Duration(
-//           seconds: int.parse(
-//             responseData['expiresIn'],
-//           ),
-//         ),
-//       );
-// //      _autoLogout();
-//       notifyListeners();
-//       final prefs = await SharedPreferences.getInstance();
-//       final userData = json.encode(
-//         {
-//           'token': _token,
-//           'userId': _userId,
-//           'expiryDate': _expiryDate.toIso8601String(),
-//         },
-//       );
-//       prefs.setString('userData', userData);
-//     } catch (error) {
-//       throw error;
-//     }
+ Future fetchAndSetUserDetails() async {
+    if (myToken == null){
+      return;
+    }
+    const url = Api.address + "api/users/me/";
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + myToken.toString(),
+        },
+      ).then((response) {
+        final dataOrders = json.decode(response.body) as Map<String, dynamic>;
+        user = dataOrders;
+        isLoadingUser = false;
+        notifyListeners();
+      });
+    } catch (e) {
+      return;
+    }
   }
 
   Future<void> signup(String email, String password, String firstname, String lastname
@@ -189,7 +156,6 @@ class Auth with ChangeNotifier {
     } catch (error) {
       throw error;
     }
-    //return _authenticate(email, password, 'verifyPassword');
   }
 
   Future<void> login(String email, String password
@@ -210,6 +176,9 @@ class Auth with ChangeNotifier {
 
       final responseData = json.decode(response.body);
       _token = responseData["token"];
+      myToken = responseData["token"];
+      myUserId = responseData["user_id"].toString();
+      myScheduleId = responseData["schedule_id"].toString();
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
@@ -217,59 +186,31 @@ class Auth with ChangeNotifier {
         {
           'token': _token,
           'user_id': responseData["user_id"],
-          "schedule_id": responseData["schedule_id"]
+          'schedule_id': responseData["schedule_id"]
         },
       );
 
       prefs.setString('userData', userData);
+      fetchAndSetUserDetails();
     } catch (error) {
       throw error;
     }
   }
 
-  Future<void> getScheduleID(String token) async {
-    const url = Api.myScheduleInfo;
-    try {
-      final response = await http.get(
-        url,
-        headers: {HttpHeaders.CONTENT_TYPE: "application/json", "Authorization": "Token " + token},
-      );
-
-      final responseData = json.decode(response.body);
-      String schedule_id = responseData["id"].toString();
-      final prefs = await SharedPreferences.getInstance();
-      final scheduleData = json.encode(
-        {
-          'schedule_id': schedule_id.toString(),
-        },
-      );
-
-      prefs.setString('scheduleData', scheduleData);
-    } catch (error) {
-      throw error;
-    }
-  }
-
+ 
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
     }
     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-//    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
-//
-//    if (expiryDate.isBefore(DateTime.now())) {
-//      return false;
-//    }
+
     _token = extractedUserData['token'];
     myTokenFromStorage = extractedUserData["token"];
     myUseridFromStorage = extractedUserData['user_id'].toString();
     myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
-
-//    _userId = extractedUserData['userId'];
-//    _expiryDate = expiryDate;
     notifyListeners();
-//    _autoLogout();
+    fetchAndSetUserDetails();
     return true;
   }
 
@@ -291,15 +232,17 @@ class Auth with ChangeNotifier {
     prefs.clear();
     Provider.of<Activities>(context).removeAllDataOfProvider();
     Provider.of<Activities>(context).removeAllDataOfProvider();
+    removeAllDataOfProvider();
     
     notifyListeners();
   }
 
-//  void _autoLogout() {
-//    if (_authTimer != null) {
-//      _authTimer.cancel();
-//    }
-//    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
-//    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
-//  }
+  removeAllDataOfProvider(){
+    _token = null;
+    user = {};
+    isLoadingUser = true;
+    myTokenFromStorage= null;
+    myScheduleidFromStorage= null;
+    myUseridFromStorage= null;
+  } 
 }

@@ -89,7 +89,7 @@ class _AccountPageState extends State<AccountPage> {
 
                         backgroundImage: NetworkImage(
                             // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
-                            "https://robohash.org/" + Provider.of<Auth>(context, listen: false).token.toString()), //Todo: UserPic
+                            "https://robohash.org/" + Provider.of<Auth>(context, listen: false).myUserId.toString()), //Todo: UserPic
 //                  child: Image.network(
 //                    'https://images-na.ssl-images-amazon.com/images/I/81NIli1PuqL._AC_SL1500_.jpg',
 //                    fit: BoxFit.cover,

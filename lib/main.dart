@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
   bool socketConnected = false;
   var neWMessage;
   String schedule_id, user_id;
+  bool flagForLoggedOutThenLoggedIn=false;
 
   @override
   void initState() {
@@ -226,7 +227,7 @@ class _MyAppState extends State<MyApp> {
         // newmessage.fetchAndSetRooms(auth);
         // initCommunication(auth, newmessage);
         // _configureFirebaseListerners(newmessage);
-
+        //flagForLoggedOutThenLoggedIn == false ? activitiesProvider.loadingActivities = true : flagForLoggedOutThenLoggedIn = true; 
         auth.isAuth == false ? auth.tryAutoLogin() : auth.isAuth;
         activitiesProvider.isLoadingActivities == true
             ? activitiesProvider.fetchAndSetMyActivities(auth.myToken, auth.myScheduleId)
