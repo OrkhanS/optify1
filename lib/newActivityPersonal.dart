@@ -8,7 +8,6 @@ import 'package:optifyapp/providers/auth.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:optifyapp/ActivityListScreen.dart';
 import 'AcivityAI.dart';
 import 'models/api.dart';
 import 'dart:async';
@@ -285,7 +284,7 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
   }
 
   Future post() async {
-    if(schedule_id == null || token == null ){
+    if (schedule_id == null || token == null) {
       final prefs = await SharedPreferences.getInstance();
       if (!prefs.containsKey('userData')) {
         return false;
@@ -330,25 +329,21 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
     });
   }
 
-Widget float2(context) {
-  return Container(
-    child: FloatingActionButton(
-      backgroundColor: Theme.of(context).primaryColor,
-      heroTag: "btn2",
-      onPressed: () {
-        navigateToActivityAI(context);
-      },
-      tooltip: 'Second button',
-      child: Icon(MdiIcons.brain, color: Colors.white),
-    ),
-  );
-}
+  Widget float2(context) {
+    return Container(
+      child: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        heroTag: "btn2",
+        onPressed: () {
+          navigateToActivityAI(context);
+        },
+        tooltip: 'Second button',
+        child: Icon(MdiIcons.brain, color: Colors.white),
+      ),
+    );
+  }
 
-void navigateToActivity(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
-}
-
-void navigateToActivityAI(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityAI()));
-}
+  void navigateToActivityAI(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityAI()));
+  }
 }

@@ -7,7 +7,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:optifyapp/ActivityListScreen.dart';
 import 'AcivityAI.dart';
 import 'ActivityClass.dart';
 import 'models/api.dart';
@@ -372,10 +371,6 @@ class NewActivityJointPage extends State<NewActivityJoint> {
     final extractedscheduleData = json.decode(prefs2.getString('scheduleData')) as Map<String, Object>;
     schedule_id = extractedscheduleData['schedule_id'];
   }
-}
-
-void navigateToActivity(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityListScreen()));
 }
 
 void navigateToActivityAI(BuildContext context) {
