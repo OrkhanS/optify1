@@ -46,6 +46,20 @@ class Auth with ChangeNotifier {
     return myUseridFromStorage;
   }
 
+  set myToken(string){
+    myTokenFromStorage = string;
+  }
+
+  set myScheduleId(string){
+    myScheduleidFromStorage = string;
+  }
+
+  set myUserId(string){
+    myUseridFromStorage = string;
+  }
+
+
+
   bool get isAuth {
     return _token != null;
   }
@@ -210,6 +224,9 @@ class Auth with ChangeNotifier {
 
       final responseData = json.decode(response.body);
       _token = responseData["token"];
+      myToken = responseData["token"];
+      myUserId = responseData["user_id"].toString();
+      myScheduleId = responseData["schedule_id"].toString();
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
@@ -217,7 +234,7 @@ class Auth with ChangeNotifier {
         {
           'token': _token,
           'user_id': responseData["user_id"],
-          "schedule_id": responseData["schedule_id"]
+          'schedule_id': responseData["schedule_id"]
         },
       );
 
@@ -291,9 +308,19 @@ class Auth with ChangeNotifier {
     prefs.clear();
     Provider.of<Activities>(context).removeAllDataOfProvider();
     Provider.of<Activities>(context).removeAllDataOfProvider();
+    removeAllDataOfProvider();
     
     notifyListeners();
   }
+
+  removeAllDataOfProvider(){
+    _token = null;
+    user = {};
+    isLoadingUser = true;
+    myTokenFromStorage= null;
+    myScheduleidFromStorage= null;
+    myUseridFromStorage= null;
+  } 
 
 //  void _autoLogout() {
 //    if (_authTimer != null) {

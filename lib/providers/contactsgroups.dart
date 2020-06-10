@@ -93,7 +93,7 @@ Future acceptContactRequest(i, token){
   removeAllDataOfProvider(){
     _contacts = [];
     allContactsDetails = {};
-    isLoadingContacts = true;
+    //isLoadingContacts = true;
   }
 
   // addActivityFromPostRequest(newactivity) {

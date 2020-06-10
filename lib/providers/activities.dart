@@ -18,6 +18,10 @@ class Activities with ChangeNotifier {
     return isLoadingActivities;
   }
 
+  set loadingActivities(bool boolean) {
+    isLoadingActivities = boolean;
+  }
+
   List get activities {
     return _activites;
   }
@@ -61,7 +65,7 @@ class Activities with ChangeNotifier {
   removeAllDataOfProvider(){
     _activites = [];
     allActivityDetails={};
-    isLoadingActivities = true;
+    loadingActivities = true;
   } 
 
 
