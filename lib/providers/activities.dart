@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class Activities with ChangeNotifier {
-  List _activites = [];
+  List<dynamic> _activites = new List(100);
   bool isLoadingActivities = true;
   String token;
   Map allActivityDetails = {};
@@ -22,8 +22,13 @@ class Activities with ChangeNotifier {
     isLoadingActivities = boolean;
   }
 
-  List get activities {
+  List get getActivities {
     return _activites;
+  }
+
+  List activities(index) {  
+    print(index);
+    return _activites[index];
   }
 
   Map get detailsActivities {
@@ -43,8 +48,70 @@ class Activities with ChangeNotifier {
       ).then((onValue) {
         if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
-          _activites = dataOrders["results"];
           allActivityDetails = dataOrders;
+          _activites[50] = dataOrders["results"];
+          isLoadingActivities = false;
+          notifyListeners();
+        } else {
+          _activites = [];
+          allActivityDetails = {};
+          isLoadingActivities = false;
+          notifyListeners();
+        }
+      });
+    }
+    // fetchAndSetPrev(49, -1, myToken, schedule_id);
+    // fetchAndSetNext(51, 1, myToken, schedule_id);
+  }
+
+  Future fetchAndSetNext(id, offset, myToken, schedule_id) async {
+    var token = myToken;
+    if (token != null && token != "null") {
+      String url = Api.myActivities +
+          schedule_id.toString() +
+          "/activities/?offset=" +
+          offset.toString();
+      http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + token,
+        },
+      ).then((onValue) {
+        if (onValue.statusCode == 200) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          allActivityDetails = dataOrders;
+          _activites[id] = dataOrders["results"];
+          isLoadingActivities = false;
+          notifyListeners();
+        } else {
+          _activites = [];
+          allActivityDetails = {};
+          isLoadingActivities = false;
+          notifyListeners();
+        }
+      });
+    }
+  }
+
+  Future fetchAndSetPrev(id, offset, myToken, schedule_id) async {
+    var token = myToken;
+    if (token != null && token != "null") {
+      String url = Api.myActivities +
+          schedule_id.toString() +
+          "/activities/?offset=" +
+          offset.toString();
+      http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + token,
+        },
+      ).then((onValue) {
+        if (onValue.statusCode == 200) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          allActivityDetails = dataOrders;
+          _activites[id] = dataOrders["results"];
           isLoadingActivities = false;
           notifyListeners();
         } else {
@@ -62,11 +129,9 @@ class Activities with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  removeAllDataOfProvider(){
+  removeAllDataOfProvider() {
     _activites = [];
-    allActivityDetails={};
+    allActivityDetails = {};
     loadingActivities = true;
-  } 
-
-
+  }
 }
