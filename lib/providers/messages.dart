@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:optifyapp/models/api.dart';
+import 'package:optifyapp/providers/auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -139,6 +142,25 @@ class Messages extends ChangeNotifier {
 
   //______________________________________________________________________________________
 
+
+  Future createRooms(id, auth) async {
+    String tokenforROOM = auth.myToken;
+    if (tokenforROOM != null) {
+      String url = Api.createRoom + id.toString()+"/";
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + tokenforROOM,
+        },
+      ).then((onValue){
+        print(json.decode(onValue.body));
+      });
+      fetchAndSetRooms(auth);
+    }
+    return null;
+  }
+
   bool changeChatRoomPlace(id) {
     newMessage[id] = 0;
     for (var i = 0; i < _chatRooms.length; i++) {
@@ -153,46 +175,37 @@ class Messages extends ChangeNotifier {
   }
 
   Future fetchAndSetRooms(auth) async {
-    // fetchAndSetUserDetails(auth);
-    // var f;
-    // auth.removeListener(f);
-    // final prefs = await SharedPreferences.getInstance();
-    // if (!prefs.containsKey('userData')) {
-    //   return false;
-    // }
-    // final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-
-    // auth.token = extractedUserData['token'];
-    // tokenforROOM = extractedUserData['token'];
-    // try {
-    //   if (extractedUserData['token'] != null) {
-    //     const url = "http://briddgy.herokuapp.com/api/chats/";
-    //     final response = await http.get(
-    //       url,
-    //       headers: {
-    //         HttpHeaders.CONTENT_TYPE: "application/json",
-    //         "Authorization": "Token " + extractedUserData['token'],
-    //       },
-    //     ).then((value) {
-    //       final dataOrders = json.decode(value.body) as Map<String, dynamic>;
-    //       allChatRoomDetails = dataOrders;
-    //       _chatRooms = dataOrders["results"];
-    //       if (_chatRooms.length == 0) {
-    //         for (var i = 0; i < _chatRooms.length; i++) {
-    //           newMessage[_chatRooms[i]["id"]] = _chatRooms[i]["members"][1]["unread_count"];
-    //         }
-    //       }
-    //       isChatsLoading = false;
-    //       isUserlogged = false;
-    //     });
-    //     return _chatRooms;
-    //   } else {
-    //     isUserlogged = true;
-    //     return null;
-    //   }
-    // } catch (e) {
-    //   return;
-    // }
+    var f;
+    auth.removeListener(f);
+    try {
+      if (auth.myToken != null) {
+        const url = Api.chatRoomsList;
+        final response = await http.get(
+          url,
+          headers: {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+            "Authorization": "Token " + auth.myToken,
+          },
+        ).then((value) {
+          final dataOrders = json.decode(value.body) as Map<String, dynamic>;
+          allChatRoomDetails = dataOrders;
+          _chatRooms = dataOrders["results"];
+          
+          // if (_chatRooms.length == 0) {
+          //   for (var i = 0; i < _chatRooms.length; i++) {
+          //     newMessage[_chatRooms[i]["id"]] = _chatRooms[i]["members"][1]["unread_count"];
+          //   }
+          // }
+          isChatsLoading = false;
+        });
+        return _chatRooms;
+      } else {
+        isUserlogged = true;
+        return null;
+      }
+    } catch (e) {
+      return;
+    }
   }
 
   set addChats(Map mesaj) {

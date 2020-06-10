@@ -38,7 +38,8 @@ import 'package:optifyapp/screens/activity_screen.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  final StreamController<String> streamController = StreamController<String>.broadcast();
+  final StreamController<String> streamController =
+      StreamController<String>.broadcast();
   IOWebSocketChannel _channel;
   ObserverList<Function> _listeners = new ObserverList<Function>();
   var button = ChatsScreen();
@@ -57,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   bool socketConnected = false;
   var neWMessage;
   String schedule_id, user_id;
-  bool flagForLoggedOutThenLoggedIn=false;
+  bool flagForLoggedOutThenLoggedIn = false;
 
   @override
   void initState() {
@@ -84,7 +85,8 @@ class _MyAppState extends State<MyApp> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
     tokenforROOM = extractedUserData['token'];
     user_id = extractedUserData['user_id'].toString();
     schedule_id = extractedUserData['schedule_id'].toString();
@@ -95,36 +97,28 @@ class _MyAppState extends State<MyApp> {
         MaterialPageRoute(builder: (context) => ChatsScreen()),
       );
 
-//  initCommunication(auth, newmessage) async {
-//    if (socketConnected == false) {
-//      socketConnected = true;
-//      reset();
-//      try {
-//        var f, d;
-//        auth.removeListener(f);
-//        newmessage.removeListener(d);
-//        neWMessage = newmessage;
-//        final prefs = await SharedPreferences.getInstance();
-//        if (!prefs.containsKey('userData')) {
-//          return false;
-//        }
-//        final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-//
-//        auth.token = extractedUserData['token'];
-//
-//        // if (extractedUserData['token'] != null) {
-//        //   widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + extractedUserData['token']);
-//        //   widget._channel.stream.listen(_onReceptionOfMessageFromServer);
-//        //   print("Alert Connected");
-//        // }
-//      } catch (e) {
-//        print("Error Occured");
-//        reset();
-//      }
-//    } else {
-//      return;
-//    }
-//  }
+  initCommunication(auth, newmessage) async {
+    // if (socketConnected == false) {
+    //   reset();
+    //   try {
+    //     var f, d;
+    //     auth.removeListener(f);
+    //     newmessage.removeListener(d);
+    //     neWMessage = newmessage;
+    //     if (auth.myToken != null) {
+    //       widget._channel = new IOWebSocketChannel.connect('ws://briddgy.herokuapp.com/ws/alert/?token=' + auth.myToken);
+    //       widget._channel.stream.listen(_onReceptionOfMessageFromServer);
+    //       socketConnected = true;
+    //       print("Alert Connected");
+    //     }
+    //   } catch (e) {
+    //     print("Error Occured");
+    //     reset();
+    //   }
+    // } else {
+    //   return;
+    // }
+  }
 
   /// ----------------------------------------------------------
   /// Closes the WebSocket communication
@@ -198,7 +192,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  static List<Widget> currentScreen = [ScheduleScreen(), SocialScreen(), SocialScreen(), ProfileScreen()];
+  static List<Widget> currentScreen = [
+    ScheduleScreen(),
+    SocialScreen(),
+    ChatsScreen(),
+    ProfileScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -225,18 +224,29 @@ class _MyAppState extends State<MyApp> {
         contactsGroupsProvider,
         _,
       ) {
-        // newmessage.fetchAndSetRooms(auth);
-        // initCommunication(auth, newmessage);
+        
+
+        // if (socketConnected == false) {
+        //   initCommunication(auth, newmessage);
+        // }
+
         // _configureFirebaseListerners(newmessage);
-        //flagForLoggedOutThenLoggedIn == false ? activitiesProvider.loadingActivities = true : flagForLoggedOutThenLoggedIn = true; 
-        auth.isAuth == false ? auth.tryAutoLogin() : auth.isAuth;
-        activitiesProvider.isLoadingActivities == true
-            ? activitiesProvider.fetchAndSetMyActivities(auth.myToken, auth.myScheduleId)
-            : activitiesProvider.activities;
-        contactsGroupsProvider.isLoadingContacts == true
-            ? contactsGroupsProvider.fetchAndSetMyContacts(auth.myToken)
-            : contactsGroupsProvider.contacts;
-        //auth.fetchAndSetUserDetails();
+        if (auth.isAuth == false) {
+          auth.tryAutoLogin();
+        }
+
+        if(newmessage.isChatsLoading){
+          newmessage.fetchAndSetRooms(auth);
+        }
+
+        if (activitiesProvider.isLoadingActivities) {
+          activitiesProvider.fetchAndSetMyActivities(
+                auth.myToken, auth.myScheduleId);
+        }
+        if (contactsGroupsProvider.isLoadingContacts == true) {
+          contactsGroupsProvider.fetchAndSetMyContacts(auth.myToken);
+        }
+        
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
@@ -250,7 +260,10 @@ class _MyAppState extends State<MyApp> {
             fontFamily: 'Lato',
           ),
           debugShowCheckedModeBanner: false,
-          builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
+          builder: (context, child) => MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child),
           home: auth.isAuth
               ? SafeArea(
                   child: Scaffold(
@@ -270,8 +283,12 @@ class _MyAppState extends State<MyApp> {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
-            AccountScreen.routeName: (ctx) => AccountScreen(token: auth.myToken, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: auth.myToken, contactsGroupsProvider: contactsGroupsProvider, user_id: auth.myUserId),
+            AccountScreen.routeName: (ctx) => AccountScreen(
+                token: auth.myToken, orderstripsProvider: activitiesProvider),
+            SocialScreen.routeName: (ctx) => SocialScreen(
+                token: auth.myToken,
+                contactsGroupsProvider: contactsGroupsProvider,
+                user_id: auth.myUserId),
             ContactsScreen.routeName: (ctx) => ContactsScreen(),
             GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen(),
             ActivityScreen.routeName: (ctx) => ActivityScreen(),
