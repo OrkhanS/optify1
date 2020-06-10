@@ -56,6 +56,22 @@ class ContactsGroups with ChangeNotifier {
     notifyListeners();
   }
 
+  Future requestContact(id, token) {
+    String url = Api.myContacts;
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({"reciever": id}))
+        .then((response) {
+      if (response.statusCode == 200) {
+        fetchAndSetMyContacts(token);
+      }
+    });
+  }
+
   Future acceptContactRequest(i, token) {
     String url = Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
     http
@@ -88,12 +104,11 @@ class ContactsGroups with ChangeNotifier {
   removeAllDataOfProvider() {
     _contacts = [];
     allContactsDetails = {};
-    isLoadingContacts = true;
+    //isLoadingContacts = true;
   }
 
-  // addActivityFromPostRequest(newactivity) {
-  //   _contacts.add(newactivity);
-  //   notifyListeners();
-  // }
-
+  addContactFromPostRequest(newcontact) {
+    _contacts.add(newcontact);
+    notifyListeners();
+  }
 }

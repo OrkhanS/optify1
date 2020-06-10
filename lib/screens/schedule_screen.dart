@@ -62,6 +62,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     var now = DateTime.now();
     var nowWeekday = now.weekday;
 
+    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * 49);
+
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
         if (activitiesProvider.activities.length != 0) {
@@ -169,7 +171,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
               : isSwitched
                   ? ListView.builder(
                       //todo Refresh activities
-                      itemCount: 5,
+                      controller: _horizontalscrollController,
+                      itemCount: 100,
 
 //                      itemExtent: 100,
 
