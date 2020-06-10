@@ -3,8 +3,6 @@ import 'package:optifyapp/models/api.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,14 +50,13 @@ class ContactsGroups with ChangeNotifier {
       });
     }
   }
- 
-removeContact(i){
-  _contacts.removeAt(i);
-  notifyListeners();
-}
 
+  removeContact(i) {
+    _contacts.removeAt(i);
+    notifyListeners();
+  }
 
-Future acceptContactRequest(i, token){
+  Future acceptContactRequest(i, token) {
     String url = Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
     http
         .post(url,
@@ -76,7 +73,6 @@ Future acceptContactRequest(i, token){
     });
   }
 
-
   Future removeContactOrRequest(i, token) {
     String url = Api.removeContactRequst + _contacts[i]["id"].toString() + "/";
     http.delete(
@@ -89,8 +85,7 @@ Future acceptContactRequest(i, token){
     removeContact(i);
   }
 
-
-  removeAllDataOfProvider(){
+  removeAllDataOfProvider() {
     _contacts = [];
     allContactsDetails = {};
     isLoadingContacts = true;
@@ -100,5 +95,5 @@ Future acceptContactRequest(i, token){
   //   _contacts.add(newactivity);
   //   notifyListeners();
   // }
-  
+
 }

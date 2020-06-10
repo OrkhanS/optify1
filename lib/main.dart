@@ -30,7 +30,6 @@ import 'package:optifyapp/screens/auth_screen.dart';
 
 import 'package:optifyapp/screens/schedule_screen.dart';
 import 'package:optifyapp/screens/social_screen.dart';
-import 'package:optifyapp/screens/contacts_screen.dart';
 import 'package:optifyapp/providers/activities.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
 import 'package:optifyapp/screens/activity_screen.dart';
@@ -270,8 +269,8 @@ class _MyAppState extends State<MyApp> {
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
             AccountScreen.routeName: (ctx) => AccountScreen(token: auth.myToken, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) => SocialScreen(token: auth.myToken, contactsGroupsProvider: contactsGroupsProvider, user_id: auth.myUserId),
-            ContactsScreen.routeName: (ctx) => ContactsScreen(),
+            SocialScreen.routeName: (ctx) =>
+                SocialScreen(token: auth.myToken, contactsGroupsProvider: contactsGroupsProvider, user_id: auth.myUserId),
             GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen(),
             ActivityScreen.routeName: (ctx) => ActivityScreen(),
           },

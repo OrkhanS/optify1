@@ -18,10 +18,10 @@ import 'package:http/http.dart' as http;
 class AddActivityScreen extends StatefulWidget {
   var token, schedule_id;
   AddActivityScreen({this.token, this.schedule_id});
-  AddActivityScreenState createState() => AddActivityScreenState();
+  _AddActivityScreenState createState() => _AddActivityScreenState();
 }
 
-class AddActivityScreenState extends State<AddActivityScreen> with SingleTickerProviderStateMixin {
+class _AddActivityScreenState extends State<AddActivityScreen> with SingleTickerProviderStateMixin {
   String _ActivityName;
   double _discreteValue = 10.0;
   DateTime _dateTime;

@@ -7,8 +7,6 @@ import '../models/http_exception.dart';
 
 //import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
-import 'FirebaseMessaging.dart';
-
 enum AuthMode { Signup, Login }
 
 class AuthScreen extends StatelessWidget {

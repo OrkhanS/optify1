@@ -15,21 +15,17 @@ import 'package:optifyapp/providers/activities.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/activityBox.dart';
-import 'package:optifyapp/ActivityClass.dart';
-import 'package:optifyapp/screens/addActivity_screen.dart' as activityPageNew;
 import '../providers/activities.dart';
-
-void main() => runApp(ScheduleScreen());
 
 class ScheduleScreen extends StatefulWidget {
   var token, auth, schedule_id;
   Activities activitiesProvider;
   ScheduleScreen({this.auth, this.token, this.schedule_id, this.activitiesProvider});
   @override
-  ScheduleScreenMain createState() => ScheduleScreenMain();
+  ScheduleScreenState createState() => ScheduleScreenState();
 }
 
-class ScheduleScreenMain extends State<ScheduleScreen> {
+class ScheduleScreenState extends State<ScheduleScreen> {
   List _activity = [];
   String nextOrderURL;
   bool isSwitched = true;
