@@ -27,10 +27,12 @@ class ScheduleScreen extends StatefulWidget {
 
 class ScheduleScreenState extends State<ScheduleScreen> {
   List _activity = [];
-  String nextOrderURL;
+  String nextActivitiesURL="FirstCall";
+  String previousActivitiesURL="FirstCall";
   bool isSwitched = true;
   String token;
   String schedule_id;
+  var dateForMonth, dateForDay;
 
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -62,15 +64,12 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     var now = DateTime.now();
     var nowWeekday = now.weekday;
 
-    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * 49);
+    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * 50);
 
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
-        if (activitiesProvider.activities.length != 0) {
-          _activity = activitiesProvider.activities;
-          if (nextOrderURL == "FirstCall") {
-            nextOrderURL = activitiesProvider.detailsActivities["next"];
-          }
+        if (activitiesProvider.notLoadingActivities == false) {
+          _activity = activitiesProvider.getActivities;
         } else {
           //messageLoader = true;
         }
@@ -186,6 +185,15 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //                          height: 50,
 //                          color: Colors.black,
 //                        );
+                        
+                        var date = DateTime.now().subtract(Duration(days: -7*(index-50)));
+                        dateForMonth = DateFormat.MMMM().format(date);
+                        // dateForDay = DateFormat.wee;
+                        // final firstMonday = DateTime.now().weekday;
+                        // final daysInFirstWeek = 8 - firstMonday;
+                        // final diff = date.difference(startOfYear);
+                        // var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
+
                         return Container(
                           width: MediaQuery.of(context).size.width,
                           child: Card(
@@ -215,7 +223,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           Text(
-                                            "May", //todo: Month
+                                            dateForMonth.toString(), //todo: Month
                                             style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                                           ),
                                           Text(
@@ -235,7 +243,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                   ],
                                 ),
                                 FullTime(
-                                  activityList: _activity,
+                                  activityList: activitiesProvider.getActivities[index],
                                 ),
                               ],
                             ),
@@ -255,7 +263,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                   movementDuration: Duration(milliseconds: 500),
                                   dragStartBehavior: DragStartBehavior.start,
                                   onDismissed: (direction) {
-                                    String url = Api.myActivities + "1" + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
+                                    String url = Api.myActivities + schedule_id.toString() + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
                                     http.delete(
                                       url,
                                       headers: {
