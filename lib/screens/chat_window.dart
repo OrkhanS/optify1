@@ -13,8 +13,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ChatWindow extends StatefulWidget {
-  var provider, user, room, token;
-  ChatWindow({this.provider, this.user, this.room, this.token});
+  var provider, user, room, auth;
+  ChatWindow({this.provider, this.user, this.room, this.auth});
   static const routeName = '/chats/chat_window';
 
   @override
@@ -43,10 +43,10 @@ class _ChatWindowState extends State<ChatWindow> {
     textEditingController = TextEditingController();
     scrollController = ScrollController();
     id = widget.room.toString();
-    if(Provider.of<Auth>(context).myToken == null){
-      Provider.of<Auth>(context).getToken();
+    if(widget.auth.myToken == null){
+      widget.auth.getToken();
     }else{
-      token = Provider.of<Auth>(context).myToken.toString();
+      token = widget.auth.myToken.toString();
     }    
     initCommunication(id);
     super.initState();
@@ -56,8 +56,9 @@ class _ChatWindowState extends State<ChatWindow> {
     reset();
     try {
       _channelRoom =
-          new IOWebSocketChannel.connect(Api.roomSocket + id.toString() + '/?token=' + token);
+          new IOWebSocketChannel.connect(Api.roomSocket + id.toString() + '/?token=' + token.toString());
       _channelRoom.stream.listen(_onReceptionOfMessageFromServer);
+      print("Room Socket Connected");
     } catch (e) {}
   }
 
@@ -192,7 +193,7 @@ class _ChatWindowState extends State<ChatWindow> {
             url,
             headers: {
               HttpHeaders.CONTENT_TYPE: "application/json",
-              "Authorization": "Token " + widget.token,
+              "Authorization": "Token " + token,
             },
           ).then((response) {
             var dataOrders = json.decode(response.body) as Map<String, dynamic>;

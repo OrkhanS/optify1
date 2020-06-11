@@ -27,23 +27,24 @@ class Messages extends ChangeNotifier {
     return tokenforROOM;
   }
 
-  Future fetchAndSetMessages(int i) async {
-    // var token = tokenforROOM;
-    // String url = "https://briddgy.herokuapp.com/api/chat/messages/?room_id=" + _chatRooms[i]["id"].toString();
-    // try {
-    //   await http.get(
-    //     url,
-    //     headers: {
-    //       HttpHeaders.CONTENT_TYPE: "application/json",
-    //       "Authorization": "Token " + token,
-    //     },
-    //   ).then((response) {
-    //     var dataOrders = json.decode(response.body) as Map<String, dynamic>;
-    //     _messages[_chatRooms[i]["id"]] = dataOrders;
-    //     _isloadingMessages = false;
-    //     notifyListeners();
-    //   });
-    // } catch (e) {}
+  Future fetchAndSetMessages(i, auth) async {
+    if(_messages.isEmpty){
+        String url = Api.messageList + _chatRooms[i]["id"].toString();
+        try {
+          await http.get(
+            url,
+            headers: {
+              HttpHeaders.CONTENT_TYPE: "application/json",
+              "Authorization": "Token " + auth.myToken,
+            },
+          ).then((response) {
+            var dataOrders = json.decode(response.body) as Map<String, dynamic>;
+            _messages[_chatRooms[i]["id"]] = dataOrders;
+            _isloadingMessages = false;
+            notifyListeners();
+          });
+        } catch (e) {}
+    }
   }
 
   bool get messagesNotLoaded {
@@ -108,7 +109,6 @@ class Messages extends ChangeNotifier {
   Map get messages => _messages;
 
   void readMessages(id) {
-    readLastMessages(id);
     newMessage[id] = 0;
     //newMessage.remove(id);
   }
@@ -122,23 +122,23 @@ class Messages extends ChangeNotifier {
     }
   }
 
-  Future readLastMessages(id) async {
-    var token = tokenforROOM;
-    try {
-      const url = "http://briddgy.herokuapp.com/api/chat/readlast/";
+  // Future readLastMessages(id) async {
+  //   var token = tokenforROOM;
+  //   try {
+  //     const url = "http://briddgy.herokuapp.com/api/chat/readlast/";
 
-      http.post(url,
-          headers: {
-            HttpHeaders.CONTENT_TYPE: "application/json",
-            "Authorization": "Token " + token,
-          },
-          body: json.encode({
-            "room_id": id,
-          }));
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     http.post(url,
+  //         headers: {
+  //           HttpHeaders.CONTENT_TYPE: "application/json",
+  //           "Authorization": "Token " + token,
+  //         },
+  //         body: json.encode({
+  //           "room_id": id,
+  //         }));
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   //______________________________________________________________________________________
 
@@ -228,30 +228,4 @@ class Messages extends ChangeNotifier {
     return user_detail;
   }
 
-  Future fetchAndSetUserDetails(auth) async {
-    // var f;
-    // auth.removeListener(f);
-    // final prefs = await SharedPreferences.getInstance();
-    // if (!prefs.containsKey('userData')) {
-    //   return false;
-    // }
-    // final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-
-    // auth.token = extractedUserData['token'];
-    // var token = extractedUserData['token'];
-    // try {
-    //   const url = "http://briddgy.herokuapp.com/api/users/me/";
-
-    //   final response = await http.get(
-    //     url,
-    //     headers: {
-    //       HttpHeaders.CONTENT_TYPE: "application/json",
-    //       "Authorization": "Token " + token,
-    //     },
-    //   ).then((response) {
-    //     var dataOrders = json.decode(response.body) as Map<String, dynamic>;
-    //     user_detail = dataOrders;
-    //   });
-    // } catch (error) {}
-  }
 }

@@ -217,7 +217,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                                 onTap: () {
                                                   messageProvider.readMessages(_rooms[index]["id"]);
                                                   Provider.of<Messages>(context).newMessage[_rooms[index]["id"]] = 0;
-                                                  messageProvider.fetchAndSetMessages(index);
+                                                  messageProvider.fetchAndSetMessages(index, auth);
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -227,7 +227,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                                                             user: _rooms[index]["members"][1]["user"]["id"].toString() != myid
                                                                 ? _rooms[index]["members"][1]["user"]
                                                                 : _rooms[index]["members"][0]["user"],
-                                                            token: auth.myToken)),
+                                                            auth: auth)),
                                                   );
                                                 },
                                               ),

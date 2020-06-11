@@ -85,26 +85,29 @@ class Auth with ChangeNotifier {
   }
 
   Future fetchAndSetUserDetails() async {
-    if (myToken == null) {
-      return;
-    }
-    const url = Api.address + "api/users/me/";
-    try {
-      await http.get(
-        url,
-        headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
-          "Authorization": "Token " + myToken.toString(),
-        },
-      ).then((response) {
-        final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-        user = dataOrders;
-        isLoadingUser = false;
-        notifyListeners();
-      });
-    } catch (e) {
-      return;
-    }
+   if(user.isEmpty){
+        if (myToken == null) {
+        return;
+      }
+      
+      const url = Api.address + "api/users/me/";
+      try {
+        await http.get(
+          url,
+          headers: {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+            "Authorization": "Token " + myToken.toString(),
+          },
+        ).then((response) {
+          final dataOrders = json.decode(response.body) as Map<String, dynamic>;
+          user = dataOrders;
+          isLoadingUser = false;
+          notifyListeners();
+        });
+      } catch (e) {
+        return;
+      }
+   }
   }
 
   Future<void> signup(String email, String password, String firstname, String lastname, String username

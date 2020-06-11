@@ -39,7 +39,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   String nextOrderURL;
   List _suggested = [];
   List contacts = [];
-  bool requestSent = false;
+  var requestSent;
   String token;
   var snackBar;
   bool loadingContacts = false;
@@ -232,10 +232,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                             ],
                                           ),
                                         ),
+                                        contacts[i]["contact_status"] == null ?
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 5),
-                                          child: requestSent == false
+                                          child: requestSent != i
                                               ? RaisedButton(
                                                   color: Colors.white,
                                                   onPressed: () {
@@ -246,7 +247,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                                             token);
                                                     setState(
                                                       () {
-                                                        requestSent = true;
+                                                        requestSent = i;
                                                       },
                                                     );
                                                   },
@@ -354,7 +355,90 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                                     ),
                                                   ),
                                                 ),
+                                        )
+
+                                        :
+                                        
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 5),
+                                          child: RaisedButton(
+                                                  color: Colors.white,
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) =>
+                                                          AlertDialog(
+                                                        content: Text(
+                                                          "Do you want to remove Request?",
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No.'),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes!',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .redAccent,
+                                                                )),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                              setState(
+                                                                () {
+                                                                  requestSent =
+                                                                      false;
+                                                                },
+                                                              );
+                                                              Provider.of<ContactsGroups>(
+                                                                      context)
+                                                                  .removeContactOrRequest(
+                                                                      i, token);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.done_all,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          "Friend",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                         ),
+                                      
+                                      
                                       ],
                                     ),
                                   ),
