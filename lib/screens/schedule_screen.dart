@@ -168,7 +168,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             backgroundColor: Theme.of(context).primaryColor,
             heroTag: "btn1",
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token, schedule_id: schedule_id, dateMonth:date)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token, schedule_id: schedule_id)));
             },
             tooltip: 'First button',
             child: Icon(Icons.add, color: Colors.white),
@@ -187,8 +187,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //                      padding: EdgeInsets.symmetric(horizontal: 1.0),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-
-                        if (index < 19 && initialBuild) {
+                        if (index < 15 && initialBuild) {
                           return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
                         }
                         initialBuild = false;
@@ -250,7 +249,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                   ],
                                 ),
                                 FullTime(
-                                  activityList:  activitiesProvider.activities(index),
+                                  activityList: activitiesProvider.getActivities[index],
                                 ),
                               ],
                             ),
@@ -619,6 +618,11 @@ Widget hourRow({@required final String time, @required final double vertical}) {
           ),
         ),
         for (var m = 0; m < 7; m++) PlaceHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
       ],
     ),
   );
@@ -642,4 +646,19 @@ class PlaceHolder extends StatelessWidget {
       ),
     ));
   }
+}
+
+Widget placeHolder({@required double vertical}) {
+  return Expanded(
+      child: Container(
+    height: vertical,
+    decoration: const BoxDecoration(
+      border: const Border(
+        right: const BorderSide(
+          width: 1.0,
+          color: const Color(0xFFE0E0E0),
+        ),
+      ),
+    ),
+  ));
 }

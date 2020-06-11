@@ -100,7 +100,7 @@ class _AuthCardState extends State<AuthCard> {
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false)
-            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname'],_authData['username'] 
+            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname'], _authData['username']
 //            , deviceToken
                 );
       }
@@ -165,28 +165,32 @@ class _AuthCardState extends State<AuthCard> {
               if (_authMode == AuthMode.Signup)
                 Container(
 //                padding: EdgeInsets.symmetric(horizontal: 15),
-                width: deviceSize.width * 0.8,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    icon: Icon(Icons.alternate_email),
+                  width: deviceSize.width * 0.8,
+                  child: TextFormField(
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => FocusScope.of(context).nextFocus(),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      icon: Icon(Icons.alternate_email),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value.isEmpty || !value.contains('@')) {
+                        return 'Invalid email!';
+                      } else
+                        return null; //Todo
+                    },
+                    onSaved: (value) {
+                      _authData['email'] = value;
+                    },
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                   if (value.isEmpty || !value.contains('@')) {
-                     return 'Invalid email!';
-                   } else
-                     return null; //Todo
-                  },
-                  onSaved: (value) {
-                    _authData['email'] = value;
-                  },
                 ),
-              ),
               Container(
 //                padding: EdgeInsets.symmetric(horizontal: 15),
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () => FocusScope.of(context).nextFocus(),
                   decoration: InputDecoration(
                     labelText: 'Username',
                     icon: Icon(MdiIcons.account),
@@ -207,6 +211,8 @@ class _AuthCardState extends State<AuthCard> {
                 Container(
                   width: deviceSize.width * 0.8,
                   child: TextFormField(
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => FocusScope.of(context).nextFocus(),
                     enabled: _authMode == AuthMode.Signup,
                     decoration: InputDecoration(
                       labelText: 'Name',
@@ -222,6 +228,8 @@ class _AuthCardState extends State<AuthCard> {
                 Container(
                   width: deviceSize.width * 0.8,
                   child: TextFormField(
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => FocusScope.of(context).nextFocus(),
                     enabled: _authMode == AuthMode.Signup,
                     decoration: InputDecoration(
                       labelText: 'Surname',
@@ -236,6 +244,8 @@ class _AuthCardState extends State<AuthCard> {
               Container(
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () => FocusScope.of(context).nextFocus(),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     icon: Icon(Icons.vpn_key),
@@ -257,6 +267,7 @@ class _AuthCardState extends State<AuthCard> {
                 Container(
                   width: deviceSize.width * 0.8,
                   child: TextFormField(
+                    textInputAction: TextInputAction.done,
                     enabled: _authMode == AuthMode.Signup,
                     decoration: InputDecoration(
                       labelText: 'Repeat Password',
@@ -326,7 +337,9 @@ class _AuthCardState extends State<AuthCard> {
                         _authMode == AuthMode.Login ? 'LOG IN' : 'SIGN UP',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      onPressed: _submit,
+                      onPressed: () {
+                        _submit();
+                      },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
