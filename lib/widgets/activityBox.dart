@@ -35,7 +35,7 @@ class _ActivityBoxState extends State<ActivityBox> {
     horiz = 50.0;
     vert = top;
     fontSize = 12.0;
-    left = 50.0 * weekDay;
+    left = 49.5 * weekDay;
     super.initState();
   }
 
@@ -132,11 +132,11 @@ class _ActivityBoxState extends State<ActivityBox> {
             : Container(
                 decoration: BoxDecoration(
 //                  color: Colors.lightGreen[(priority * 9 - (priority * 9) % 100)],
-                  color: Colors.lime[100],
+                  color: Colors.indigo[100],
 //                  borderRadius: BorderRadius.circular(3),
-////                  border: Border.all(color: Theme.of(context).primaryColor, width: .7),
+                  border: Border.all(color: Theme.of(context).primaryColor, width: .7),
                 ),
-                width: horiz,
+                width: horiz - 2,
                 height: duration * (widget.height),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(1),

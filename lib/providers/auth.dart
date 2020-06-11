@@ -22,43 +22,40 @@ class Auth with ChangeNotifier {
   String myScheduleidFromStorage;
   String myUseridFromStorage;
 
-
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;    
-      myTokenFromStorage = extractedUserData["token"];
-      myUseridFromStorage = extractedUserData['user_id'].toString();
-      myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    myTokenFromStorage = extractedUserData["token"];
+    myUseridFromStorage = extractedUserData['user_id'].toString();
+    myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
   }
 
-  String get myToken{
+  String get myToken {
     return myTokenFromStorage;
   }
 
-  String get myScheduleId{
+  String get myScheduleId {
     return myScheduleidFromStorage;
   }
 
-  String get myUserId{
+  String get myUserId {
     return myUseridFromStorage;
   }
 
-  set myToken(string){
+  set myToken(string) {
     myTokenFromStorage = string;
   }
 
-  set myScheduleId(string){
+  set myScheduleId(string) {
     myScheduleidFromStorage = string;
   }
 
-  set myUserId(string){
+  set myUserId(string) {
     myUseridFromStorage = string;
   }
-
-
 
   bool get isAuth {
     return _token != null;
@@ -87,8 +84,8 @@ class Auth with ChangeNotifier {
     return isLoadingUser;
   }
 
- Future fetchAndSetUserDetails() async {
-    if (myToken == null){
+  Future fetchAndSetUserDetails() async {
+    if (myToken == null) {
       return;
     }
     const url = Api.address + "api/users/me/";
@@ -183,11 +180,7 @@ class Auth with ChangeNotifier {
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
-        {
-          'token': _token,
-          'user_id': responseData["user_id"],
-          'schedule_id': responseData["schedule_id"]
-        },
+        {'token': _token, 'user_id': responseData["user_id"], 'schedule_id': responseData["schedule_id"]},
       );
 
       prefs.setString('userData', userData);
@@ -197,7 +190,6 @@ class Auth with ChangeNotifier {
     }
   }
 
- 
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
@@ -233,16 +225,16 @@ class Auth with ChangeNotifier {
     Provider.of<Activities>(context).removeAllDataOfProvider();
     Provider.of<Activities>(context).removeAllDataOfProvider();
     removeAllDataOfProvider();
-    
+
     notifyListeners();
   }
 
-  removeAllDataOfProvider(){
+  removeAllDataOfProvider() {
     _token = null;
-    user = {};
+    user = null;
     isLoadingUser = true;
-    myTokenFromStorage= null;
-    myScheduleidFromStorage= null;
-    myUseridFromStorage= null;
-  } 
+    myTokenFromStorage = null;
+    myScheduleidFromStorage = null;
+    myUseridFromStorage = null;
+  }
 }

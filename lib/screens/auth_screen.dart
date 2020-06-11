@@ -167,15 +167,15 @@ class _AuthCardState extends State<AuthCard> {
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Username',
                     icon: Icon(Icons.alternate_email),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value.isEmpty || !value.contains('@')) {
-                      return 'Invalid email!';
-                    } else
-                      return null; //Todo
+//                    if (value.isEmpty || !value.contains('@')) {
+//                      return 'Invalid email!';
+//                    } else
+//                      return null; //Todo
                   },
                   onSaved: (value) {
                     _authData['email'] = value;

@@ -245,7 +245,7 @@ class _MyAppState extends State<MyApp> {
             ),
             primarySwatch: Colors.lightGreen,
             primaryColor: Colors.lightGreen[900],
-            accentColor: Colors.lightGreenAccent,
+            accentColor: Colors.lightGreen[900],
             fontFamily: 'Lato',
           ),
           debugShowCheckedModeBanner: false,

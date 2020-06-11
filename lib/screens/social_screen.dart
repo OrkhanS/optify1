@@ -219,317 +219,15 @@ class _SocialScreenState extends State<SocialScreen> {
                                     }
                                   },
                                   child: ListView.builder(
+                                    itemCount: _contacts.length,
                                     itemBuilder: (context, int i) {
-                                      if (_contacts[i]["requester"]["id"].toString() == user_id.toString()) {
-                                        _contactsDetails = _contacts[i]["reciever"];
-                                      } else {
-                                        _contactsDetails = _contacts[i]["requester"];
-                                      }
-                                      var nameSur = _contactsDetails["first_name"].toString() + " " + _contactsDetails["last_name"].toString();
-                                      if (nameSur == " ") nameSur = "Hidden Name";
-                                      return Container(
-                                        height: 100,
-                                        padding: EdgeInsets.symmetric(horizontal: 10),
-                                        child: Card(
-                                          elevation: 4,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Image(
-                                                image: NetworkImage("https://robohash.org/" + _contactsDetails["id"].toString()),
-                                                height: 80,
-                                                width: 90,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      nameSur,
-                                                      style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Icon(
-                                                          Icons.alternate_email,
-                                                          size: 10,
-                                                          color: Theme.of(context).primaryColor,
-                                                        ),
-                                                        Text(
-                                                          _contactsDetails["username"].toString(),
-                                                          style: TextStyle(color: Colors.grey[600]),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-
-                                              _contacts[i]["requester"]["id"].toString() ==
-                                                      user_id.toString() // Here check if I requested or someone sent me friend request.
-
-                                                  ?
-
-                                                  /// Start of: I sent friend request
-                                                  Padding(
-                                                      //If I sent friend request
-                                                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-                                                      child: _contacts[i]["state"] == "req" // If another person hasn't accepted my request yet.
-
-                                                          ?
-
-                                                          /// My Pending request
-                                                          RaisedButton(
-                                                              // If I want to cancel my Pending
-                                                              color: Colors.white,
-                                                              onPressed: () {
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (ctx) => AlertDialog(
-                                                                    content: Text(
-                                                                      "Do you want to remove Request?",
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                      FlatButton(
-                                                                        child: Text('No.'),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                        },
-                                                                      ),
-                                                                      FlatButton(
-                                                                        child: Text('Yes!',
-                                                                            style: TextStyle(
-                                                                              color: Colors.redAccent,
-                                                                            )),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                                                child: Column(
-                                                                  mainAxisSize: MainAxisSize.max,
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                  children: <Widget>[
-                                                                    Icon(
-                                                                      Icons.access_time,
-                                                                      color: Theme.of(context).primaryColor,
-                                                                      size: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      "Pending",
-                                                                      style: TextStyle(
-                                                                        color: Theme.of(context).primaryColor,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )
-
-                                                          /// End of my Pending request
-
-                                                          :
-
-                                                          /// My Contact (which I sent request)
-
-                                                          RaisedButton(
-                                                              color: Colors.white,
-                                                              onPressed: () {
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (ctx) => AlertDialog(
-                                                                    content: Text(
-                                                                      "Do you want to remove Request?",
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                      FlatButton(
-                                                                        child: Text('No.'),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                        },
-                                                                      ),
-                                                                      FlatButton(
-                                                                        child: Text('Yes!',
-                                                                            style: TextStyle(
-                                                                              color: Colors.redAccent,
-                                                                            )),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                                                child: Column(
-                                                                  mainAxisSize: MainAxisSize.max,
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                  children: <Widget>[
-                                                                    Icon(
-                                                                      Icons.remove_circle_outline,
-                                                                      color: Theme.of(context).primaryColor,
-                                                                      size: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      "Remove",
-                                                                      style: TextStyle(
-                                                                        color: Theme.of(context).primaryColor,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                      /// End My Contact
-                                                    )
-
-                                                  /// End of: I sent friend request
-
-                                                  /// Start of: Someone sent me request
-
-                                                  : Padding(
-                                                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-                                                      child: _contacts[i]["state"] == "req" // If I haven't accepted my request yet.
-
-                                                          ?
-
-                                                          /// Respond to request
-                                                          RaisedButton(
-                                                              color: Colors.white,
-                                                              onPressed: () {
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (ctx) => AlertDialog(
-                                                                    content: Text(
-                                                                      "Do you want to Accept or Remove the request?",
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                      FlatButton(
-                                                                        child: Text('Accept.'),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                          Provider.of<ContactsGroups>(context).acceptContactRequest(i, token);
-                                                                          setState(
-                                                                            () {
-                                                                              _contacts[i]["state"] = "acc";
-                                                                            },
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                      FlatButton(
-                                                                        child: Text('Remove.',
-                                                                            style: TextStyle(
-                                                                              color: Colors.redAccent,
-                                                                            )),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                                                child: Column(
-                                                                  mainAxisSize: MainAxisSize.max,
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                  children: <Widget>[
-                                                                    Icon(
-                                                                      Icons.query_builder,
-                                                                      color: Theme.of(context).primaryColor,
-                                                                      size: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      "Respond",
-                                                                      style: TextStyle(
-                                                                        color: Theme.of(context).primaryColor,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )
-
-                                                          /// End of Respond to request
-                                                          :
-
-                                                          /// My Contact (which someone sent to me)
-                                                          RaisedButton(
-                                                              color: Colors.white,
-                                                              onPressed: () {
-                                                                showDialog(
-                                                                  context: context,
-                                                                  builder: (ctx) => AlertDialog(
-                                                                    content: Text(
-                                                                      "Do you want to remove Contact?",
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                      FlatButton(
-                                                                        child: Text('No.'),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                        },
-                                                                      ),
-                                                                      FlatButton(
-                                                                        child: Text('Yes!',
-                                                                            style: TextStyle(
-                                                                              color: Colors.redAccent,
-                                                                            )),
-                                                                        onPressed: () {
-                                                                          Navigator.of(ctx).pop();
-                                                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(i, token);
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                                                child: Column(
-                                                                  mainAxisSize: MainAxisSize.max,
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                  children: <Widget>[
-                                                                    Icon(
-                                                                      Icons.remove_circle_outline,
-                                                                      color: Theme.of(context).primaryColor,
-                                                                      size: 20,
-                                                                    ),
-                                                                    Text(
-                                                                      "Remove",
-                                                                      style: TextStyle(
-                                                                        color: Theme.of(context).primaryColor,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                      /// End My Contact
-                                                    ),
-
-                                              /// End of: Someone sent me request
-                                            ],
-                                          ),
-                                        ),
+                                      return ContactCard(
+                                        contacts: _contacts,
+                                        i: i,
+                                        token: token,
+                                        userId: user_id,
                                       );
                                     },
-                                    itemCount: _contacts.length,
                                   ),
                                 ),
                     ),
@@ -547,6 +245,333 @@ class _SocialScreenState extends State<SocialScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class ContactCard extends StatefulWidget {
+  final contacts, i, token, userId;
+
+  ContactCard({@required this.contacts, @required this.i, @required this.token, @required this.userId});
+
+  @override
+  _ContactCardState createState() => _ContactCardState();
+}
+
+class _ContactCardState extends State<ContactCard> {
+  var contactsDetails;
+  @override
+  Widget build(BuildContext context) {
+    if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
+      contactsDetails = widget.contacts[widget.i]["reciever"];
+    } else {
+      contactsDetails = widget.contacts[widget.i]["requester"];
+    }
+    var nameSur = contactsDetails["first_name"].toString() + " " + contactsDetails["last_name"].toString();
+    if (nameSur == " ") nameSur = "Hidden Name";
+    return Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Card(
+          elevation: 4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Image(
+                image: NetworkImage("https://robohash.org/" + contactsDetails["id"].toString()),
+                height: 80,
+                width: 90,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      nameSur,
+                      style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.alternate_email,
+                          size: 10,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Text(
+                          contactsDetails["username"].toString(),
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+
+              widget.contacts[widget.i]["requester"]["id"].toString() ==
+                      widget.userId.toString() // Here check if I requested or someone sent me friend request.
+
+                  ?
+
+                  /// Start of: I sent friend request
+                  Padding(
+                      //If I sent friend request
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+                      child: widget.contacts[widget.i]["state"] == "req" // If another person hasn't accepted my request yet.
+
+                          ?
+
+                          /// My Pending request
+                          RaisedButton(
+                              // If I want to cancel my Pending
+                              color: Colors.white,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    content: Text(
+                                      "Do you want to remove Request?",
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('No.'),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Yes!',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                            )),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.access_time,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      "Pending",
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+
+                          /// End of my Pending request
+
+                          :
+
+                          /// My Contact (which I sent request)
+
+                          RaisedButton(
+                              color: Colors.white,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    content: Text(
+                                      "Do you want to remove Request?",
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('No.'),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Yes!',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                            )),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.remove_circle_outline,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      "Remove",
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                      /// End My Contact
+                    )
+
+                  /// End of: I sent friend request
+
+                  /// Start of: Someone sent me request
+
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+                      child: widget.contacts[widget.i]["state"] == "req" // If I haven't accepted my request yet.
+
+                          ?
+
+                          /// Respond to request
+                          RaisedButton(
+                              color: Colors.white,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    content: Text(
+                                      "Do you want to Accept or Remove the request?",
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Accept.'),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Provider.of<ContactsGroups>(context).acceptContactRequest(widget.i, widget.token);
+                                          setState(
+                                            () {
+                                              widget.contacts[widget.i]["state"] = "acc";
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Remove.',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                            )),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.query_builder,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      "Respond",
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+
+                          /// End of Respond to request
+                          :
+
+                          /// My Contact (which someone sent to me)
+                          RaisedButton(
+                              color: Colors.white,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    content: Text(
+                                      "Do you want to remove Contact?",
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('No.'),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Yes!',
+                                            style: TextStyle(
+                                              color: Colors.redAccent,
+                                            )),
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                          Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.remove_circle_outline,
+                                      color: Theme.of(context).primaryColor,
+                                      size: 20,
+                                    ),
+                                    Text(
+                                      "Remove",
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                      /// End My Contact
+                    ),
+
+              /// End of: Someone sent me request
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

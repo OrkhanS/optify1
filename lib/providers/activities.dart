@@ -26,7 +26,7 @@ class Activities with ChangeNotifier {
     return _activites;
   }
 
-  List activities(index) {  
+  List activities(index) {
     print(index);
     return _activites[index];
   }
@@ -49,7 +49,9 @@ class Activities with ChangeNotifier {
         if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
           allActivityDetails = dataOrders;
-          _activites[50] = dataOrders["results"];
+          _activites[20] = dataOrders["results"];
+
+          ///middle
           isLoadingActivities = false;
           notifyListeners();
         } else {
@@ -67,10 +69,7 @@ class Activities with ChangeNotifier {
   Future fetchAndSetNext(id, offset, myToken, schedule_id) async {
     var token = myToken;
     if (token != null && token != "null") {
-      String url = Api.myActivities +
-          schedule_id.toString() +
-          "/activities/?offset=" +
-          offset.toString();
+      String url = Api.myActivities + schedule_id.toString() + "/activities/?offset=" + offset.toString();
       http.get(
         url,
         headers: {
@@ -97,10 +96,7 @@ class Activities with ChangeNotifier {
   Future fetchAndSetPrev(id, offset, myToken, schedule_id) async {
     var token = myToken;
     if (token != null && token != "null") {
-      String url = Api.myActivities +
-          schedule_id.toString() +
-          "/activities/?offset=" +
-          offset.toString();
+      String url = Api.myActivities + schedule_id.toString() + "/activities/?offset=" + offset.toString();
       http.get(
         url,
         headers: {
@@ -127,10 +123,11 @@ class Activities with ChangeNotifier {
   // addActivityFromPostRequest(newactivity) {
   //   _activites.add(newactivity);
   //   notifyListeners();
-  // }
+  //
 
   removeAllDataOfProvider() {
     _activites = [];
+    _activites = new List(100);
     allActivityDetails = {};
     loadingActivities = true;
   }
