@@ -314,7 +314,8 @@ class NewActivityPersonalPage extends State<NewActivityPersonal> {
           
         print(response.statusCode);
       if (response.statusCode == 201) {
-        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
+        //Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
+        Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(
           title: "Done",

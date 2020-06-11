@@ -90,7 +90,7 @@ class Auth with ChangeNotifier {
     }
     const url = Api.address + "api/users/me/";
     try {
-      final response = await http.get(
+      await http.get(
         url,
         headers: {
           HttpHeaders.CONTENT_TYPE: "application/json",
@@ -107,7 +107,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> signup(String email, String password, String firstname, String lastname
+  Future<void> signup(String email, String password, String firstname, String lastname, String username
 //      , String deviceID todo fix
       ) async {
     //return _authenticate(email, password, 'signupNewUser');
@@ -116,7 +116,7 @@ class Auth with ChangeNotifier {
       final response = await http.post(url,
           headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
           body: json.encode({
-            "username": email, //todo fix
+            "username": username, 
             "password": password,
             "deviceToken": '', //todo orxan
             "first_name": firstname,
@@ -155,7 +155,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> login(String email, String password
+  Future<void> login(String username, String password
 //      , String deviceID todo fix
       ) async {
     final prefs = await SharedPreferences.getInstance();
@@ -166,7 +166,7 @@ class Auth with ChangeNotifier {
       final response = await http.post(url,
           headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
           body: json.encode({
-            "username": email,
+            "username": username,
             "password": password,
             "deviceToken": '', //todo orxan
           }));

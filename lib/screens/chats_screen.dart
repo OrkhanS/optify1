@@ -48,20 +48,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
       auth = Provider.of<Auth>(context);
       myid = auth.myUserId;
     }
-    
-    // if(a == false){
-    //   messageProvider.createRooms("2", auth);
-    // }
-    // getAvatarUrl(String a) {
-    //   String helper = 'https://briddgy.herokuapp.com/media/';
-    //   imageUrl =
-    //       'https://moonvillageassociation.org/wp-content/uploads/2018/06/default-profile-picture1.jpg';
-    //   if (a != null) {
-    //     imageUrl = 'https://briddgy.herokuapp.com/media/' + a.toString() + "/";
-    //   }
-
-    //   return imageUrl;
-    // }
+  
 
     List<MaterialColor> colors = [
       Colors.amber,
@@ -122,17 +109,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
             elevation: 1,
           ),
           body: Container(
-            child: messageProvider.chats == null
-                ? Center(child: Text('No Chats'))
-                : messageProvider.isChatsLoading == true
-                    ? Center(child: CircularProgressIndicator())
+            child:messageProvider.isChatsLoading == true 
+                ? Center(child: CircularProgressIndicator())
+                : messageProvider.chats == null || messageProvider.chats.length == 0
+                    ? Center(child: Text('No Chats'))
                     : NotificationListener<ScrollNotification>(
                         onNotification: (ScrollNotification scrollInfo) {
                           if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                             // start loading data
                             setState(() {
                               _isfetchingnew = true;
-                              print("load order");
                             });
                             _loadData();
                           }

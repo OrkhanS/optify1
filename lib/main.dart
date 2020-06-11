@@ -216,6 +216,7 @@ class _MyAppState extends State<MyApp> {
         contactsGroupsProvider,
         _,
       ) {
+        
         // if (socketConnected == false) {
         //   initCommunication(auth, newmessage);
         // }

@@ -190,12 +190,6 @@ class Messages extends ChangeNotifier {
           final dataOrders = json.decode(value.body) as Map<String, dynamic>;
           allChatRoomDetails = dataOrders;
           _chatRooms = dataOrders["results"];
-          
-          // if (_chatRooms.length == 0) {
-          //   for (var i = 0; i < _chatRooms.length; i++) {
-          //     newMessage[_chatRooms[i]["id"]] = _chatRooms[i]["members"][1]["unread_count"];
-          //   }
-          // }
           isChatsLoading = false;
         });
         return _chatRooms;

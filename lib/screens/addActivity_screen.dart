@@ -16,8 +16,8 @@ import '../newActivityPersonal.dart' as personal;
 import 'package:http/http.dart' as http;
 
 class AddActivityScreen extends StatefulWidget {
-  var token, schedule_id;
-  AddActivityScreen({this.token, this.schedule_id});
+  var token, schedule_id, dateMonth;
+  AddActivityScreen({this.token, this.schedule_id, this.dateMonth});
   _AddActivityScreenState createState() => _AddActivityScreenState();
 }
 
@@ -567,7 +567,7 @@ class _AddActivityState extends State<AddActivity> {
       token = extractedUserData['token'];
       schedule_id = extractedUserData['schedule_id'].toString();
     }
-    String url = Api.newActivityPersonal + widget.schedule_id.toString() + "/activities/";
+    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
     http
         .post(url,
             headers: {
@@ -586,7 +586,8 @@ class _AddActivityState extends State<AddActivity> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
-        Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
+        //Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
+        Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(
           title: "Done",

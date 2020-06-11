@@ -94,13 +94,13 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Provider.of<Auth>(context, listen: false).login(_authData['email'], _authData['password']
+        await Provider.of<Auth>(context, listen: false).login(_authData['username'], _authData['password']
 //            , deviceToken
             );
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false)
-            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname']
+            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname'],_authData['username'] 
 //            , deviceToken
                 );
       }
@@ -162,13 +162,34 @@ class _AuthCardState extends State<AuthCard> {
               SizedBox(
                 height: 30,
               ),
+              if (_authMode == AuthMode.Signup)
+                Container(
+//                padding: EdgeInsets.symmetric(horizontal: 15),
+                width: deviceSize.width * 0.8,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    icon: Icon(Icons.alternate_email),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                   if (value.isEmpty || !value.contains('@')) {
+                     return 'Invalid email!';
+                   } else
+                     return null; //Todo
+                  },
+                  onSaved: (value) {
+                    _authData['email'] = value;
+                  },
+                ),
+              ),
               Container(
 //                padding: EdgeInsets.symmetric(horizontal: 15),
                 width: deviceSize.width * 0.8,
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Username',
-                    icon: Icon(Icons.alternate_email),
+                    icon: Icon(MdiIcons.account),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
@@ -178,7 +199,7 @@ class _AuthCardState extends State<AuthCard> {
 //                      return null; //Todo
                   },
                   onSaved: (value) {
-                    _authData['email'] = value;
+                    _authData['username'] = value;
                   },
                 ),
               ),

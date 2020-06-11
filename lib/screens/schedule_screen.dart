@@ -168,7 +168,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             backgroundColor: Theme.of(context).primaryColor,
             heroTag: "btn1",
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token, schedule_id: schedule_id)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token, schedule_id: schedule_id, dateMonth:date)));
             },
             tooltip: 'First button',
             child: Icon(Icons.add, color: Colors.white),
@@ -187,7 +187,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //                      padding: EdgeInsets.symmetric(horizontal: 1.0),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        if (index < 15 && initialBuild) {
+
+                        if (index < 19 && initialBuild) {
                           return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
                         }
                         initialBuild = false;
@@ -249,7 +250,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                   ],
                                 ),
                                 FullTime(
-                                  activityList: activitiesProvider.getActivities[index],
+                                  activityList:  activitiesProvider.activities(index),
                                 ),
                               ],
                             ),
