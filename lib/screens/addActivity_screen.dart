@@ -31,6 +31,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   bool _autoValidate = false;
   bool _modeAI = false;
   var categoryValue = 'Routine';
+  var defPrivacy = 'Friends';
 
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -419,10 +420,44 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                 ),
                 Divider(),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text(
+                      'Privacy',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                    ),
+                    SizedBox(width: 100),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        width: 130,
+                        child: DropdownButton<String>(
+                          value: defPrivacy,
+                          items: <String>['Private', 'Friends', 'Public'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              defPrivacy = val;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+                Divider(),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     const Text(
-                      'Members',
+                      'Privacy',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                     ),
                     Expanded(child: SizedBox()),
@@ -526,7 +561,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               },
               "category": categoryValue,
               "priority": _discreteValue.toInt(),
-              "privacy": {"privacy": "personal"}
+              "privacy": {"privacy": defPrivacy.toLowerCase()}
             }))
         .then((response) {
       if (response.statusCode == 201) {

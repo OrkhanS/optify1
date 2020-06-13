@@ -40,10 +40,36 @@ class _ActivityScreenState extends State<ActivityScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(),
                     Text(
                       widget.myActivity["activity"]["title"],
                       style: TextStyle(fontSize: 24, color: Colors.grey[700], fontWeight: FontWeight.w500),
+                    ),
+                    Divider(),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Privacy:",
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                          ),
+                        ),
+                        Text(
+                          widget.myActivity["privacy"]["privacy"].toString()[0].toUpperCase() +
+                              widget.myActivity["privacy"]["privacy"]
+                                  .toString()
+                                  .substring(1, widget.myActivity["privacy"]["privacy"].toString().length),
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                     Divider(),
                     Row(
