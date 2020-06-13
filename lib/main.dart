@@ -242,6 +242,10 @@ class _MyAppState extends State<MyApp> {
           title: 'Optisend',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            primarySwatch: Colors.lightGreen,
+            primaryColor: Colors.lightGreen[900],
+            accentColor: Colors.lightGreen[800],
+            fontFamily: 'Lato',
             appBarTheme: AppBarTheme(
               color: Colors.white,
             ),
@@ -253,10 +257,6 @@ class _MyAppState extends State<MyApp> {
             cardTheme: CardTheme(
               margin: EdgeInsets.all(0),
             ),
-            primarySwatch: Colors.lightGreen,
-            primaryColor: Colors.lightGreen[900],
-            accentColor: Colors.lightGreen[900],
-            fontFamily: 'Lato',
           ),
           localizationsDelegates: [
             // ... app-specific localization delegate[s] here

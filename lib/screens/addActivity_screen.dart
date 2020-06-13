@@ -66,7 +66,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(
             Icons.chevron_left,
@@ -457,7 +456,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     const Text(
-                      'Privacy',
+                      'Members',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                     ),
                     Expanded(child: SizedBox()),

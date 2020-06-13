@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:optifyapp/models/routine_color.dart';
 import 'package:optifyapp/providers/auth.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:provider/provider.dart';
+import 'package:optifyapp/models/routine_color.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
@@ -149,6 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
+//                          for(var x in range(0,routineColor.length))
                           Container(height: 8, width: 8, color: Colors.lightBlue),
                           Text("Work"),
                           SizedBox(

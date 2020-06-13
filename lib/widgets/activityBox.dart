@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:optifyapp/models/routine_color.dart';
 import 'package:optifyapp/screens/activity_screen.dart';
-import 'package:random_color/random_color.dart';
-import 'package:optifyapp/ActivityClass.dart';
 
 class ActivityBox extends StatefulWidget {
-  ActivityBox({@required this.context, @required this.myActivity, @required this.height});
+  ActivityBox({@required this.context, @required this.myActivity, @required this.height, @required this.modePriority});
   final BuildContext context;
   final myActivity, height;
+  final bool modePriority;
   @override
   _ActivityBoxState createState() => _ActivityBoxState();
 }
@@ -20,23 +20,33 @@ class _ActivityBoxState extends State<ActivityBox> {
   int priority;
   var weekDay;
   var fontSize;
-  bool tapped = false;
+  bool tapped;
   var left;
-  bool deduced = false;
+  bool deduced;
+  Color boxColor;
 
   @override
   void initState() {
+    super.initState();
     startDate = DateTime.parse(widget.myActivity["activity"]["start_times"][0].toString());
     endDate = DateTime.parse(widget.myActivity["activity"]["end_times"][0].toString());
     weekDay = startDate.weekday.toDouble();
     top = startDate.hour.toDouble() * 60 + startDate.minute.toDouble();
     duration = -startDate.hour.toDouble() * 60 + endDate.hour.toDouble() * 60 - startDate.minute.toDouble() + endDate.minute.toDouble();
     priority = int.parse(widget.myActivity["priority"].toString());
+    tapped = false;
+    deduced = false;
     horiz = 50.0;
     vert = top;
     fontSize = 12.0;
     left = 49.5 * weekDay;
-    super.initState();
+    boxColor = widget.modePriority ? Colors.lightGreen[(priority * 9 - (priority * 9) % 100)] : routineColor[widget.myActivity["category"]];
+  }
+
+  @override
+  void didChangeDependencies() {
+    boxColor = widget.modePriority ? Colors.lightGreen[(priority * 9 - (priority * 9) % 100)] : routineColor[widget.myActivity["category"]];
+    super.didChangeDependencies();
   }
 
   @override
@@ -56,7 +66,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                 height: duration * (widget.height) < 100 ? 100 : duration * (widget.height),
                 width: 200,
                 child: Card(
-                  elevation: 1,
+                  elevation: 3,
                   child: Row(
                     children: <Widget>[
                       Expanded(
@@ -66,9 +76,17 @@ class _ActivityBoxState extends State<ActivityBox> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                widget.myActivity["activity"]["title"],
-                                style: TextStyle(fontSize: 19, color: Colors.grey[800], fontWeight: FontWeight.w600),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(
+                                      widget.myActivity["activity"]["title"],
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 2,
+                                      style: TextStyle(fontSize: 19, color: Colors.grey[800], fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
                               ),
                               Text(
                                 widget.myActivity["category"],
@@ -91,7 +109,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                         ),
                       ),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           IconButton(
                               icon: Icon(Icons.open_in_new),
@@ -122,6 +140,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                               ],
                             ),
                           ),
+                          SizedBox(),
                         ],
                       ),
 
@@ -136,12 +155,15 @@ class _ActivityBoxState extends State<ActivityBox> {
               )
             : Container(
                 decoration: BoxDecoration(
-//                  color: Colors.lightGreen[(priority * 9 - (priority * 9) % 100)],
-                  color: Colors.indigo[100],
-//                  borderRadius: BorderRadius.circular(3),
-                  border: Border.all(color: Theme.of(context).primaryColor, width: .7),
+                  color: boxColor,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                      color: Colors.black26
+//                  Theme.of(context).primaryColor
+                      ,
+                      width: .5),
                 ),
-                width: horiz - 2,
+                width: horiz - 1,
                 height: duration * (widget.height),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(1),

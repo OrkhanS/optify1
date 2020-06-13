@@ -33,6 +33,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   String token;
   String schedule_id;
   var dateForMonth, dateForDay;
+  bool _modePriority;
 
   bool initialBuild;
 
@@ -57,9 +58,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   void initState() {
-    // getToken();
-    initialBuild = true;
     super.initState();
+    initialBuild = true;
+    _modePriority = false;
   }
 
   @override
@@ -82,71 +83,36 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         }
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.white,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-//                IconButton(
-//                  icon: Icon(Icons.format_list_bulleted),
-//                  color: Theme.of(context).primaryColor,
-//                  onPressed: () {},
-//                ),
-
-//                FlatButton(
-//                  child: Container(
-//                      padding: EdgeInsets.all(10),
-//                      decoration: BoxDecoration(
-//                        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-//                        borderRadius: BorderRadius.circular(5),
-//                      ),
-//                      child: Text(
-//                        "List Activities",
-//                        style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold, fontSize: 13),
-//                      )),
-////                  color: Colors.red[100],
-//                  onPressed: () {},
-//                ),
-
                 Text(
 //                  dateForMonth,
-
                   "Schedule",
                   style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                 ),
-//                SizedBox(
-//                  width: 100,
-//                ),
               ],
             ),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
+                  color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
                   shape: new RoundedRectangleBorder(
+                    side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
                     borderRadius: new BorderRadius.circular(30.0),
                   ),
                   child: Text(
-                    "Default",
-                    style: TextStyle(color: Colors.white),
+                    _modePriority ? "Priority" : "Default",
+                    style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      _modePriority = !_modePriority;
+                    });
+                  },
                 ),
               ),
-//              FlatButton(
-//                child: Container(
-//                    padding: EdgeInsets.all(10),
-//                    decoration: BoxDecoration(
-//                      border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-//                      borderRadius: BorderRadius.circular(5),
-//                    ),
-//                    child: Text(
-//                      "Heatmap",
-//                      style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold, fontSize: 13),
-//                    )),
-////                  color: Colors.red[100],
-//                onPressed: () {},
-//              ),
               Transform.rotate(
                 angle: 3.14 / 2,
                 child: Switch(
@@ -249,6 +215,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                 ),
                                 FullTime(
                                   activityList: activitiesProvider.getActivities[index],
+                                  modePriority: _modePriority,
                                 ),
                               ],
                             ),
@@ -389,14 +356,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                /* todo RASUL
-_activity[0]["priority"]
-_activity[0]["activity"]["title"]
-_activity[0]["activity"]["start_times"][0]
-_activity[0]["activity"]["end_times"][0]
-_activity[0]["activity"]["weekdays"][0]
-_activity[0]["activity"]["durations"][0]
-*/
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: <Widget>[
@@ -418,11 +377,13 @@ _activity[0]["activity"]["durations"][0]
                                                   children: <Widget>[
                                                     Icon(
                                                       Icons.timer,
+                                                      size: 15,
                                                       color: Theme.of(context).primaryColor,
                                                     ),
                                                     RichText(
                                                       text: TextSpan(
-                                                        text: DateFormat.Hm()
+                                                        text: "  " +
+                                                            DateFormat.Hm()
                                                                 .format(DateTime.parse(
                                                                     activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
                                                                 .toString() +
@@ -490,7 +451,8 @@ _activity[0]["activity"]["durations"][0]
 
 class FullTime extends StatefulWidget {
   final List activityList;
-  FullTime({Key key, @required this.activityList}) : super(key: key);
+  final bool modePriority;
+  FullTime({Key key, @required this.activityList, @required this.modePriority}) : super(key: key);
 
   @override
   FullTimeState createState() => FullTimeState();
@@ -534,11 +496,7 @@ class FullTimeState extends State<FullTime> {
 
                   if (widget.activityList != null)
                     for (var x = widget.activityList.length - 1; x >= 0; x--)
-                      ActivityBox(
-                        context: context,
-                        myActivity: widget.activityList[x],
-                        height: scaleHeight / 60,
-                      ),
+                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority),
 //                  if (widget.activityList != null)
 //                    for (var x in widget.activityList)
 //                      ActivityBox(
