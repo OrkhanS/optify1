@@ -168,7 +168,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             backgroundColor: Theme.of(context).primaryColor,
             heroTag: "btn1",
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token, schedule_id: schedule_id)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token)));
             },
             tooltip: 'First button',
             child: Icon(Icons.add, color: Colors.white),
@@ -182,7 +182,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       controller: _horizontalscrollController,
                       itemCount: middle * 2,
 //                      itemExtent: 100,
-
                       physics: const PageScrollPhysics(),
 //                      padding: EdgeInsets.symmetric(horizontal: 1.0),
                       scrollDirection: Axis.horizontal,

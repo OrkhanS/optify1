@@ -49,6 +49,7 @@ class _ActivityBoxState extends State<ActivityBox> {
       child: InkWell(
         onTap: () {
           setState(() => tapped = !tapped);
+          print(widget.myActivity.toString());
         },
         child: tapped
             ? Container(
@@ -68,6 +69,10 @@ class _ActivityBoxState extends State<ActivityBox> {
                               Text(
                                 widget.myActivity["activity"]["title"],
                                 style: TextStyle(fontSize: 19, color: Colors.grey[800], fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                widget.myActivity["category"],
+                                style: TextStyle(fontSize: 15, color: Colors.grey[700], fontWeight: FontWeight.normal),
                               ),
                               Text(
                                 DateFormat.yMMMd().format(DateTime.parse(widget.myActivity["activity"]["start_times"][0])).toString(),

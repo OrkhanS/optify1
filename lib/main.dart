@@ -33,6 +33,7 @@ import 'package:optifyapp/screens/social_screen.dart';
 import 'package:optifyapp/providers/activities.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
 import 'package:optifyapp/screens/activity_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -216,7 +217,6 @@ class _MyAppState extends State<MyApp> {
         contactsGroupsProvider,
         _,
       ) {
-        
         // if (socketConnected == false) {
         //   initCommunication(auth, newmessage);
         // }
@@ -240,7 +240,16 @@ class _MyAppState extends State<MyApp> {
         if (auth.isAuth) auth.fetchAndSetUserDetails();
         return MaterialApp(
           title: 'Optisend',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              color: Colors.white,
+            ),
+            sliderTheme: SliderThemeData(
+                valueIndicatorTextStyle: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            )),
             cardTheme: CardTheme(
               margin: EdgeInsets.all(0),
             ),
@@ -249,7 +258,16 @@ class _MyAppState extends State<MyApp> {
             accentColor: Colors.lightGreen[900],
             fontFamily: 'Lato',
           ),
-          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [
+            // ... app-specific localization delegate[s] here
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en'), // English
+            // ... other locales the app supports
+          ],
           builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
           home: auth.isAuth
               ? SafeArea(

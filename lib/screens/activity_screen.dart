@@ -49,6 +49,30 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     Row(
                       children: <Widget>[
                         Text(
+                          "Category:",
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                          ),
+                        ),
+                        Text(
+                          widget.myActivity["category"],
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    Row(
+                      children: <Widget>[
+                        Text(
                           "Date:",
                           style: TextStyle(
                             color: Colors.grey[800],
