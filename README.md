@@ -1,4 +1,4 @@
-# optifyflutter
+# optify
 
 A new Flutter application.
 

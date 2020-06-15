@@ -1,4 +1,4 @@
-package com.example.optifyflutter
+package com.example.optify
 
 import android.os.Bundle
 

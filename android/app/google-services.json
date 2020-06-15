@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "370435691044",
+    "firebase_url": "https://optify-51572.firebaseio.com",
+    "project_id": "optify-51572",
+    "storage_bucket": "optify-51572.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370435691044:android:50faeaf6f56727a67abeb1",
+        "android_client_info": {
+          "package_name": "com.example.optify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "370435691044-pbonki4o3tj34jp9fov1biad57enjiio.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEZRrLhBCem4lOP9p9EenqiS4EzQBegE0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "370435691044-pbonki4o3tj34jp9fov1biad57enjiio.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
