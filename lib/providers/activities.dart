@@ -10,32 +10,37 @@ import 'package:http/http.dart' as http;
 
 class Activities with ChangeNotifier {
   List<dynamic> _activites = new List(40);
+  List<dynamic> tempListBeforeLoad = new List(22);
   var middle = 20;
   bool isLoadingActivities = true;
   bool isLoadingPrevOrNext = false;
-  int fetchCallCountInitialBuild=0;
+  int fetchCallCountInitialBuild = 0;
   String token;
   String scheduleId;
   Map allActivityDetails = {};
-
 
   bool get notLoadingActivities {
     return isLoadingActivities;
   }
 
   set loadingActivities(bool boolean) {
-    
     isLoadingActivities = boolean;
   }
 
   List get getActivities {
+    if (_activites[middle] == null) {
+      tempListBeforeLoad[middle - 1] = [];
+      tempListBeforeLoad[middle] = [];
+      tempListBeforeLoad[middle + 1] = [];
+      return tempListBeforeLoad;
+    }
     return _activites;
   }
 
   List activities(index) {
     print(index);
     // if(index == middle || index == middle-1 || index == middle+1) fetchCallCountInitialBuild++;
-    // if(fetchCallCountInitialBuild >= 3){ 
+    // if(fetchCallCountInitialBuild >= 3){
     //   fetchCallCountInitialBuild = 2;
     //   return _activites[index];}
     // var offset;
@@ -71,8 +76,8 @@ class Activities with ChangeNotifier {
           ///middle
           isLoadingActivities = false;
           notifyListeners();
-          fetchAndSetNextOrPrev(middle+1,1,myToken,schedule_id);
-          fetchAndSetNextOrPrev(middle-1,-1,myToken,schedule_id);
+          fetchAndSetNextOrPrev(middle + 1, 1, myToken, schedule_id);
+          fetchAndSetNextOrPrev(middle - 1, -1, myToken, schedule_id);
         } else {
           _activites = [];
           allActivityDetails = {};
@@ -99,7 +104,7 @@ class Activities with ChangeNotifier {
           allActivityDetails = dataOrders;
           _activites[id] = dataOrders["results"];
           isLoadingPrevOrNext = false;
-          
+
           notifyListeners();
         } else {
           _activites = [];
@@ -111,23 +116,22 @@ class Activities with ChangeNotifier {
     }
   }
 
- 
   addActivityFromPostRequest(newactivity) {
     var date = DateTime.now();
-    var date2 = date.add(Duration(days: 7 - date.weekday, hours: 23 - date.hour, minutes: 59-date.minute));
+    var date2 = date.add(Duration(days: 7 - date.weekday, hours: 23 - date.hour, minutes: 59 - date.minute));
     var newActivityDate = DateTime.parse(newactivity["activity"]["start_times"][0].toString());
     int difference = newActivityDate.difference(date2).inDays;
-    
-    if(difference > 0){
-      difference = (difference~/7);
-      if(_activites[difference+middle+1] == null) _activites[difference+middle+1] = [];
-      _activites[difference+middle+1].add(newactivity);
-    }else{
-      difference = (difference~/7);
-      if(_activites[difference+middle] == null) _activites[difference+middle] = [];
-      _activites[difference+middle].add(newactivity);
+
+    if (difference > 0) {
+      difference = (difference ~/ 7);
+      if (_activites[difference + middle + 1] == null) _activites[difference + middle + 1] = [];
+      _activites[difference + middle + 1].add(newactivity);
+    } else {
+      difference = (difference ~/ 7);
+      if (_activites[difference + middle] == null) _activites[difference + middle] = [];
+      _activites[difference + middle].add(newactivity);
     }
-    
+
     notifyListeners();
   }
 

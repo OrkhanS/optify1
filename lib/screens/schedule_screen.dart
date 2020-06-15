@@ -29,7 +29,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   List _activity = [];
   String nextActivitiesURL = "FirstCall";
   String previousActivitiesURL = "FirstCall";
-  bool isSwitched = true;
+  bool isSwitched;
   String token;
   String schedule_id;
   var dateForMonth, dateForDay;
@@ -59,6 +59,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
     super.initState();
+    isSwitched = false;
     initialBuild = true;
     _modePriority = false;
   }
@@ -72,7 +73,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     var date = DateTime.now();
     dateForMonth = DateFormat.MMMM().format(date);
 
-    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * middle);
+    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * (middle));
 
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
@@ -82,321 +83,232 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           //messageLoader = true;
         }
         return Scaffold(
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
+            appBar: AppBar(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
 //                  dateForMonth,
-                  "Schedule",
-                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
-                  shape: new RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
-                    borderRadius: new BorderRadius.circular(30.0),
+                    "Schedule",
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                   ),
-                  child: Text(
-                    _modePriority ? "Priority" : "Default",
-                    style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _modePriority = !_modePriority;
-                    });
-                  },
-                ),
+                ],
               ),
-              Transform.rotate(
-                angle: 3.14 / 2,
-                child: Switch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                    });
-                  },
-                  activeTrackColor: Theme.of(context).primaryColorLight,
-                  activeColor: Theme.of(context).primaryColor,
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                    color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
+                    shape: new RoundedRectangleBorder(
+                      side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
+                    child: Text(
+                      _modePriority ? "Priority" : "Default",
+                      style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _modePriority = !_modePriority;
+                      });
+                    },
+                  ),
                 ),
-              )
-            ],
-            centerTitle: true,
-            elevation: 1,
-          ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Theme.of(context).primaryColor,
-            heroTag: "btn1",
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token)));
-            },
-            tooltip: 'First button',
-            child: Icon(Icons.add, color: Colors.white),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: isSwitched
-              ? Stack(
-                  children: <Widget>[
-                    ListView.builder(
-                      //todo Refresh activities
-                      controller: _horizontalscrollController,
-                      itemCount: middle * 2,
-//                      itemExtent: 100,
-                      physics: const PageScrollPhysics(),
-//                      padding: EdgeInsets.symmetric(horizontal: 1.0),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        if (index < 15 && initialBuild) {
-                          return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
-                        }
-                        initialBuild = false;
-                        date = DateTime.now().subtract(Duration(days: -7 * (index - middle)));
+                Transform.rotate(
+                  angle: 3.14 / 2,
+                  child: Switch(
+                    value: isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        isSwitched = value;
+                      });
+                    },
+                    activeTrackColor: Theme.of(context).primaryColorLight,
+                    activeColor: Theme.of(context).primaryColor,
+                  ),
+                )
+              ],
+              centerTitle: true,
+              elevation: 1,
+            ),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              heroTag: "btn1",
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token)));
+              },
+              tooltip: 'First button',
+              child: Icon(Icons.add, color: Colors.white),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            body: Column(
+              children: <Widget>[
+                activitiesProvider.getActivities[20].isEmpty
+                    ? Center(child: Text("No Activity"))
+                    : AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        height: isSwitched ? MediaQuery.of(context).size.height * 0.8 : 0,
+                        child: ListView.builder(
+                          itemBuilder: (context, int i) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Dismissible(
+                                direction: DismissDirection.endToStart,
+                                movementDuration: Duration(milliseconds: 500),
+                                dragStartBehavior: DragStartBehavior.start,
+                                onDismissed: (direction) {
+                                  String url =
+                                      Api.myActivities + schedule_id.toString() + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
+                                  http.delete(
+                                    url,
+                                    headers: {
+                                      HttpHeaders.CONTENT_TYPE: "application/json",
+                                      "Authorization": "Token " + token,
+                                    },
+                                  );
+                                  activitiesProvider.getActivities[20][i].removeAt(i);
 
-                        dateForMonth = DateFormat.MMMM().format(date);
-                        // dateForDay = DateFormat.wee;
-                        // final firstMonday = DateTime.now().weekday;
-                        // final daysInFirstWeek = 8 - firstMonday;
-                        // final diff = date.difference(startOfYear);
-                        // var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
-
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Card(
-                            margin: EdgeInsets.symmetric(horizontal: 7),
-                            elevation: 1,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            width: 2.0,
-                                            color: Colors.grey[100],
-                                          ),
-                                          right: BorderSide(
-                                            width: 2.0,
-                                            color: Colors.grey[100],
-                                          ),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          Text(
-                                            dateForMonth.toString(), //todo: Month
-                                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            "10 - 17", //todo :Range
-                                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                  Flushbar(
+                                    title: "Done!",
+                                    message: "Activity was deleted",
+                                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+                                    borderRadius: 10,
+                                    duration: Duration(seconds: 3),
+                                  )..show(context);
+                                },
+                                confirmDismiss: (DismissDirection direction) async {
+                                  final bool res = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Confirm"),
+                                        content: const Text("Are you sure you wish to delete this item?"),
+                                        actions: <Widget>[
+                                          FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("DELETE")),
+                                          FlatButton(
+                                            onPressed: () => Navigator.of(context).pop(false),
+                                            child: const Text("CANCEL"),
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                    weekDay(day: "Mon"),
-                                    weekDay(day: "Tue"),
-                                    weekDay(day: "Wed"),
-                                    weekDay(day: "Thu"),
-                                    weekDay(day: "Fri"),
-                                    weekDay(day: "Sat"),
-                                    weekDay(day: "Sun"),
-                                  ],
-                                ),
-                                FullTime(
-                                  activityList: activitiesProvider.getActivities[index],
-                                  modePriority: _modePriority,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    Provider.of<Activities>(context, listen: true).isLoadingActivities == true
-                        ? Container(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 40.0),
-                              child: CircularProgressIndicator(),
-                            ))
-                        : SizedBox(),
-                  ],
-                )
-              : activitiesProvider.getActivities[20].isEmpty
-                  ? Center(child: Text("No Activity"))
-                  : Container(
-                      child: ListView.builder(
-                        itemBuilder: (context, int i) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: Dismissible(
-                              direction: DismissDirection.endToStart,
-                              movementDuration: Duration(milliseconds: 500),
-                              dragStartBehavior: DragStartBehavior.start,
-                              onDismissed: (direction) {
-                                String url =
-                                    Api.myActivities + schedule_id.toString() + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
-                                http.delete(
-                                  url,
-                                  headers: {
-                                    HttpHeaders.CONTENT_TYPE: "application/json",
-                                    "Authorization": "Token " + token,
-                                  },
-                                );
-                                activitiesProvider.getActivities[20][i].removeAt(i);
-
-                                Flushbar(
-                                  title: "Done!",
-                                  message: "Activity was deleted",
-                                  aroundPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
-                                  borderRadius: 10,
-                                  duration: Duration(seconds: 3),
-                                )..show(context);
-                              },
-                              confirmDismiss: (DismissDirection direction) async {
-                                final bool res = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Confirm"),
-                                      content: const Text("Are you sure you wish to delete this item?"),
-                                      actions: <Widget>[
-                                        FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("DELETE")),
-                                        FlatButton(
-                                          onPressed: () => Navigator.of(context).pop(false),
-                                          child: const Text("CANCEL"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                return res; //todo check
-                              },
-                              background: Container(
-                                margin: EdgeInsets.all(3),
-                                decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]])),
+                                      );
+                                    },
+                                  );
+                                  return res; //todo check
+                                },
+                                background: Container(
+                                  margin: EdgeInsets.all(3),
+                                  decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]])),
 //                                    border: Border.all(),
 //                                    borderRadius: BorderRadius.circular(5),
 //                                  ),
 
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    SizedBox(width: 40),
-                                    Icon(
-                                      MdiIcons.delete,
-                                      color: Colors.white,
-                                      size: 27,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "DELETE",
-                                      style: TextStyle(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(width: 40),
+                                      Icon(
+                                        MdiIcons.delete,
                                         color: Colors.white,
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
+                                        size: 27,
                                       ),
-                                    ),
-                                    SizedBox(width: 15),
-                                  ],
-                                ),
-                              ),
-                              key: ValueKey(i),
-                              child: InkWell(
-                                onTap: () => null,
-                                child: Container(
-//                              height: 140,
-                                  child: Card(
-                                    elevation: 1,
-                                    child: Row(
-//                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: <Widget>[
-                                              Transform.rotate(
-                                                angle: 3.18,
-                                                child: CircularProgressIndicator(
-//                                          value: Tween<Double>(0.0, int.parse(_activity[i]["priority"].toString()).toDouble() / 100).animate(parent),
-                                                  value: int.parse(activitiesProvider.getActivities[20][i]["priority"].toString()).toDouble() / 100,
-                                                  strokeWidth: 4,
-                                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                                    Colors.lightGreen[activitiesProvider.getActivities[20][i]["priority"] * 9 -
-                                                        (activitiesProvider.getActivities[20][i]["priority"] * 9) % 100 +
-                                                        100],
-                                                  ),
-                                                  backgroundColor: Colors.grey[100],
-                                                ),
-                                              ),
-                                              Text(
-                                                activitiesProvider.getActivities[20][i]["priority"].toString(),
-                                                style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
-                                              ),
-                                            ],
-                                          ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        "DELETE",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                      ),
+                                      SizedBox(width: 15),
+                                    ],
+                                  ),
+                                ),
+                                key: ValueKey(i),
+                                child: InkWell(
+                                  onTap: () => null,
+                                  child: Container(
+//                              height: 140,
+                                    child: Card(
+                                      elevation: 1,
+                                      child: Row(
+//                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                            child: Stack(
+                                              alignment: Alignment.center,
                                               children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      activitiesProvider.getActivities[20][i]["activity"]["title"],
-                                                      style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
+                                                Transform.rotate(
+                                                  angle: 3.18,
+                                                  child: CircularProgressIndicator(
+//                                          value: Tween<Double>(0.0, int.parse(_activity[i]["priority"].toString()).toDouble() / 100).animate(parent),
+                                                    value: int.parse(activitiesProvider.getActivities[20][i]["priority"].toString()).toDouble() / 100,
+                                                    strokeWidth: 4,
+                                                    valueColor: new AlwaysStoppedAnimation<Color>(
+                                                      Colors.lightGreen[activitiesProvider.getActivities[20][i]["priority"] * 9 -
+                                                          (activitiesProvider.getActivities[20][i]["priority"] * 9) % 100 +
+                                                          100],
                                                     ),
-                                                    Text(
-                                                      DateFormat.yMMMd()
-                                                          .format(
-                                                              DateTime.parse(activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
-                                                          .toString(),
-                                                      style: TextStyle(color: Colors.grey[600]),
-                                                    ),
-                                                  ],
+                                                    backgroundColor: Colors.grey[100],
+                                                  ),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Icon(
-                                                      Icons.timer,
-                                                      size: 15,
-                                                      color: Theme.of(context).primaryColor,
-                                                    ),
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        text: "  " +
-                                                            DateFormat.Hm()
-                                                                .format(DateTime.parse(
-                                                                    activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
-                                                                .toString() +
-                                                            " - " +
-                                                            DateFormat.Hm()
-                                                                .format(DateTime.parse(
-                                                                    activitiesProvider.getActivities[20][i]["activity"]["end_times"][0]))
-                                                                .toString(),
-                                                        style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                                                Text(
+                                                  activitiesProvider.getActivities[20][i]["priority"].toString(),
+                                                  style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        activitiesProvider.getActivities[20][i]["activity"]["title"],
+                                                        style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                      Text(
+                                                        DateFormat.yMMMd()
+                                                            .format(
+                                                                DateTime.parse(activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+                                                            .toString(),
+                                                        style: TextStyle(color: Colors.grey[600]),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.timer,
+                                                        size: 15,
+                                                        color: Theme.of(context).primaryColor,
+                                                      ),
+                                                      RichText(
+                                                        text: TextSpan(
+                                                          text: "  " +
+                                                              DateFormat.Hm()
+                                                                  .format(DateTime.parse(
+                                                                      activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+                                                                  .toString() +
+                                                              " - " +
+                                                              DateFormat.Hm()
+                                                                  .format(DateTime.parse(
+                                                                      activitiesProvider.getActivities[20][i]["activity"]["end_times"][0]))
+                                                                  .toString(),
+                                                          style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
 //                                          Row(
 //                                            children: <Widget>[
 //                                              Icon(
@@ -422,28 +334,125 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 //                                              ),
 //                                            ],
 //                                          )
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
 
 //                                    Image(
 //                                      image: NetworkImage("https://img.icons8.com/wired/2x/passenger-with-baggage.png"),
 //                                      height: 60,
 //                                      width: 60,
 //                                    ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                            );
+                          },
+                          itemCount: activitiesProvider.getActivities == null ? 0 : activitiesProvider.getActivities[20].length,
+                        ),
+                      ),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: isSwitched ? 0 : MediaQuery.of(context).size.height * .8,
+                  child: Stack(
+                    children: <Widget>[
+                      ListView.builder(
+                        //todo Refresh activities
+                        controller: _horizontalscrollController,
+                        itemCount: middle * 2,
+//                      itemExtent: 100,
+                        physics: const PageScrollPhysics(),
+//                      padding: EdgeInsets.symmetric(horizontal: 1.0),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          if (index < 15 && initialBuild) {
+                            return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
+                          }
+                          initialBuild = false;
+                          date = DateTime.now().subtract(Duration(days: -7 * (index - middle)));
+
+                          dateForMonth = DateFormat.MMMM().format(date);
+                          // dateForDay = DateFormat.wee;
+                          // final firstMonday = DateTime.now().weekday;
+                          // final daysInFirstWeek = 8 - firstMonday;
+                          // final diff = date.difference(startOfYear);
+                          // var weeks = ((diff.inDays - daysInFirstWeek) / 7).ceil();
+
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Card(
+                              margin: EdgeInsets.symmetric(horizontal: 7),
+                              elevation: 1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              width: 2.0,
+                                              color: Colors.grey[100],
+                                            ),
+                                            right: BorderSide(
+                                              width: 2.0,
+                                              color: Colors.grey[100],
+                                            ),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: <Widget>[
+                                            Text(
+                                              dateForMonth.toString(), //todo: Month
+                                              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "10 - 17", //todo :Range
+                                              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      weekDay(day: "Mon"),
+                                      weekDay(day: "Tue"),
+                                      weekDay(day: "Wed"),
+                                      weekDay(day: "Thu"),
+                                      weekDay(day: "Fri"),
+                                      weekDay(day: "Sat"),
+                                      weekDay(day: "Sun"),
+                                    ],
+                                  ),
+                                  FullTime(
+                                    activityList: activitiesProvider.getActivities[index],
+                                    modePriority: _modePriority,
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
-                        itemCount: activitiesProvider.getActivities == null ? 0 : activitiesProvider.getActivities[20].length,
                       ),
-                    ),
-        );
+                      Provider.of<Activities>(context, listen: true).isLoadingActivities == true
+                          ? Container(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 40.0),
+                                child: CircularProgressIndicator(),
+                              ))
+                          : SizedBox(),
+                    ],
+                  ),
+                ),
+              ],
+            ));
       },
     );
   }
@@ -462,7 +471,7 @@ class FullTimeState extends State<FullTime> {
   double scaleHeight = 40;
   double check = 40;
 
-  final _scrollController = ScrollController(initialScrollOffset: 300);
+  final _scrollController = ScrollController(initialScrollOffset: 800);
   @override
   Widget build(BuildContext context) {
 //    _animateToIndex(8.0);

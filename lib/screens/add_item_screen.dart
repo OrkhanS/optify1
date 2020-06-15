@@ -338,7 +338,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     Flushbar(
                       title: "Item added",
                       message: "You can see all of your items in My Items section of Account",
-                      aroundPadding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       borderRadius: 10,
                       duration: Duration(seconds: 5),
                     )..show(context);

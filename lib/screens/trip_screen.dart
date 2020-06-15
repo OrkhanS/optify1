@@ -413,7 +413,7 @@ class _TripScreenState extends State<TripsScreen> {
                                                 Flushbar(
                                                   title: "Chat with " + _trips[i]["owner"]["first_name"].toString() + " has been started!",
                                                   message: "Check Chats to see more.",
-                                                  aroundPadding: const EdgeInsets.all(8),
+                                                  padding: const EdgeInsets.all(8),
                                                   borderRadius: 10,
                                                   duration: Duration(seconds: 5),
                                                 )..show(context);

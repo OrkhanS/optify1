@@ -268,7 +268,7 @@ class _AddTripScreenState extends State<AddTripScreen> {
                     Flushbar(
                       title: "Trip added",
                       message: "You can see all of your trips in My Trips section of Account",
-                      aroundPadding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       borderRadius: 10,
                       duration: Duration(seconds: 5),
                     )..show(context);
