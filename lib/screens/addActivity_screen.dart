@@ -622,8 +622,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
             }))
         .then((response) {
       if (response.statusCode == 201) {
-        //Provider.of<Activities>(context, listen: false).fetchAndSetMyActivities(token, schedule_id);
-        Provider.of<Activities>(context, listen: false).addActivityFromPostRequest(json.decode(response.body));
+        Provider.of<Activities>(context).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(
           title: "Done",
@@ -634,7 +633,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         )..show(context);
       } else {
         print(response.body);
-
         Flushbar(
           title: "Error",
           message: "'Wrong details, try again'",

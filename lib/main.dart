@@ -197,16 +197,16 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          builder: (_) => Auth(),
+          create: (context) => Auth(),
         ),
         ChangeNotifierProvider(
-          builder: (_) => Activities(),
+          create: (context) => Activities()
         ),
         ChangeNotifierProvider(
-          builder: (_) => Messages(),
+         create: (context) => Messages(),
         ),
         ChangeNotifierProvider(
-          builder: (_) => ContactsGroups(),
+          create: (context) => ContactsGroups(),
         ),
       ],
       child: Consumer4<Auth, Messages, Activities, ContactsGroups>(builder: (

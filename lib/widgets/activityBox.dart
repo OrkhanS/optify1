@@ -6,7 +6,8 @@ import 'package:optifyapp/models/routine_color.dart';
 import 'package:optifyapp/screens/activity_screen.dart';
 
 class ActivityBox extends StatefulWidget {
-  ActivityBox({@required this.context, @required this.myActivity, @required this.height, @required this.modePriority});
+  var i;
+  ActivityBox({@required this.context, @required this.myActivity, @required this.height, @required this.modePriority, this.i});
   final BuildContext context;
   final myActivity, height;
   final bool modePriority;
@@ -114,7 +115,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                           IconButton(
                               icon: Icon(Icons.open_in_new),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityScreen(myActivity: widget.myActivity)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityScreen(i:widget.i,myActivity: widget.myActivity)));
                               }),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12.0),

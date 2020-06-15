@@ -34,6 +34,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   String schedule_id;
   var dateForMonth, dateForDay;
   bool _modePriority;
+  var middle = 20;
 
   bool initialBuild;
 
@@ -45,23 +46,22 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     token = extractedUserData['token'];
     schedule_id = extractedUserData['schedule_id'].toString();
-    loadMyActivites();
   }
 
-  loadMyActivites() async {
-    if (widget.activitiesProvider != null) {
-      if (widget.activitiesProvider.isLoadingActivities == true && token != null && token != "null") {
-        widget.activitiesProvider.fetchAndSetMyActivities(token, schedule_id);
-      }
-    }
-  }
 
   @override
   void initState() {
+    getToken();
     super.initState();
     isSwitched = false;
     initialBuild = true;
     _modePriority = false;
+  }
+  
+  func(){
+    setState(() {
+      _activity = Provider.of<Activities>(context, listen: true).getActivities[middle];
+    });
   }
 
   @override
@@ -78,7 +78,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
         if (activitiesProvider.notLoadingActivities == false) {
-          _activity = activitiesProvider.getActivities;
+          _activity = Provider.of<Activities>(context, listen: true).getActivities[middle];
         } else {
           //messageLoader = true;
         }
@@ -157,17 +157,15 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                 movementDuration: Duration(milliseconds: 500),
                                 dragStartBehavior: DragStartBehavior.start,
                                 onDismissed: (direction) {
-                                  String url =
-                                      Api.myActivities + schedule_id.toString() + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
-                                  http.delete(
-                                    url,
-                                    headers: {
-                                      HttpHeaders.CONTENT_TYPE: "application/json",
-                                      "Authorization": "Token " + token,
-                                    },
-                                  );
-                                  activitiesProvider.getActivities[20][i].removeAt(i);
-
+                                  if(token == null){
+                                    getToken().whenComplete(() => {
+                                      activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token)
+                                    });
+                                    
+                                  } else{
+                                    activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token);
+                                  }
+                                  
                                   Flushbar(
                                     title: "Done!",
                                     message: "Activity was deleted",
@@ -459,8 +457,8 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 }
 
 class FullTime extends StatefulWidget {
-  final List activityList;
-  final bool modePriority;
+  List activityList;
+  bool modePriority;
   FullTime({Key key, @required this.activityList, @required this.modePriority}) : super(key: key);
 
   @override
@@ -505,7 +503,7 @@ class FullTimeState extends State<FullTime> {
 
                   if (widget.activityList != null)
                     for (var x = widget.activityList.length - 1; x >= 0; x--)
-                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority),
+                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i:x),
 //                  if (widget.activityList != null)
 //                    for (var x in widget.activityList)
 //                      ActivityBox(
