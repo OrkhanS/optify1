@@ -7,10 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class ContactsGroups with ChangeNotifier {
-  List _contacts = [];
+  List _contacts = [];  
+  List _tempContacts = [];
   bool isLoadingContacts = true;
   String token;
   Map allContactsDetails = {};
+  Map tempContactDetails = {};
 
   bool get notLoadingContacts {
     return isLoadingContacts;
@@ -111,4 +113,24 @@ class ContactsGroups with ChangeNotifier {
     _contacts.add(newcontact);
     notifyListeners();
   }
+
+  // localAndGlobalSearch(pattern, user_id) async {
+  //   String url = Api.userslistAndSignUp + "?username=" + pattern;
+  //   await http.get(
+  //     url,
+  //     headers: {
+  //       HttpHeaders.CONTENT_TYPE: "application/json",
+  //       "Authorization": "Token " + token,
+  //     },
+  //   ).then((response) {
+  //     setState(
+  //       () {
+  //         final dataOrders = json.decode(response.body) as Map<String, dynamic>;
+  //         contacts.clear();
+  //         contacts.addAll(dataOrders["results"]);
+  //         loadingContacts = false;
+  //       },
+  //     );
+  //   });
+  // }
 }
