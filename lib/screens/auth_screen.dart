@@ -51,17 +51,16 @@ class _AuthCardState extends State<AuthCard> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String deviceToken;
   _getToken() {
-    // _firebaseMessaging.getToken().then((device) {
-    //   deviceToken = device;
-    //   print(deviceToken);
-    // });
-    // print(deviceToken);
+    _firebaseMessaging.getToken().then((device) {
+      deviceToken = device;
+    });
+    print(deviceToken);
   }
 
   @override
   void initState() {
     super.initState();
-    //_getToken();
+    _getToken();
   }
 
   void _showErrorDialog(String message) {
@@ -100,8 +99,7 @@ class _AuthCardState extends State<AuthCard> {
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false)
-            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname'], _authData['username']
-//            , deviceToken
+            .signup(_authData['email'], _authData['password'], _authData['firstname'], _authData['lastname'], _authData['username'], deviceToken
                 );
       }
     } on HttpException catch (error) {

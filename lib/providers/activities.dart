@@ -126,12 +126,14 @@ class Activities with ChangeNotifier {
       },
     );
 
-    //Todo index
+    //Todo send index
 
     _activites[middle].removeAt(i);
     _activites[middle].insert(0, {});
     _activites[middle].removeAt(0);
-
+    _activites[middle].sort((a,b) {
+          return a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
+    });
 
     notifyListeners();
   }
@@ -146,10 +148,19 @@ class Activities with ChangeNotifier {
       difference = (difference ~/ 7);
       if (_activites[difference + middle + 1] == null) _activites[difference + middle + 1] = [];
       _activites[difference + middle + 1].insert(0,newactivity);
+      _activites[difference + middle + 1].sort((a,b) {
+            return a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
+      });
     } else {
       difference = (difference ~/ 7);
       if (_activites[difference + middle] == null) _activites[difference + middle] = [];
       _activites[difference + middle].insert(0,newactivity);
+      _activites[difference + middle]..sort((a,b) {
+            print("Salam");
+            print(a);
+            var list = a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
+            return list;
+      });
     }
 
     notifyListeners();

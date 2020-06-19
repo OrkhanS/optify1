@@ -53,30 +53,39 @@ class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
   PageController _pageController;
   String tokenforROOM;
+  String deviceToken;
   Map valueMessages = {};
   bool socketConnected = false;
   var neWMessage;
+  List addMessages;
   String schedule_id, user_id;
   bool flagForLoggedOutThenLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
-    //getToken();
+    if(deviceToken==null)_getTokenOfDevice();
+    if(tokenforROOM == null) getToken();
   }
 
+  _getTokenOfDevice() {
+    _firebaseMessaging.getToken().then((deviceToken) {
+      print("Token is: $deviceToken");
+      deviceToken = deviceToken;
+    });
+  }
   _configureFirebaseListerners(newmessage) {
-    // _firebaseMessaging.configure(
-    //   // onMessage: (Map<String, dynamic> message) async {
-    //   //   neWMessage.addMessages = message;
-    //   // },
-    //   onLaunch: (Map<String, dynamic> message) async {
-    //     neWMessage.addMessages = message;
-    //   },
-    //   onResume: (Map<String, dynamic> message) async {
-    //     neWMessage.addMessages = message;
-    //   },
-    // );
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        addMessages.add( message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        addMessages.add( message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        addMessages.add( message);
+      },
+    );
   }
 
   Future getToken() async {
@@ -217,11 +226,12 @@ class _MyAppState extends State<MyApp> {
         contactsGroupsProvider,
         _,
       ) {
+        
         // if (socketConnected == false) {
         //   initCommunication(auth, newmessage);
         // }
 
-        // _configureFirebaseListerners(newmessage);
+        _configureFirebaseListerners(newmessage);
         if (auth.isAuth == false) {
           auth.tryAutoLogin();
         }

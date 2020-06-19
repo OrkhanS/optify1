@@ -15,7 +15,7 @@ class Auth with ChangeNotifier {
   String _token;
   DateTime _expiryDate;
   String _userId;
-  Map user = {};
+  Map user;
   bool isLoadingUser = true;
 
   String myTokenFromStorage;
@@ -85,7 +85,7 @@ class Auth with ChangeNotifier {
   }
 
   Future fetchAndSetUserDetails() async {
-   if(user.isEmpty){
+   if(user == null){
         if (myToken == null) {
         return;
       }
@@ -110,8 +110,7 @@ class Auth with ChangeNotifier {
    }
   }
 
-  Future<void> signup(String email, String password, String firstname, String lastname, String username
-//      , String deviceID todo fix
+  Future<void> signup(String email, String password, String firstname, String lastname, String username, String deviceID
       ) async {
     //return _authenticate(email, password, 'signupNewUser');
     const url = Api.userslistAndSignUp;
@@ -121,7 +120,7 @@ class Auth with ChangeNotifier {
           body: json.encode({
             "username": username, 
             "password": password,
-            "deviceToken": '', //todo orxan
+            "deviceToken": deviceID, 
             "first_name": firstname,
             "last_name": lastname,
             "email": email,
