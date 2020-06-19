@@ -28,6 +28,8 @@ class SocialScreen extends StatefulWidget {
 }
 
 class _SocialScreenState extends State<SocialScreen> {
+  final TextEditingController _typeAheadController = TextEditingController();
+
 //  var deviceSize = MediaQuery.of(context).size;
   bool expands = false;
   var filterColor = Colors.white;
@@ -139,9 +141,9 @@ class _SocialScreenState extends State<SocialScreen> {
     //print(widget.orderstripsProvider.orders);
     return Consumer<ContactsGroups>(
       builder: (context, contactsGroupsProvider, child) {
-        if (_contacts.isEmpty || !searchFlag) {
+        if (_contacts.isEmpty && !searchFlag) {
           if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
-            _contacts = contactsGroupsProvider.contacts;
+            _contacts.addAll(contactsGroupsProvider.detailsContacts["results"]);
             if (nextOrderURL == "FirstCall") {
               nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
             }
@@ -154,7 +156,7 @@ class _SocialScreenState extends State<SocialScreen> {
           floatingActionButton: OutlineButton(
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen(contactsGroupsProvider:contactsGroupsProvider, searchFlag:searchFlag)));
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -173,6 +175,7 @@ class _SocialScreenState extends State<SocialScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        controller: _typeAheadController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           prefixIcon: Icon(
@@ -189,7 +192,14 @@ class _SocialScreenState extends State<SocialScreen> {
                               Icons.close,
                               size: 15,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _typeAheadController.clear();
+                               setState(() {
+                                  searchFlag = false;
+                                  requestSent = [];
+                                  _contacts.clear();
+                                });
+                            },
                           ),
                         ),
                         onFieldSubmitted: (value) {
@@ -222,25 +232,31 @@ class _SocialScreenState extends State<SocialScreen> {
                                   },
                                   child: Column(
                                     children: <Widget>[
-                                      // Expanded(
-                                      //   child: ListView.builder(
-                                      //     itemCount: _contacts.length,
-                                      //     padding: EdgeInsets.all(20),
-                                      //     itemBuilder: (context, int i) {
-                                      //       return Column(
-                                      //         children: <Widget>[
-                                      //           ContactCard(
-                                      //             contacts: _contacts,
-                                      //             i: i,
-                                      //             token: token,
-                                      //             userId: user_id,
-                                      //           ),
-                                      //           SizedBox(height: 3)
-                                      //         ],
-                                      //       );
-                                      //     },
-                                      //   ),
-                                      // ),
+                                      Center(
+                                        child: Text("My Groups"),
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _contacts.length,
+                                          padding: EdgeInsets.all(20),
+                                          itemBuilder: (context, int i) {
+                                            return Column(
+                                              children: <Widget>[
+                                                // ContactCard(
+                                                //   contacts: [],
+                                                //   i: i,
+                                                //   token: token,
+                                                //   userId: user_id,
+                                                // ),
+                                                SizedBox(height: 3)
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Center(
+                                        child: Text("My Contacts"),
+                                      ),
                                       Expanded(
                                         child: ListView.builder(
                                           itemCount: _contacts.length,

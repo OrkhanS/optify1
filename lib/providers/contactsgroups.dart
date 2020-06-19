@@ -8,11 +8,14 @@ import 'package:http/http.dart' as http;
 
 class ContactsGroups with ChangeNotifier {
   List _contacts = [];  
-  List _tempContacts = [];
   bool isLoadingContacts = true;
   String token;
   Map allContactsDetails = {};
   Map tempContactDetails = {};
+  Map allGroupsDetails = {};
+  List _groups = [];
+  bool isLoadingGroups = true;
+
 
   bool get notLoadingContacts {
     return isLoadingContacts;
@@ -114,23 +117,58 @@ class ContactsGroups with ChangeNotifier {
     notifyListeners();
   }
 
-  // localAndGlobalSearch(pattern, user_id) async {
-  //   String url = Api.userslistAndSignUp + "?username=" + pattern;
-  //   await http.get(
-  //     url,
-  //     headers: {
-  //       HttpHeaders.CONTENT_TYPE: "application/json",
-  //       "Authorization": "Token " + token,
-  //     },
-  //   ).then((response) {
-  //     setState(
-  //       () {
-  //         final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-  //         contacts.clear();
-  //         contacts.addAll(dataOrders["results"]);
-  //         loadingContacts = false;
-  //       },
-  //     );
-  //   });
-  // }
+
+  
+//-------------------------------------------------------------------------------------------------------------------------------------------
+   Future fetchAndSetMyGroups(myToken) async {
+    var token = myToken;
+    if (token != null && token != "null") {
+      String url = Api.createGroupAndMyGroups;
+      http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + token,
+        },
+      ).then((onValue) {
+        if (onValue.statusCode == 200) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          _groups = dataOrders["results"];
+          allGroupsDetails = dataOrders;
+          isLoadingGroups = false;
+          notifyListeners();
+        } else {
+          _groups = [];
+          allGroupsDetails = {};
+          isLoadingGroups = false;
+          notifyListeners();
+        }
+      });
+    }
+  }
+ 
+ 
+ 
+  Future createGroup(token, title, members) async{
+    String url = Api.createGroupAndMyGroups;
+    if(title.toString().length > 55){
+      title=title.toString().substring(0,55);
+    }
+    title = title.join(",");
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({
+              "name": title,
+              "members": members
+            }))
+        .then((response) {
+      if (response.statusCode == 200) {
+        fetchAndSetMyGroups(token);
+      }
+    });
+  }
 }

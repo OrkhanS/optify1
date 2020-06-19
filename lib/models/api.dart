@@ -12,4 +12,5 @@ class Api {
   static const myContacts = address + "api/contacts/";
   static const removeContactRequst = address + "api/contacts/";
   static const respondContactRequst = address + "api/contacts/";
+  static const createGroupAndMyGroups = address + "api/groups/";
 }
