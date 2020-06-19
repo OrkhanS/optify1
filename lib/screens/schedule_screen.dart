@@ -36,6 +36,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   bool _modePriority;
 
   bool initialBuild;
+  ScrollController _horizontalscrollController;
 
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -65,6 +66,12 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   @override
+  void dispose() {
+    _horizontalscrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var now = DateTime.now();
     var middle = 20;
@@ -73,7 +80,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     var date = DateTime.now();
     dateForMonth = DateFormat.MMMM().format(date);
 
-    final _horizontalscrollController = ScrollController(initialScrollOffset: MediaQuery.of(context).size.width * (middle));
+    _horizontalscrollController = ScrollController(
+      initialScrollOffset: MediaQuery.of(context).size.width * (middle),
+    );
 
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
@@ -83,54 +92,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
           //messageLoader = true;
         }
         return Scaffold(
-            appBar: AppBar(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-//                  dateForMonth,
-                    "Schedule",
-                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RaisedButton(
-                    color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
-                    shape: new RoundedRectangleBorder(
-                      side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
-                      borderRadius: new BorderRadius.circular(30.0),
-                    ),
-                    child: Text(
-                      _modePriority ? "Priority" : "Default",
-                      style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _modePriority = !_modePriority;
-                      });
-                    },
-                  ),
-                ),
-                Transform.rotate(
-                  angle: 3.14 / 2,
-                  child: Switch(
-                    value: isSwitched,
-                    onChanged: (value) {
-                      setState(() {
-                        isSwitched = value;
-                      });
-                    },
-                    activeTrackColor: Theme.of(context).primaryColorLight,
-                    activeColor: Theme.of(context).primaryColor,
-                  ),
-                )
-              ],
-              centerTitle: true,
-              elevation: 1,
-            ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,
               heroTag: "btn1",
@@ -143,8 +104,67 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
             body: Column(
               children: <Widget>[
+                Card(
+                  margin: EdgeInsets.only(bottom: 5),
+                  color: Colors.white,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 14,
+                    child: Row(
+                      ///Appbar
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          child: Center(
+                            child: Text(
+//                              dateForMonth,
+                              "Schedule",
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: SizedBox()),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RaisedButton(
+                            color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
+                            shape: new RoundedRectangleBorder(
+                              side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
+                              borderRadius: new BorderRadius.circular(30.0),
+                            ),
+                            child: Text(
+                              _modePriority ? "Priority" : "Default",
+                              style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _modePriority = !_modePriority;
+                              });
+                            },
+                          ),
+                        ),
+                        Transform.rotate(
+                          angle: 3.14 / 2,
+                          child: Switch(
+                            value: isSwitched,
+                            onChanged: (value) {
+                              setState(() {
+                                isSwitched = value;
+                              });
+                            },
+                            activeTrackColor: Theme.of(context).primaryColorLight,
+                            activeColor: Theme.of(context).primaryColor,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
                 activitiesProvider.getActivities[20].isEmpty
-                    ? Center(child: Text("No Activity"))
+                    ? Container(height: isSwitched ? 20 : 0, child: Text("No Activity"))
                     : AnimatedContainer(
                         duration: Duration(milliseconds: 300),
                         height: isSwitched ? MediaQuery.of(context).size.height * 0.8 : 0,
@@ -162,7 +182,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                   http.delete(
                                     url,
                                     headers: {
-                                      HttpHeaders.CONTENT_TYPE: "application/json",
+                                      HttpHeaders.contentTypeHeader: "application/json",
                                       "Authorization": "Token " + token,
                                     },
                                   );
@@ -197,11 +217,9 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                 },
                                 background: Container(
                                   margin: EdgeInsets.all(3),
-                                  decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]])),
-//                                    border: Border.all(),
-//                                    borderRadius: BorderRadius.circular(5),
-//                                  ),
-
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]]),
+                                  ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -309,41 +327,10 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                                       ),
                                                     ],
                                                   ),
-//                                          Row(
-//                                            children: <Widget>[
-//                                              Icon(
-//                                                Icons.date_range,
-//                                                color: Theme.of(context).primaryColor,
-//                                              ),
-//                                              Text(
-//                                                DateFormat.yMMMd().format(DateTime.parse(_activity[i]["activity"]["start_times"][0])).toString(),
-//                                                style: TextStyle(color: Colors.grey[600]),
-//                                              ),
-//                                            ],
-//                                          ),
-//                                          Row(
-//                                            children: <Widget>[
-//                                              Icon(
-//                                                MdiIcons.weightKilogram, //todo: icon
-////                                            (FontAwesome.suitcase),
-//                                                color: Theme.of(context).primaryColor,
-//                                              ),
-//                                              Text(
-//                                                _activity[i]["priority"].toString(),
-//                                                style: TextStyle(color: Colors.grey[600]),
-//                                              ),
-//                                            ],
-//                                          )
                                                 ],
                                               ),
                                             ),
                                           ),
-
-//                                    Image(
-//                                      image: NetworkImage("https://img.icons8.com/wired/2x/passenger-with-baggage.png"),
-//                                      height: 60,
-//                                      width: 60,
-//                                    ),
                                         ],
                                       ),
                                     ),
@@ -363,11 +350,13 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       ListView.builder(
                         //todo Refresh activities
                         controller: _horizontalscrollController,
+
                         itemCount: middle * 2,
 //                      itemExtent: 100,
                         physics: const PageScrollPhysics(),
 //                      padding: EdgeInsets.symmetric(horizontal: 1.0),
                         scrollDirection: Axis.horizontal,
+
                         itemBuilder: (context, index) {
                           if (index < 15 && initialBuild) {
                             return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
@@ -376,7 +365,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                           date = DateTime.now().subtract(Duration(days: -7 * (index - middle)));
 
                           dateForMonth = DateFormat.MMMM().format(date);
-                          // dateForDay = DateFormat.wee;
                           // final firstMonday = DateTime.now().weekday;
                           // final daysInFirstWeek = 8 - firstMonday;
                           // final diff = date.difference(startOfYear);
@@ -398,11 +386,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                         decoration: BoxDecoration(
                                           border: Border(
                                             bottom: BorderSide(
-                                              width: 2.0,
+                                              width: 1.0,
                                               color: Colors.grey[100],
                                             ),
                                             right: BorderSide(
-                                              width: 2.0,
+                                              width: 1.0,
                                               color: Colors.grey[100],
                                             ),
                                           ),
@@ -412,11 +400,17 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                           children: <Widget>[
                                             Text(
                                               dateForMonth.toString(), //todo: Month
-                                              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                color: Theme.of(context).primaryColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                             Text(
                                               "10 - 17", //todo :Range
-                                              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                color: Theme.of(context).primaryColor,
+//                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -461,8 +455,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
 class FullTime extends StatefulWidget {
   final List activityList;
   final bool modePriority;
-  FullTime({Key key, @required this.activityList, @required this.modePriority}) : super(key: key);
-
+  FullTime({
+    Key key,
+    @required this.activityList,
+    @required this.modePriority,
+  }) : super(key: key);
   @override
   FullTimeState createState() => FullTimeState();
 }
@@ -474,7 +471,6 @@ class FullTimeState extends State<FullTime> {
   final _scrollController = ScrollController(initialScrollOffset: 800);
   @override
   Widget build(BuildContext context) {
-//    _animateToIndex(8.0);
     return Flexible(
       child: GestureDetector(
         onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
@@ -541,9 +537,14 @@ Widget weekDay({@required final String day}) {
       width: 47,
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(width: 2.0, color: Colors.grey[100]),
-          right: BorderSide(width: 2.0, color: Colors.grey[100]),
-          top: BorderSide(width: 2.0, color: Colors.grey[100]),
+          bottom: BorderSide(
+            width: 1.0,
+            color: Color(0xFFF5F5F5),
+          ),
+          right: BorderSide(
+            width: 1.0,
+            color: Color(0xFFF5F5F5),
+          ),
         ),
       ),
       child: Center(
@@ -562,7 +563,7 @@ Widget hourRow({@required final String time, @required final double vertical}) {
       border: const Border(
         bottom: const BorderSide(
           width: 1.0,
-          color: Color(0xFFE0E0E0),
+          color: const Color(0xFFF5F5F5),
         ),
       ),
     ),
@@ -575,7 +576,7 @@ Widget hourRow({@required final String time, @required final double vertical}) {
             border: const Border(
               right: const BorderSide(
                 width: 1.0,
-                color: Color(0xFFE0E0E0),
+                color: const Color(0xFFF5F5F5),
               ),
             ),
           ),
@@ -584,11 +585,6 @@ Widget hourRow({@required final String time, @required final double vertical}) {
           ),
         ),
         for (var m = 0; m < 7; m++) PlaceHolder(vertical: vertical),
-//        placeHolder(vertical: vertical),
-//        placeHolder(vertical: vertical),
-//        placeHolder(vertical: vertical),
-//        placeHolder(vertical: vertical),
-//        placeHolder(vertical: vertical),
       ],
     ),
   );
@@ -600,31 +596,17 @@ class PlaceHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: Container(
-      height: vertical,
-      decoration: const BoxDecoration(
-        border: const Border(
-          right: const BorderSide(
-            width: 1.0,
-            color: const Color(0xFFE0E0E0),
+      child: Container(
+        height: vertical,
+        decoration: const BoxDecoration(
+          border: const Border(
+            right: const BorderSide(
+              width: 1.0,
+              color: const Color(0xFFF5F5F5),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
-}
-
-Widget placeHolder({@required double vertical}) {
-  return Expanded(
-      child: Container(
-    height: vertical,
-    decoration: const BoxDecoration(
-      border: const Border(
-        right: const BorderSide(
-          width: 1.0,
-          color: const Color(0xFFE0E0E0),
-        ),
-      ),
-    ),
-  ));
 }

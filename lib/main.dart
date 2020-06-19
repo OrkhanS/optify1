@@ -51,7 +51,6 @@ class _MyAppState extends State<MyApp> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool _isOn = false;
   int _currentIndex = 0;
-  PageController _pageController;
   String tokenforROOM;
   Map valueMessages = {};
   bool socketConnected = false;

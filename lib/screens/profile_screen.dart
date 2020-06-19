@@ -7,7 +7,6 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:provider/provider.dart';
-import 'package:optifyapp/models/routine_color.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile';
@@ -23,57 +22,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
     auth = Provider.of<Auth>(context, listen: true);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "Profile",
-          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 1,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              MdiIcons.logoutVariant,
-              color: Theme.of(context).primaryColor,
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-//                          title: Text(''),
-                  content: Text(
-                    "Are you sure you want to Log out?",
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('No.'),
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('Yes, let me out!',
-                          style: TextStyle(
-                            color: Colors.redAccent,
-                          )),
-                      onPressed: () {
-                        Provider.of<Auth>(context, listen: false).logout(context);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          SizedBox(
-            width: 4,
-          )
-        ],
-      ),
       body: Center(
         child: Column(
           children: <Widget>[
+            Container(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: Icon(
+                  MdiIcons.logoutVariant,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+//                          title: Text(''),
+                      content: Text(
+                        "Are you sure you want to Log out?",
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('No.'),
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text('Yes, let me out!',
+                              style: TextStyle(
+                                color: Colors.redAccent,
+                              )),
+                          onPressed: () {
+                            Provider.of<Auth>(context, listen: false).logout(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
             Card(
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               shape: RoundedRectangleBorder(
@@ -83,8 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Row(
                       children: <Widget>[
@@ -94,18 +80,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundImage: NetworkImage("https://robohash.org/" + auth.myUserId.toString()), //Todo
                         ),
                         Column(
-//                          mainAxisSize: MainAxisSize.max,
-//                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Row(
                               mainAxisSize: MainAxisSize.max,
                             ),
                             Text(
-//                              "  " +
-//                                  Provider.of<Auth>(context, listen: false).userdetail["first_name"].toString() +
-//                                  " " +
-//                                  Provider.of<Auth>(context, listen: false).userdetail["last_name"].toString(),
                               auth.userdetail["first_name"].toString() + " " + auth.userdetail["last_name"].toString(),
                               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Theme.of(context).primaryColor),
                             ),
