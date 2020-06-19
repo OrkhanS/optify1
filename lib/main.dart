@@ -51,7 +51,6 @@ class _MyAppState extends State<MyApp> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   bool _isOn = false;
   int _currentIndex = 0;
-  PageController _pageController;
   String tokenforROOM;
   String deviceToken;
   Map valueMessages = {};
@@ -176,7 +175,7 @@ class _MyAppState extends State<MyApp> {
           activeIcon: Icon(MdiIcons.mapClock),
         ),
         BottomNavigationBarItem(
-          title: Text('People'),
+          title: Text('Contacts'),
           icon: Icon(MdiIcons.accountGroupOutline),
           activeIcon: Icon(MdiIcons.accountGroup),
         ),
@@ -208,11 +207,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => Auth(),
         ),
+        ChangeNotifierProvider(create: (context) => Activities()),
         ChangeNotifierProvider(
-          create: (context) => Activities()
-        ),
-        ChangeNotifierProvider(
-         create: (context) => Messages(),
+          create: (context) => Messages(),
         ),
         ChangeNotifierProvider(
           create: (context) => ContactsGroups(),

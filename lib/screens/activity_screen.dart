@@ -16,18 +16,17 @@ class ActivityScreen extends StatefulWidget {
   _ActivityScreenState createState() => _ActivityScreenState();
 }
 
-
-
 class _ActivityScreenState extends State<ActivityScreen> {
   String token, schedule_id;
-  
+
   @override
   Widget build(BuildContext context) {
-    if(token == null || schedule_id == null){
+    if (token == null || schedule_id == null) {
       token = Provider.of<Auth>(context).myToken;
       schedule_id = Provider.of<Auth>(context).myScheduleId;
     }
     return Scaffold(
+//        backgroundColor: Colors.black12,
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -47,6 +46,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
           height: MediaQuery.of(context).size.height * .8,
           child: Center(
             child: Card(
+              elevation: 10,
               margin: EdgeInsets.all(20),
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
@@ -212,7 +212,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     RaisedButton(
                       color: Colors.red,
                       onPressed: () {
-                          showDialog(
+                        showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
                             content: Text(
@@ -230,7 +230,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                     style: TextStyle(
                                       color: Colors.redAccent,
                                     )),
-                                onPressed: () {                                  
+                                onPressed: () {
                                   Provider.of<Activities>(context).removeActivity(schedule_id, widget.myActivity["activity"]["id"], widget.i, token);
                                   Navigator.of(ctx).pop();
                                   Navigator.of(ctx).pop();
@@ -242,7 +242,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                     duration: Duration(seconds: 3),
                                   )..show(context);
                                 },
-
                               ),
                             ],
                           ),

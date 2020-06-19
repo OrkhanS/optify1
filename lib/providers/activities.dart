@@ -63,7 +63,7 @@ class Activities with ChangeNotifier {
       http.get(
         url,
         headers: {
-          HttpHeaders.CONTENT_TYPE: "application/json",
+          HttpHeaders.contentTypeHeader: "application/json",
           "Authorization": "Token " + token,
         },
       ).then((onValue) {
@@ -77,6 +77,7 @@ class Activities with ChangeNotifier {
           notifyListeners();
           fetchAndSetNextOrPrev(middle + 1, 1, myToken, schedule_id);
           fetchAndSetNextOrPrev(middle - 1, -1, myToken, schedule_id);
+          print(_activites[middle]);
         } else {
           _activites = [];
           allActivityDetails = {};
@@ -162,7 +163,7 @@ class Activities with ChangeNotifier {
             return list;
       });
     }
-
+    print(_activites[middle]);
     notifyListeners();
   }
 

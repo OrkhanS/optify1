@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -64,65 +65,10 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ));
     return Scaffold(
-//      appBar: AppBar(
-//        leading: IconButton(
-//          icon: Icon(
-//            Icons.chevron_left,
-//            color: Theme.of(context).primaryColor,
-//          ),
-//          onPressed: () {
-//            Navigator.of(context).pop();
-//          },
-//        ),
-//        title: Row(
-//          children: <Widget>[
-//            Row(
-//              mainAxisAlignment: MainAxisAlignment.center,
-//              children: <Widget>[
-//                Icon(
-//                  Icons.schedule,
-//                  color: !_modeAI ? Theme.of(context).primaryColor : Colors.black45,
-//                ),
-//                Text(
-//                  "  Fixed     ",
-//                  style: TextStyle(
-//                    fontWeight: FontWeight.w700,
-//                    fontSize: 18,
-//                    color: !_modeAI ? Theme.of(context).primaryColor : Colors.black45,
-//                  ),
-//                ),
-//              ],
-//            ),
-//            Expanded(child: SizedBox()),
-//            Row(
-//              mainAxisAlignment: MainAxisAlignment.center,
-//              children: <Widget>[
-//                Icon(
-//                  MdiIcons.brain,
-//                  color: _modeAI ? Theme.of(context).primaryColor : Colors.black45,
-//                ),
-//                Text(" AI Generated",
-//                    style: TextStyle(
-//                      fontSize: 18,
-//                      color: _modeAI ? Theme.of(context).primaryColor : Colors.black45,
-//                    )),
-//              ],
-//            ),
-//            Expanded(child: SizedBox()),
-//            Switch(
-//              value: _modeAI,
-//              onChanged: (value) {
-//                setState(() {
-//                  _switchModeAI();
-//                });
-//              },
-//              activeTrackColor: Theme.of(context).primaryColorLight,
-//              activeColor: Theme.of(context).primaryColor,
-//            ),
-//          ],
-//        ),
-//      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: RaisedButton(
         color: Theme.of(context).primaryColor,
@@ -158,6 +104,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -227,7 +174,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       ),
                     ],
                   ),
-                  Divider(),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
