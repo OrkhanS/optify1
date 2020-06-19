@@ -157,7 +157,8 @@ class _SocialScreenState extends State<SocialScreen> {
             elevation: 7,
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen(contactsGroupsProvider:contactsGroupsProvider, searchFlag:searchFlag)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AddGroupScreen(contactsGroupsProvider: contactsGroupsProvider, searchFlag: searchFlag)));
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -198,11 +199,11 @@ class _SocialScreenState extends State<SocialScreen> {
                             ),
                             onPressed: () {
                               _typeAheadController.clear();
-                               setState(() {
-                                  searchFlag = false;
-                                  requestSent = [];
-                                  _contacts.clear();
-                                });
+                              setState(() {
+                                searchFlag = false;
+                                requestSent = [];
+                                _contacts.clear();
+                              });
                             },
                           ),
                         ),
@@ -236,6 +237,27 @@ class _SocialScreenState extends State<SocialScreen> {
                                   },
                                   child: Column(
                                     children: <Widget>[
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _contacts.length,
+                                          padding: EdgeInsets.all(20),
+                                          itemBuilder: (context, int i) {
+                                            return Column(
+                                              children: <Widget>[
+                                                ContactCard(
+                                                  requestSent: requestSent,
+                                                  searchFlag: searchFlag,
+                                                  contacts: _contacts,
+                                                  i: i,
+                                                  token: token,
+                                                  userId: user_id,
+                                                ),
+                                                SizedBox(height: 3)
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
                                       Center(
                                         child: Text("My Groups"),
                                       ),
@@ -258,30 +280,6 @@ class _SocialScreenState extends State<SocialScreen> {
                                           },
                                         ),
                                       ),
-                                      Center(
-                                        child: Text("My Contacts"),
-                                      ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: _contacts.length,
-                                          padding: EdgeInsets.all(20),
-                                          itemBuilder: (context, int i) {
-                                            return Column(
-                                              children: <Widget>[
-                                                ContactCard(
-                                                  requestSent: requestSent,
-                                                  searchFlag: searchFlag,
-                                                  contacts: _contacts,
-                                                  i: i,
-                                                  token: token,
-                                                  userId: user_id,
-                                                ),
-                                                SizedBox(height: 3)
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
