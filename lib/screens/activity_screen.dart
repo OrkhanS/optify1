@@ -182,7 +182,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     Row(
                       children: <Widget>[
                         Text(
-                          "Members:",
+                          "Owner:",
                           style: TextStyle(
                             color: Colors.grey[800],
                             fontSize: 18,
@@ -196,11 +196,15 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         Column(
                           children: <Widget>[
                             Chip(
+                              backgroundColor: Colors.green.shade50,
                               avatar: CircleAvatar(
-                                backgroundColor: Colors.grey.shade800,
-                                child: Text('KS'),
+                                backgroundColor: Colors.grey.shade100,
+                                child: Text(widget.myActivity["activity"]["attendees"][0]["first_name"][0] +
+                                    widget.myActivity["activity"]["attendees"][0]["last_name"][0]),
                               ),
-                              label: Text('Kazato Suriname'), //todo fix Name
+                              label: Text(widget.myActivity["activity"]["attendees"][0]["first_name"] +
+                                  " " +
+                                  widget.myActivity["activity"]["attendees"][0]["last_name"]), //todo fix Name
                             ),
                           ],
                         ),

@@ -499,7 +499,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                                 childAspectRatio: 5,
                                 crossAxisCount: 2,
                                 children: <Widget>[
-                                  for (var i = 0; i < 3; i++) //todo Orxan list members
+                                  for (var i = 0; i < 1; i++) //todo Orxan list members
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).primaryColorLight,
@@ -508,14 +508,11 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                                       child: Row(
                                         children: <Widget>[
                                           CircleAvatar(
-                                            backgroundColor: Colors.grey.shade800,
-                                            child: Text('KS'),
+                                            backgroundColor: Colors.grey.shade100,
+                                            child: Text("RA"),
                                           ),
                                           SizedBox(width: 10),
-                                          Text(
-                                            'Kazato Suriname',
-                                            style: TextStyle(fontWeight: FontWeight.w500),
-                                          ),
+                                          Text("Rasul Aliyev"),
                                         ],
                                       ),
                                     ),

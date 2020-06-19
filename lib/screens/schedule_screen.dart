@@ -94,7 +94,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
         return Scaffold(
             floatingActionButton: FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,
-              heroTag: "btn1",
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AddActivityScreen(token: token)));
               },
@@ -104,70 +103,66 @@ class ScheduleScreenState extends State<ScheduleScreen> {
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
             body: Column(
               children: <Widget>[
-                Card(
-                  margin: EdgeInsets.only(bottom: 5),
-                  color: Colors.white,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 14,
-                    child: Row(
-                      ///Appbar
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Center(
-                            child: Text(
+                Container(
+                  height: 50,
+                  child: Row(
+                    ///Appbar
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: Center(
+                          child: Text(
 //                              dateForMonth,
-                              "Schedule",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            "Schedule",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        Expanded(child: SizedBox()),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RaisedButton(
-                            color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
-                            shape: new RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
-                              borderRadius: new BorderRadius.circular(30.0),
-                            ),
-                            child: Text(
-                              _modePriority ? "Priority" : "Default",
-                              style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _modePriority = !_modePriority;
-                              });
-                            },
-                          ),
+                      ),
+                      Expanded(child: SizedBox()),
+//                      Padding(
+//                        padding: const EdgeInsets.all(8.0),
+//                        child: RaisedButton(
+//                          color: _modePriority ? Theme.of(context).primaryColor : Colors.white,
+//                          shape: new RoundedRectangleBorder(
+//                            side: BorderSide(width: 1, color: Theme.of(context).primaryColor),
+//                            borderRadius: new BorderRadius.circular(30.0),
+//                          ),
+//                          child: Text(
+//                            _modePriority ? "Priority" : "Default",
+//                            style: TextStyle(color: _modePriority ? Colors.white : Theme.of(context).primaryColor),
+//                          ),
+//                          onPressed: () {
+//                            setState(() {
+//                              _modePriority = !_modePriority;
+//                            });
+//                          },
+//                        ),
+//                      ),
+                      Transform.rotate(
+                        angle: 3.14 / 2,
+                        child: Switch(
+                          value: isSwitched,
+                          onChanged: (value) {
+                            setState(() {
+                              isSwitched = value;
+                            });
+                          },
+                          activeTrackColor: Theme.of(context).primaryColorLight,
+                          activeColor: Theme.of(context).primaryColor,
                         ),
-                        Transform.rotate(
-                          angle: 3.14 / 2,
-                          child: Switch(
-                            value: isSwitched,
-                            onChanged: (value) {
-                              setState(() {
-                                isSwitched = value;
-                              });
-                            },
-                            activeTrackColor: Theme.of(context).primaryColorLight,
-                            activeColor: Theme.of(context).primaryColor,
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
                 activitiesProvider.getActivities[20].isEmpty
                     ? Container(height: isSwitched ? 20 : 0, child: Text("No Activity"))
                     : AnimatedContainer(
                         duration: Duration(milliseconds: 300),
-                        height: isSwitched ? MediaQuery.of(context).size.height * 0.8 : 0,
+                        height: isSwitched ? MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 25 : 0,
                         child: ListView.builder(
                           itemBuilder: (context, int i) {
                             return Padding(
@@ -436,7 +431,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 300),
-                  height: isSwitched ? 0 : MediaQuery.of(context).size.height * .8,
+                  height: isSwitched ? 0 : MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 25,
                   child: Stack(
                     children: <Widget>[
                       ListView.builder(
@@ -496,7 +491,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "10 - 17", //todo :Range
+                                              "15 - 21", //todo :Range
                                               style: TextStyle(
                                                 color: Theme.of(context).primaryColor,
 //                                                fontWeight: FontWeight.bold,

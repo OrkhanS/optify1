@@ -115,7 +115,8 @@ class _ActivityBoxState extends State<ActivityBox> {
                           IconButton(
                               icon: Icon(Icons.open_in_new),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityScreen(i:widget.i,myActivity: widget.myActivity)));
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => ActivityScreen(i: widget.i, myActivity: widget.myActivity)));
                               }),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -164,7 +165,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                       ,
                       width: .5),
                 ),
-                width: horiz - 1,
+                width: horiz - 3,
                 height: duration * (widget.height),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(1),
