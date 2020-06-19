@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'add_group.dart';
 import 'contact_screen.dart';
 
 class SocialScreen extends StatefulWidget {
@@ -144,18 +145,17 @@ class _SocialScreenState extends State<SocialScreen> {
 
         return Scaffold(
           resizeToAvoidBottomPadding: true,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: RaisedButton(
-            color: Theme.of(context).primaryColor,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: OutlineButton(
+            color: Colors.white,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => GlobalSearchScreen(token: token, contactsGroupsProvider: widget.contactsGroupsProvider)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen()));
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Icon(Icons.add, color: Colors.white),
-                Text("New Group", style: TextStyle(color: Colors.white)),
+                Icon(Icons.add, color: Theme.of(context).primaryColor),
+                Text("New Group", style: TextStyle(color: Theme.of(context).primaryColor)),
               ],
             ),
           ),
@@ -165,28 +165,30 @@ class _SocialScreenState extends State<SocialScreen> {
                 height: MediaQuery.of(context).size.height * .83,
                 child: Column(
                   children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Theme.of(context).primaryColorLight,
-                        prefixIcon: Icon(
-                          Icons.search,
-                        ),
-                        labelText: 'Search',
-                        hintText: 'Username',
-                        hintStyle: TextStyle(color: Colors.grey[400]),
-                        suffixIcon: IconButton(
-                          padding: EdgeInsets.only(
-                            top: 5,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          prefixIcon: Icon(
+                            Icons.search,
                           ),
-                          icon: Icon(
-                            Icons.close,
-                            size: 15,
+                          labelText: 'Search',
+                          hintText: 'Username',
+                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          suffixIcon: IconButton(
+                            padding: EdgeInsets.only(
+                              top: 5,
+                            ),
+                            icon: Icon(
+                              Icons.close,
+                              size: 15,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
                         ),
+                        onFieldSubmitted: (value) {},
                       ),
-                      onFieldSubmitted: (value) {},
                     ),
                     Expanded(
                       child: contactsGroupsProvider.notLoadingContacts || user_id == null
