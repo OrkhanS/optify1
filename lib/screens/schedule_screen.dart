@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/activityBox.dart';
 import '../providers/activities.dart';
+import 'activity_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
   var token, auth, schedule_id;
@@ -49,7 +50,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     schedule_id = extractedUserData['schedule_id'].toString();
   }
 
-
   @override
   void initState() {
     getToken();
@@ -59,7 +59,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     _modePriority = false;
   }
 
-  func(){
+  func() {
     setState(() {
       _activity = Provider.of<Activities>(context, listen: true).getActivities[middle];
     });
@@ -172,165 +172,259 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                           itemBuilder: (context, int i) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: Dismissible(
-                                direction: DismissDirection.endToStart,
-                                movementDuration: Duration(milliseconds: 500),
-                                dragStartBehavior: DragStartBehavior.start,
-                                onDismissed: (direction) {
-                                  if(token == null){
-                                    getToken().whenComplete(() => {
-                                      activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token)
-                                    });
-
-                                  } else{
-                                    activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token);
-                                  }
-
-                                  Flushbar(
-                                    title: "Done!",
-                                    message: "Activity was deleted",
-                                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
-                                    borderRadius: 10,
-                                    duration: Duration(seconds: 3),
-                                  )..show(context);
-                                },
-                                confirmDismiss: (DismissDirection direction) async {
-                                  final bool res = await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Confirm"),
-                                        content: const Text("Are you sure you wish to delete this item?"),
-                                        actions: <Widget>[
-                                          FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("DELETE")),
-                                          FlatButton(
-                                            onPressed: () => Navigator.of(context).pop(false),
-                                            child: const Text("CANCEL"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  return res; //todo check
-                                },
-                                background: Container(
-                                  margin: EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]]),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(width: 40),
-                                      Icon(
-                                        MdiIcons.delete,
-                                        color: Colors.white,
-                                        size: 27,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "DELETE",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                    ],
-                                  ),
-                                ),
-                                key: ValueKey(i),
-                                child: InkWell(
-                                  onTap: () => null,
-                                  child: Container(
+                              child:
+//                              Dismissible(
+//                                direction: DismissDirection.endToStart,
+//                                movementDuration: Duration(milliseconds: 500),
+//                                dragStartBehavior: DragStartBehavior.start,
+//                                onDismissed: (direction) {
+//                                  if (token == null) {
+//                                    getToken().whenComplete(
+//                                            () => {activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token)});
+//                                  } else {
+//                                    activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token);
+//                                  }
+//
+//                                  Flushbar(
+//                                    title: "Done!",
+//                                    message: "Activity was deleted",
+//                                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+//                                    borderRadius: 10,
+//                                    duration: Duration(seconds: 3),
+//                                  )..show(context);
+//                                },
+//                                confirmDismiss: (DismissDirection direction) async {
+//                                  final bool res = await showDialog(
+//                                    context: context,
+//                                    builder: (BuildContext context) {
+//                                      return AlertDialog(
+//                                        title: const Text("Confirm"),
+//                                        content: const Text("Are you sure you wish to delete this item?"),
+//                                        actions: <Widget>[
+//                                          FlatButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("DELETE")),
+//                                          FlatButton(
+//                                            onPressed: () => Navigator.of(context).pop(false),
+//                                            child: const Text("CANCEL"),
+//                                          ),
+//                                        ],
+//                                      );
+//                                    },
+//                                  );
+//                                  return res; //todo check
+//                                },
+//                                background: Container(
+//                                  margin: EdgeInsets.all(3),
+//                                  decoration: BoxDecoration(
+//                                    gradient: LinearGradient(colors: [Colors.red[700], Colors.orange[300]]),
+//                                  ),
+//                                  child: Row(
+//                                    mainAxisAlignment: MainAxisAlignment.end,
+//                                    crossAxisAlignment: CrossAxisAlignment.center,
+//                                    children: <Widget>[
+//                                      SizedBox(width: 40),
+//                                      Icon(
+//                                        MdiIcons.delete,
+//                                        color: Colors.white,
+//                                        size: 27,
+//                                      ),
+//                                      SizedBox(width: 5),
+//                                      Text(
+//                                        "DELETE",
+//                                        style: TextStyle(
+//                                          color: Colors.white,
+//                                          fontSize: 22,
+//                                          fontWeight: FontWeight.bold,
+//                                        ),
+//                                      ),
+//                                      SizedBox(width: 15),
+//                                    ],
+//                                  ),
+//                                ),
+//                                key: ValueKey(i),
+//                                child: InkWell(
+//                                  onTap: () => null,
+//                                  child: Container(
+////                              height: 140,
+//                                    child: Card(
+//                                      elevation: 1,
+//                                      child: Row(
+////                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                                        children: <Widget>[
+//                                          Padding(
+//                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+//                                            child: Stack(
+//                                              alignment: Alignment.center,
+//                                              children: <Widget>[
+//                                                Transform.rotate(
+//                                                  angle: 3.18,
+//                                                  child: CircularProgressIndicator(
+////                                          value: Tween<Double>(0.0, int.parse(_activity[i]["priority"].toString()).toDouble() / 100).animate(parent),
+//                                                    value: int.parse(activitiesProvider.getActivities[20][i]["priority"].toString()).toDouble() / 100,
+//                                                    strokeWidth: 4,
+//                                                    valueColor: new AlwaysStoppedAnimation<Color>(
+//                                                      Colors.lightGreen[activitiesProvider.getActivities[20][i]["priority"] * 9 -
+//                                                          (activitiesProvider.getActivities[20][i]["priority"] * 9) % 100 +
+//                                                          100],
+//                                                    ),
+//                                                    backgroundColor: Colors.grey[100],
+//                                                  ),
+//                                                ),
+//                                                Text(
+//                                                  activitiesProvider.getActivities[20][i]["priority"].toString(),
+//                                                  style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
+//                                                ),
+//                                              ],
+//                                            ),
+//                                          ),
+//                                          Expanded(
+//                                            child: Padding(
+//                                              padding: const EdgeInsets.all(8.0),
+//                                              child: Column(
+//                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                                crossAxisAlignment: CrossAxisAlignment.start,
+//                                                children: <Widget>[
+//                                                  Row(
+//                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                                    children: <Widget>[
+//                                                      Text(
+//                                                        activitiesProvider.getActivities[20][i]["activity"]["title"],
+//                                                        style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
+//                                                      ),
+//                                                      Text(
+//                                                        DateFormat.yMMMd()
+//                                                            .format(
+//                                                            DateTime.parse(activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+//                                                            .toString(),
+//                                                        style: TextStyle(color: Colors.grey[600]),
+//                                                      ),
+//                                                    ],
+//                                                  ),
+//                                                  Row(
+//                                                    mainAxisAlignment: MainAxisAlignment.start,
+//                                                    children: <Widget>[
+//                                                      Icon(
+//                                                        Icons.timer,
+//                                                        size: 15,
+//                                                        color: Theme.of(context).primaryColor,
+//                                                      ),
+//                                                      RichText(
+//                                                        text: TextSpan(
+//                                                          text: "  " +
+//                                                              DateFormat.Hm()
+//                                                                  .format(DateTime.parse(
+//                                                                  activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+//                                                                  .toString() +
+//                                                              " - " +
+//                                                              DateFormat.Hm()
+//                                                                  .format(DateTime.parse(
+//                                                                  activitiesProvider.getActivities[20][i]["activity"]["end_times"][0]))
+//                                                                  .toString(),
+//                                                          style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+//                                                        ),
+//                                                      ),
+//                                                    ],
+//                                                  ),
+//                                                ],
+//                                              ),
+//                                            ),
+//                                          ),
+//                                        ],
+//                                      ),
+//                                    ),
+//                                  ),
+//                                ),
+//                              )
+                                  InkWell(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ActivityScreen(i: i, myActivity: activitiesProvider.getActivities[20][i]))),
+                                child: Container(
 //                              height: 140,
-                                    child: Card(
-                                      elevation: 1,
-                                      child: Row(
+                                  child: Card(
+                                    elevation: 1,
+                                    child: Row(
 //                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: <Widget>[
-                                                Transform.rotate(
-                                                  angle: 3.18,
-                                                  child: CircularProgressIndicator(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: <Widget>[
+                                              Transform.rotate(
+                                                angle: 3.18,
+                                                child: CircularProgressIndicator(
 //                                          value: Tween<Double>(0.0, int.parse(_activity[i]["priority"].toString()).toDouble() / 100).animate(parent),
-                                                    value: int.parse(activitiesProvider.getActivities[20][i]["priority"].toString()).toDouble() / 100,
-                                                    strokeWidth: 4,
-                                                    valueColor: new AlwaysStoppedAnimation<Color>(
-                                                      Colors.lightGreen[activitiesProvider.getActivities[20][i]["priority"] * 9 -
-                                                          (activitiesProvider.getActivities[20][i]["priority"] * 9) % 100 +
-                                                          100],
-                                                    ),
-                                                    backgroundColor: Colors.grey[100],
+                                                  value: int.parse(activitiesProvider.getActivities[20][i]["priority"].toString()).toDouble() / 100,
+                                                  strokeWidth: 4,
+                                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                                    Colors.lightGreen[activitiesProvider.getActivities[20][i]["priority"] * 9 -
+                                                        (activitiesProvider.getActivities[20][i]["priority"] * 9) % 100 +
+                                                        100],
                                                   ),
+                                                  backgroundColor: Colors.grey[100],
                                                 ),
-                                                Text(
-                                                  activitiesProvider.getActivities[20][i]["priority"].toString(),
-                                                  style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
+                                              ),
+                                              Text(
+                                                activitiesProvider.getActivities[20][i]["priority"].toString(),
+                                                style: TextStyle(color: Colors.grey[900], fontSize: 15, fontWeight: FontWeight.w400),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      activitiesProvider.getActivities[20][i]["activity"]["title"],
+                                                      style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
+                                                    ),
+                                                    Text(
+                                                      DateFormat.yMMMd()
+                                                          .format(
+                                                              DateTime.parse(activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+                                                          .toString(),
+                                                      style: TextStyle(color: Colors.grey[600]),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.timer,
+                                                      size: 15,
+                                                      color: Theme.of(context).primaryColor,
+                                                    ),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: "  " +
+                                                            DateFormat.Hm()
+                                                                .format(DateTime.parse(
+                                                                    activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
+                                                                .toString() +
+                                                            " - " +
+                                                            DateFormat.Hm()
+                                                                .format(DateTime.parse(
+                                                                    activitiesProvider.getActivities[20][i]["activity"]["end_times"][0]))
+                                                                .toString(),
+                                                        style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        activitiesProvider.getActivities[20][i]["activity"]["title"],
-                                                        style: TextStyle(fontSize: 18, color: Colors.grey[700], fontWeight: FontWeight.w500),
-                                                      ),
-                                                      Text(
-                                                        DateFormat.yMMMd()
-                                                            .format(
-                                                                DateTime.parse(activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
-                                                            .toString(),
-                                                        style: TextStyle(color: Colors.grey[600]),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.timer,
-                                                        size: 15,
-                                                        color: Theme.of(context).primaryColor,
-                                                      ),
-                                                      RichText(
-                                                        text: TextSpan(
-                                                          text: "  " +
-                                                              DateFormat.Hm()
-                                                                  .format(DateTime.parse(
-                                                                      activitiesProvider.getActivities[20][i]["activity"]["start_times"][0]))
-                                                                  .toString() +
-                                                              " - " +
-                                                              DateFormat.Hm()
-                                                                  .format(DateTime.parse(
-                                                                      activitiesProvider.getActivities[20][i]["activity"]["end_times"][0]))
-                                                                  .toString(),
-                                                          style: TextStyle(fontSize: 15, color: Colors.grey[600], fontWeight: FontWeight.normal),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -497,7 +591,8 @@ class FullTimeState extends State<FullTime> {
 
                   if (widget.activityList != null)
                     for (var x = widget.activityList.length - 1; x >= 0; x--)
-                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i:x),
+                      ActivityBox(
+                          context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i: x),
 //                  if (widget.activityList != null)
 //                    for (var x in widget.activityList)
 //                      ActivityBox(

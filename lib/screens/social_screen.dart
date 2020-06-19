@@ -144,25 +144,20 @@ class _SocialScreenState extends State<SocialScreen> {
 
         return Scaffold(
           resizeToAvoidBottomPadding: true,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Center(
-              child: Text(
-                "Social",
-                style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-              ),
-            ),
-            elevation: 1,
-          ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Theme.of(context).primaryColor,
-            heroTag: "btn1",
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: RaisedButton(
+            color: Theme.of(context).primaryColor,
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => GlobalSearchScreen(token: token, contactsGroupsProvider: widget.contactsGroupsProvider)));
             },
-            tooltip: 'First button',
-            child: Icon(Icons.search, color: Colors.white),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.add, color: Colors.white),
+                Text("New Group", style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
           body: GestureDetector(
             child: SingleChildScrollView(
@@ -170,41 +165,28 @@ class _SocialScreenState extends State<SocialScreen> {
                 height: MediaQuery.of(context).size.height * .83,
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextFormField(
-//                                controller: _typeAheadController4,
-                                  decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                    ),
-                                    labelText: 'Search',
-                                    hintText: 'Username',
-                                    hintStyle: TextStyle(color: Colors.grey[300]),
-                                    suffixIcon: IconButton(
-                                      padding: EdgeInsets.only(
-                                        top: 5,
-                                      ),
-                                      icon: Icon(
-                                        Icons.close,
-                                        size: 15,
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  ),
-                                  onFieldSubmitted: (value) {},
-                                ),
-                              ),
-                            ],
+                    TextFormField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Theme.of(context).primaryColorLight,
+                        prefixIcon: Icon(
+                          Icons.search,
+                        ),
+                        labelText: 'Search',
+                        hintText: 'Username',
+                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        suffixIcon: IconButton(
+                          padding: EdgeInsets.only(
+                            top: 5,
                           ),
+                          icon: Icon(
+                            Icons.close,
+                            size: 15,
+                          ),
+                          onPressed: () {},
                         ),
                       ),
+                      onFieldSubmitted: (value) {},
                     ),
                     Expanded(
                       child: contactsGroupsProvider.notLoadingContacts || user_id == null
@@ -294,21 +276,22 @@ class _ContactCardState extends State<ContactCard> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                      flex: 1,
-                      child: Image.network(
-                        "https://robohash.org/" + contactsDetails["id"].toString(),
-                        fit: BoxFit.cover,
-                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                                  : null,
-                            ),
-                          );
-                        },
-                      )),
+                    flex: 1,
+                    child: Image.network(
+                      "https://robohash.org/" + contactsDetails["id"].toString(),
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   Expanded(
                     flex: 2,
                     child: Padding(
