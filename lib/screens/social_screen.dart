@@ -28,6 +28,8 @@ class SocialScreen extends StatefulWidget {
 }
 
 class _SocialScreenState extends State<SocialScreen> {
+  final TextEditingController _typeAheadController = TextEditingController();
+
 //  var deviceSize = MediaQuery.of(context).size;
   bool expands = false;
   var filterColor = Colors.white;
@@ -139,9 +141,9 @@ class _SocialScreenState extends State<SocialScreen> {
     //print(widget.orderstripsProvider.orders);
     return Consumer<ContactsGroups>(
       builder: (context, contactsGroupsProvider, child) {
-        if (_contacts.isEmpty || !searchFlag) {
+        if (_contacts.isEmpty && !searchFlag) {
           if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
-            _contacts = contactsGroupsProvider.contacts;
+            _contacts.addAll(contactsGroupsProvider.detailsContacts["results"]);
             if (nextOrderURL == "FirstCall") {
               nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
             }
@@ -155,7 +157,7 @@ class _SocialScreenState extends State<SocialScreen> {
             elevation: 7,
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupScreen(contactsGroupsProvider:contactsGroupsProvider, searchFlag:searchFlag)));
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -168,83 +170,131 @@ class _SocialScreenState extends State<SocialScreen> {
               ],
             ),
           ),
-          body: SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height - 50 - 25,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        prefixIcon: Icon(
-                          Icons.search,
-                        ),
-                        labelText: 'Search',
-                        hintText: 'Username',
-                        hintStyle: TextStyle(color: Colors.grey[400]),
-                        suffixIcon: IconButton(
-                          padding: EdgeInsets.only(
-                            top: 5,
+          body: GestureDetector(
+            child: SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height * .83,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: _typeAheadController,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          prefixIcon: Icon(
+                            Icons.search,
                           ),
-                          icon: Icon(
-                            Icons.close,
-                            size: 15,
+                          labelText: 'Search',
+                          hintText: 'Username',
+                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          suffixIcon: IconButton(
+                            padding: EdgeInsets.only(
+                              top: 5,
+                            ),
+                            icon: Icon(
+                              Icons.close,
+                              size: 15,
+                            ),
+                            onPressed: () {
+                              _typeAheadController.clear();
+                               setState(() {
+                                  searchFlag = false;
+                                  requestSent = [];
+                                  _contacts.clear();
+                                });
+                            },
                           ),
-                          onPressed: () {},
                         ),
+                        onFieldSubmitted: (value) {
+                          getSuggestions(value);
+                        },
+                        onChanged: (value) {
+                          //todo rasul
+                          if (value == "") {
+                            setState(() {
+                              searchFlag = false;
+                              requestSent = [];
+                            });
+                          }
+                        },
                       ),
-                      onFieldSubmitted: (value) {
-                        getSuggestions(value);
-                      },
-                      onChanged: (value) {
-                        //todo rasul
-                        if (value == "") {
-                          setState(() {
-                            searchFlag = false;
-                            requestSent = [];
-                          });
-                        }
-                      },
                     ),
-                  ),
-                  Expanded(
-                    child: contactsGroupsProvider.notLoadingContacts || user_id == null
-                        ? Center(child: CircularProgressIndicator())
-                        : _contacts.isEmpty
-                            ? Center(child: Text("No contacts"))
-                            : ListView.builder(
-                                itemCount: _contacts.length,
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                                itemBuilder: (context, int i) {
-                                  return Column(
+                    Expanded(
+                      child: contactsGroupsProvider.notLoadingContacts || user_id == null
+                          ? Center(child: CircularProgressIndicator())
+                          : _contacts.isEmpty
+                              ? Center(child: Text("No contacts"))
+                              : NotificationListener<ScrollNotification>(
+                                  onNotification: (ScrollNotification scrollInfo) {
+                                    if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                                      setState(() {
+                                        _isfetchingnew = true;
+                                      });
+                                      _loadData();
+                                    }
+                                  },
+                                  child: Column(
                                     children: <Widget>[
-                                      ContactCard(
-                                        requestSent: requestSent,
-                                        searchFlag: searchFlag,
-                                        contacts: _contacts,
-                                        i: i,
-                                        token: token,
-                                        userId: user_id,
+                                      Center(
+                                        child: Text("My Groups"),
                                       ),
-                                      Divider(
-                                        color: Colors.black,
-                                        height: 1,
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _contacts.length,
+                                          padding: EdgeInsets.all(20),
+                                          itemBuilder: (context, int i) {
+                                            return Column(
+                                              children: <Widget>[
+                                                // ContactCard(
+                                                //   contacts: [],
+                                                //   i: i,
+                                                //   token: token,
+                                                //   userId: user_id,
+                                                // ),
+                                                SizedBox(height: 3)
+                                              ],
+                                            );
+                                          },
+                                        ),
                                       ),
+                                      Center(
+                                        child: Text("My Contacts"),
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _contacts.length,
+                                          padding: EdgeInsets.all(20),
+                                          itemBuilder: (context, int i) {
+                                            return Column(
+                                              children: <Widget>[
+                                                ContactCard(
+                                                  requestSent: requestSent,
+                                                  searchFlag: searchFlag,
+                                                  contacts: _contacts,
+                                                  i: i,
+                                                  token: token,
+                                                  userId: user_id,
+                                                ),
+                                                SizedBox(height: 3)
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      )
                                     ],
-                                  );
-                                },
-                              ),
-                  ),
-                  Container(
-                    height: _isfetchingnew ? 50.0 : 0.0,
-                    color: Colors.transparent,
-                    child: Center(
-                      child: CircularProgressIndicator(),
+                                  ),
+                                ),
                     ),
-                  ),
-                ],
+                    Container(
+                      height: _isfetchingnew ? 50.0 : 0.0,
+                      color: Colors.transparent,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
