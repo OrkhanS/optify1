@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/models/api.dart';
+import 'package:optifyapp/providers/auth.dart';
 import 'package:optifyapp/screens/global_search.dart';
 import 'package:provider/provider.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
@@ -35,8 +36,10 @@ class _SocialScreenState extends State<SocialScreen> {
   String nextOrderURL;
   List _suggested = [];
   List _contacts = [];
+  bool searchFlag = false;
   String token, user_id;
   Map _contactsDetails = {};
+  List requestSent = [];
 
   loadMycontacts() {
     if (Provider.of<ContactsGroups>(context, listen: true).contacts.isEmpty) {
@@ -70,7 +73,8 @@ class _SocialScreenState extends State<SocialScreen> {
   }
 
   Future getSuggestions(pattern) async {
-    String url = Api.userslistAndSignUp;
+    Provider.of<ContactsGroups>(context).isLoadingContacts = true;
+    String url = Api.userslistAndSignUp + "?username=" + pattern;
     await http.get(
       url,
       headers: {
@@ -81,12 +85,14 @@ class _SocialScreenState extends State<SocialScreen> {
       setState(
         () {
           final dataOrders = json.decode(response.body) as Map<String, dynamic>;
-          _suggested = dataOrders["results"];
-          // isLoading = false;
+          _contacts.clear();
+          _contacts.addAll(dataOrders["results"]);
+          searchFlag = true;
+          Provider.of<ContactsGroups>(context).isLoadingContacts = false;
+
         },
       );
     });
-    return _suggested;
   }
 
   @override
@@ -132,14 +138,14 @@ class _SocialScreenState extends State<SocialScreen> {
     //print(widget.orderstripsProvider.orders);
     return Consumer<ContactsGroups>(
       builder: (context, contactsGroupsProvider, child) {
-        if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
-          _contacts = contactsGroupsProvider.contacts;
-          if (nextOrderURL == "FirstCall") {
-            nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
+        if(_contacts.isEmpty || !searchFlag){
+          if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
+            _contacts = contactsGroupsProvider.contacts;
+            if (nextOrderURL == "FirstCall") {
+              nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
+            }
+          } else {
           }
-          //messageLoader = false;
-        } else {
-          //messageLoader = true;
         }
 
         return Scaffold(
@@ -186,39 +192,75 @@ class _SocialScreenState extends State<SocialScreen> {
                           onPressed: () {},
                         ),
                       ),
-                      onFieldSubmitted: (value) {},
+                      onFieldSubmitted: (value) {
+                        getSuggestions(value);
+                      },
+                      onChanged: (value){  //todo rasul
+                        if(value==""){
+                          setState(() {
+                            searchFlag = false;
+                            requestSent  = [];
+                          });
+                        }
+                      },
                     ),
                     Expanded(
                       child: contactsGroupsProvider.notLoadingContacts || user_id == null
                           ? Center(child: CircularProgressIndicator())
-                          : contactsGroupsProvider.contacts.isEmpty
+                          : _contacts.isEmpty
                               ? Center(child: Text("No contacts"))
                               : NotificationListener<ScrollNotification>(
                                   onNotification: (ScrollNotification scrollInfo) {
                                     if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                                      // start loading data
                                       setState(() {
                                         _isfetchingnew = true;
                                       });
                                       _loadData();
                                     }
                                   },
-                                  child: ListView.builder(
-                                    itemCount: _contacts.length,
-                                    padding: EdgeInsets.all(20),
-                                    itemBuilder: (context, int i) {
-                                      return Column(
-                                        children: <Widget>[
-                                          ContactCard(
-                                            contacts: _contacts,
-                                            i: i,
-                                            token: token,
-                                            userId: user_id,
-                                          ),
-                                          SizedBox(height: 3)
-                                        ],
-                                      );
-                                    },
+                                  child: Column(
+                                    children: <Widget>[
+                                      // Expanded(
+                                      //   child: ListView.builder(
+                                      //     itemCount: _contacts.length,
+                                      //     padding: EdgeInsets.all(20),
+                                      //     itemBuilder: (context, int i) {
+                                      //       return Column(
+                                      //         children: <Widget>[
+                                      //           ContactCard(
+                                      //             contacts: _contacts,
+                                      //             i: i,
+                                      //             token: token,
+                                      //             userId: user_id,
+                                      //           ),
+                                      //           SizedBox(height: 3)
+                                      //         ],
+                                      //       );
+                                      //     },
+                                      //   ),
+                                      // ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: _contacts.length,
+                                          padding: EdgeInsets.all(20),
+                                          itemBuilder: (context, int i) {
+                                            return Column(
+                                              children: <Widget>[
+                                                ContactCard(
+                                                  requestSent:requestSent,
+                                                  searchFlag: searchFlag,
+                                                  contacts: _contacts,
+                                                  i: i,
+                                                  token: token,
+                                                  userId: user_id,
+                                                ),
+                                                SizedBox(height: 3)
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
                     ),
@@ -241,24 +283,29 @@ class _SocialScreenState extends State<SocialScreen> {
 }
 
 class ContactCard extends StatefulWidget {
-  final contacts, i, token, userId;
+  final contacts, i, token, userId, searchFlag, requestSent;
 
-  ContactCard({@required this.contacts, @required this.i, @required this.token, @required this.userId});
+  ContactCard({@required this.requestSent, @required this.contacts, @required this.i, @required this.token, @required this.userId, @required this.searchFlag});
 
   @override
   _ContactCardState createState() => _ContactCardState();
 }
 
 class _ContactCardState extends State<ContactCard> {
-  var contactsDetails;
-
+  var contactsDetails;  
   @override
   Widget build(BuildContext context) {
-    if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
-      contactsDetails = widget.contacts[widget.i]["reciever"];
-    } else {
-      contactsDetails = widget.contacts[widget.i]["requester"];
+    
+    if(widget.searchFlag == false){
+        if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
+        contactsDetails = widget.contacts[widget.i]["reciever"];
+      } else {
+        contactsDetails = widget.contacts[widget.i]["requester"];
+      }
+    }else{
+      contactsDetails = widget.contacts[widget.i];
     }
+    
     var nameSur = contactsDetails["first_name"].toString() + " " + contactsDetails["last_name"].toString();
     if (nameSur == " ") nameSur = "Hidden Name";
     return Card(
@@ -456,7 +503,9 @@ class _ContactCardState extends State<ContactCard> {
                       }
                     }
                   },
-                  child: Padding(
+                  child: 
+                      widget.searchFlag == false ?
+                  Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()
                           ? (widget.contacts[widget.i]["state"].toString() == "req")
@@ -484,7 +533,288 @@ class _ContactCardState extends State<ContactCard> {
                                   style: TextStyle(
                                     color: Colors.red,
                                   ),
-                                )),
+                                ))
+              
+                          : widget.contacts[widget.i]["contact_status"] == null ?
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 5),
+                                          child: ! widget.requestSent.contains(widget.i)
+                                              ? RaisedButton(
+                                                  color: Colors.white,
+                                                  onPressed: () {
+                                                    Provider.of<ContactsGroups>(
+                                                            context)
+                                                        .requestContact(
+                                                            widget.contacts[widget.i]["id"],
+                                                            Provider.of<Auth>(context).myToken);
+                                                    setState(
+                                                      () {
+                                                      widget.requestSent.add(widget.i);
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.add,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          "Add",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : RaisedButton(
+                                                  color: Colors.white,
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) =>
+                                                          AlertDialog(
+                                                        content: Text(
+                                                          "Do you want to remove Request?",
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No.'),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes!',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .redAccent,
+                                                                )),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                              setState(
+                                                                () {
+                                                                widget.requestSent.remove(widget.i);
+                                                                },
+                                                              );
+                                                              Provider.of<ContactsGroups>(
+                                                                      context)
+                                                                  .removeContactOrRequest(
+                                                                      widget.i, Provider.of<Auth>(context).myToken);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.done,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          "Sent",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                        )
+
+                                        :
+                                       
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 5),
+                                          child: widget.contacts[widget.i]["contact_status"] == "acc" ? RaisedButton(
+                                                  color: Colors.white,
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) =>
+                                                          AlertDialog(
+                                                        content: Text(
+                                                          "Do you want to remove Request?",
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No.'),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes!',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .redAccent,
+                                                                )),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                              setState(
+                                                                () {
+                                                                  widget.requestSent.remove(widget.i);
+                                                                },
+                                                              );
+                                                              Provider.of<ContactsGroups>(
+                                                                      context)
+                                                                  .removeContactOrRequest(
+                                                                      widget.i, Provider.of<Auth>(context).myToken);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.done_all,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          "Friend",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                        :
+                                        RaisedButton(
+                                                  color: Colors.white,
+                                                  onPressed: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) =>
+                                                          AlertDialog(
+                                                        content: Text(
+                                                          "Do you want to remove Request?",
+                                                        ),
+                                                        actions: <Widget>[
+                                                          FlatButton(
+                                                            child: Text('No.'),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          FlatButton(
+                                                            child: Text('Yes!',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .redAccent,
+                                                                )),
+                                                            onPressed: () {
+                                                              Navigator.of(ctx)
+                                                                  .pop();
+                                                              setState(
+                                                                () {
+                                                                widget.requestSent.remove(widget.i);
+                                                                },
+                                                              );
+                                                              Provider.of<ContactsGroups>(
+                                                                      context)
+                                                                  .removeContactOrRequest(
+                                                                      widget.i, Provider.of<Auth>(context).myToken);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 5.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: <Widget>[
+                                                        Icon(
+                                                          Icons.done,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          "Sent",
+                                                          style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                      
+                                        ),
+                              
+              
                 )),
           ),
         ],
