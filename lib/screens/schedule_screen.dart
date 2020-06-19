@@ -34,6 +34,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
   String schedule_id;
   var dateForMonth, dateForDay;
   bool _modePriority;
+  var middle = 20;
 
   bool initialBuild;
   ScrollController _horizontalscrollController;
@@ -46,23 +47,22 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
     token = extractedUserData['token'];
     schedule_id = extractedUserData['schedule_id'].toString();
-    loadMyActivites();
   }
 
-  loadMyActivites() async {
-    if (widget.activitiesProvider != null) {
-      if (widget.activitiesProvider.isLoadingActivities == true && token != null && token != "null") {
-        widget.activitiesProvider.fetchAndSetMyActivities(token, schedule_id);
-      }
-    }
-  }
 
   @override
   void initState() {
+    getToken();
     super.initState();
     isSwitched = false;
     initialBuild = true;
     _modePriority = false;
+  }
+
+  func(){
+    setState(() {
+      _activity = Provider.of<Activities>(context, listen: true).getActivities[middle];
+    });
   }
 
   @override
@@ -87,7 +87,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
     return Consumer<Activities>(
       builder: (context, activitiesProvider, child) {
         if (activitiesProvider.notLoadingActivities == false) {
-          _activity = activitiesProvider.getActivities;
+          _activity = Provider.of<Activities>(context, listen: true).getActivities[middle];
         } else {
           //messageLoader = true;
         }
@@ -177,16 +177,14 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                                 movementDuration: Duration(milliseconds: 500),
                                 dragStartBehavior: DragStartBehavior.start,
                                 onDismissed: (direction) {
-                                  String url =
-                                      Api.myActivities + schedule_id.toString() + "/activities/" + _activity[i]["activity"]["id"].toString() + "/";
-                                  http.delete(
-                                    url,
-                                    headers: {
-                                      HttpHeaders.contentTypeHeader: "application/json",
-                                      "Authorization": "Token " + token,
-                                    },
-                                  );
-                                  activitiesProvider.getActivities[20][i].removeAt(i);
+                                  if(token == null){
+                                    getToken().whenComplete(() => {
+                                      activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token)
+                                    });
+
+                                  } else{
+                                    activitiesProvider.removeActivity(schedule_id, _activity[i]["activity"]["id"], i, token);
+                                  }
 
                                   Flushbar(
                                     title: "Done!",
@@ -350,13 +348,11 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       ListView.builder(
                         //todo Refresh activities
                         controller: _horizontalscrollController,
-
                         itemCount: middle * 2,
 //                      itemExtent: 100,
                         physics: const PageScrollPhysics(),
 //                      padding: EdgeInsets.symmetric(horizontal: 1.0),
                         scrollDirection: Axis.horizontal,
-
                         itemBuilder: (context, index) {
                           if (index < 15 && initialBuild) {
                             return Container(width: MediaQuery.of(context).size.width, child: Text('inititial Build'));
@@ -501,7 +497,7 @@ class FullTimeState extends State<FullTime> {
 
                   if (widget.activityList != null)
                     for (var x = widget.activityList.length - 1; x >= 0; x--)
-                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority),
+                      ActivityBox(context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i:x),
 //                  if (widget.activityList != null)
 //                    for (var x in widget.activityList)
 //                      ActivityBox(
@@ -537,14 +533,9 @@ Widget weekDay({@required final String day}) {
       width: 47,
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            width: 1.0,
-            color: Color(0xFFF5F5F5),
-          ),
-          right: BorderSide(
-            width: 1.0,
-            color: Color(0xFFF5F5F5),
-          ),
+          bottom: BorderSide(width: 2.0, color: Colors.grey[100]),
+          right: BorderSide(width: 2.0, color: Colors.grey[100]),
+          top: BorderSide(width: 2.0, color: Colors.grey[100]),
         ),
       ),
       child: Center(
@@ -563,7 +554,7 @@ Widget hourRow({@required final String time, @required final double vertical}) {
       border: const Border(
         bottom: const BorderSide(
           width: 1.0,
-          color: const Color(0xFFF5F5F5),
+          color: Color(0xFFE0E0E0),
         ),
       ),
     ),
@@ -576,7 +567,7 @@ Widget hourRow({@required final String time, @required final double vertical}) {
             border: const Border(
               right: const BorderSide(
                 width: 1.0,
-                color: const Color(0xFFF5F5F5),
+                color: Color(0xFFE0E0E0),
               ),
             ),
           ),
@@ -585,6 +576,11 @@ Widget hourRow({@required final String time, @required final double vertical}) {
           ),
         ),
         for (var m = 0; m < 7; m++) PlaceHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
       ],
     ),
   );
@@ -596,17 +592,31 @@ class PlaceHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        height: vertical,
-        decoration: const BoxDecoration(
-          border: const Border(
-            right: const BorderSide(
-              width: 1.0,
-              color: const Color(0xFFF5F5F5),
-            ),
+        child: Container(
+      height: vertical,
+      decoration: const BoxDecoration(
+        border: const Border(
+          right: const BorderSide(
+            width: 1.0,
+            color: const Color(0xFFE0E0E0),
           ),
         ),
       ),
-    );
+    ));
   }
+}
+
+Widget placeHolder({@required double vertical}) {
+  return Expanded(
+      child: Container(
+    height: vertical,
+    decoration: const BoxDecoration(
+      border: const Border(
+        right: const BorderSide(
+          width: 1.0,
+          color: const Color(0xFFE0E0E0),
+        ),
+      ),
+    ),
+  ));
 }

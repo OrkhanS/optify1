@@ -38,17 +38,16 @@ class Activities with ChangeNotifier {
   }
 
   List activities(index) {
-    print(index);
-    // if(index == middle || index == middle-1 || index == middle+1) fetchCallCountInitialBuild++;
-    // if(fetchCallCountInitialBuild >= 3){
-    //   fetchCallCountInitialBuild = 2;
-    //   return _activites[index];}
-    // var offset;
-    // if(index != middle) {
-    //   offset = index-middle;
-    //   isLoadingPrevOrNext = true;
-    //   fetchAndSetNextOrPrev(index, offset, token, scheduleId);
-    // }
+    if(index == middle || index == middle-1 || index == middle+1) fetchCallCountInitialBuild++;
+    if(fetchCallCountInitialBuild >= 3){
+      fetchCallCountInitialBuild = 2;
+      return _activites[index];}
+    var offset;
+    if(index != middle) {
+      offset = index-middle;
+      isLoadingPrevOrNext = true;
+      fetchAndSetNextOrPrev(index, offset, token, scheduleId);
+    }
     return _activites[index];
   }
 
@@ -117,6 +116,27 @@ class Activities with ChangeNotifier {
     }
   }
 
+  Future removeActivity(schedule_id, id, i, token){
+    String url =
+        Api.myActivities + schedule_id.toString() + "/activities/" + id.toString() + "/";
+    http.delete(
+      url,
+      headers: {
+        HttpHeaders.CONTENT_TYPE: "application/json",
+        "Authorization": "Token " + token,
+      },
+    );
+
+    //Todo index
+
+    _activites[middle].removeAt(i);
+    _activites[middle].insert(0, {});
+    _activites[middle].removeAt(0);
+
+
+    notifyListeners();
+  }
+
   addActivityFromPostRequest(newactivity) {
     var date = DateTime.now();
     var date2 = date.add(Duration(days: 7 - date.weekday, hours: 23 - date.hour, minutes: 59 - date.minute));
@@ -126,11 +146,11 @@ class Activities with ChangeNotifier {
     if (difference > 0) {
       difference = (difference ~/ 7);
       if (_activites[difference + middle + 1] == null) _activites[difference + middle + 1] = [];
-      _activites[difference + middle + 1].add(newactivity);
+      _activites[difference + middle + 1].insert(0,newactivity);
     } else {
       difference = (difference ~/ 7);
       if (_activites[difference + middle] == null) _activites[difference + middle] = [];
-      _activites[difference + middle].add(newactivity);
+      _activites[difference + middle].insert(0,newactivity);
     }
     print(_activites[middle]);
     notifyListeners();

@@ -1,19 +1,32 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:optifyapp/ActivityClass.dart';
+import 'package:optifyapp/providers/activities.dart';
+import 'package:optifyapp/providers/auth.dart';
+import 'package:provider/provider.dart';
 
 class ActivityScreen extends StatefulWidget {
   static const routeName = '/activity';
 
-  var myActivity;
-  ActivityScreen({this.myActivity});
+  var myActivity, i;
+  ActivityScreen({this.myActivity, this.i});
 
   @override
   _ActivityScreenState createState() => _ActivityScreenState();
 }
 
+
+
 class _ActivityScreenState extends State<ActivityScreen> {
+  String token, schedule_id;
+  
   @override
   Widget build(BuildContext context) {
+    if(token == null || schedule_id == null){
+      token = Provider.of<Auth>(context).myToken;
+      schedule_id = Provider.of<Auth>(context).myScheduleId;
+    }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -199,7 +212,41 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     RaisedButton(
                       color: Colors.red,
                       onPressed: () {
-                        //todo Delete activity
+                          showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            content: Text(
+                              "Do you want to remove this activity?",
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No.'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes!',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                    )),
+                                onPressed: () {                                  
+                                  Provider.of<Activities>(context).removeActivity(schedule_id, widget.myActivity["activity"]["id"], widget.i, token);
+                                  Navigator.of(ctx).pop();
+                                  Navigator.of(ctx).pop();
+                                  Flushbar(
+                                    title: "Done!",
+                                    message: "Activity was deleted",
+                                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+                                    borderRadius: 10,
+                                    duration: Duration(seconds: 3),
+                                  )..show(context);
+                                },
+
+                              ),
+                            ],
+                          ),
+                        );
                       },
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
