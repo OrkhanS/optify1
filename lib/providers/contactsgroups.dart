@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:optifyapp/models/api.dart';
 import 'dart:convert';
@@ -7,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class ContactsGroups with ChangeNotifier {
-  List _contacts = [];  
+  List _contacts = [];
   bool isLoadingContacts = true;
   String token;
   Map allContactsDetails = {};
@@ -15,7 +16,6 @@ class ContactsGroups with ChangeNotifier {
   Map allGroupsDetails = {};
   List _groups = [];
   bool isLoadingGroups = true;
-
 
   bool get notLoadingContacts {
     return isLoadingContacts;
@@ -78,7 +78,8 @@ class ContactsGroups with ChangeNotifier {
   }
 
   Future acceptContactRequest(i, token) {
-    String url = Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
+    String url =
+        Api.respondContactRequst + _contacts[i]["id"].toString() + "/respond/";
     http
         .post(url,
             headers: {
@@ -109,7 +110,7 @@ class ContactsGroups with ChangeNotifier {
   removeAllDataOfProvider() {
     _contacts = [];
     allContactsDetails = {};
-    //isLoadingContacts = true;
+    isLoadingContacts = true;
   }
 
   addContactFromPostRequest(newcontact) {
@@ -117,10 +118,8 @@ class ContactsGroups with ChangeNotifier {
     notifyListeners();
   }
 
-
-  
 //-------------------------------------------------------------------------------------------------------------------------------------------
-   Future fetchAndSetMyGroups(myToken) async {
+  Future fetchAndSetMyGroups(myToken) async {
     var token = myToken;
     if (token != null && token != "null") {
       String url = Api.createGroupAndMyGroups;
@@ -145,30 +144,5 @@ class ContactsGroups with ChangeNotifier {
         }
       });
     }
-  }
- 
- 
- 
-  Future createGroup(token, title, members) async{
-    String url = Api.createGroupAndMyGroups;
-    if(title.toString().length > 55){
-      title=title.toString().substring(0,55);
-    }
-    title = title.join(",");
-    http
-        .post(url,
-            headers: {
-              "Authorization": "Token " + token,
-              HttpHeaders.CONTENT_TYPE: "application/json",
-            },
-            body: json.encode({
-              "name": title,
-              "members": members
-            }))
-        .then((response) {
-      if (response.statusCode == 200) {
-        fetchAndSetMyGroups(token);
-      }
-    });
   }
 }

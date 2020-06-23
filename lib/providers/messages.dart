@@ -28,23 +28,21 @@ class Messages extends ChangeNotifier {
   }
 
   Future fetchAndSetMessages(i, auth) async {
-    if(_messages.isEmpty){
-        String url = Api.messageList + _chatRooms[i]["id"].toString();
-        try {
-          await http.get(
-            url,
-            headers: {
-              HttpHeaders.CONTENT_TYPE: "application/json",
-              "Authorization": "Token " + auth.myToken,
-            },
-          ).then((response) {
-            var dataOrders = json.decode(response.body) as Map<String, dynamic>;
-            _messages[_chatRooms[i]["id"]] = dataOrders;
-            _isloadingMessages = false;
-            notifyListeners();
-          });
-        } catch (e) {}
-    }
+      String url = Api.messageList + _chatRooms[i]["id"].toString();
+      try {
+        await http.get(
+          url,
+          headers: {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+            "Authorization": "Token " + auth.myToken,
+          },
+        ).then((response) {
+          var dataOrders = json.decode(response.body) as Map<String, dynamic>;
+          _messages[_chatRooms[i]["id"]] = dataOrders;
+          _isloadingMessages = false;
+          notifyListeners();
+        });
+      } catch (e) {}
   }
 
   bool get messagesNotLoaded {
@@ -57,11 +55,13 @@ class Messages extends ChangeNotifier {
 
   set addMessages(Map mesaj) {
     ismessagesAdded = false;
-    var room = mesaj["data"] == null ? mesaj["room_id"] : mesaj["data"]["room_id"];
+    var room =
+        mesaj["data"] == null ? mesaj["room_id"] : mesaj["data"]["room_id"];
     for (var i = 0; i < _messages.length; i++) {
       if (_messages[room] != null) {
         if (_messages[room]["results"][0]["id"] != mesaj["id"]) {
-          lastMessageID.add(mesaj["data"] == null ? mesaj["id"] : mesaj["data"]["id"]);
+          lastMessageID
+              .add(mesaj["data"] == null ? mesaj["id"] : mesaj["data"]["id"]);
           _messages[room]["results"].insert(0, mesaj);
           changeChatRoomPlace(room);
         }
@@ -74,7 +74,8 @@ class Messages extends ChangeNotifier {
       if (!okay) {
         _chatRooms.insert(0, mesaj);
       }
-      lastMessageID.add(mesaj["data"] == null ? mesaj["id"] : mesaj["data"]["id"]);
+      lastMessageID
+          .add(mesaj["data"] == null ? mesaj["id"] : mesaj["data"]["id"]);
     }
     if (ismessagesAdded == true) {
       var lastindex = lastMessageID.lastIndexOf(lastMessageID.last);
@@ -114,7 +115,8 @@ class Messages extends ChangeNotifier {
   }
 
   bool get arethereNewMessage {
-    var key = newMessage.keys.firstWhere((k) => newMessage[k] != 0, orElse: () => null);
+    var key = newMessage.keys
+        .firstWhere((k) => newMessage[k] != 0, orElse: () => null);
     if (key != null) {
       return true;
     } else {
@@ -142,19 +144,17 @@ class Messages extends ChangeNotifier {
 
   //______________________________________________________________________________________
 
-
   Future createRooms(id, auth) async {
     String tokenforROOM = auth.myToken;
     if (tokenforROOM != null) {
-      String url = Api.createRoom + id.toString()+"/";
+      String url = Api.createRoom + id.toString() + "/";
       final response = await http.get(
         url,
         headers: {
           HttpHeaders.CONTENT_TYPE: "application/json",
           "Authorization": "Token " + tokenforROOM,
         },
-      ).then((onValue){
-        print(json.decode(onValue.body));
+      ).then((onValue) {
       });
       fetchAndSetRooms(auth);
     }
@@ -228,4 +228,20 @@ class Messages extends ChangeNotifier {
     return user_detail;
   }
 
+  removeAllDataOfProvider() {
+    _messages = {};
+    _chatRooms = [];
+    tmp = {};
+    newMessage = {};
+    newMessageCount = null;
+    tmpIDofMessage = 0;
+    tokenforROOM = null;
+    isUserlogged = true;
+    isChatsLoading = true;
+    _isloadingMessages = true;
+    ismessagesAdded = false;
+    lastMessageID = [];
+    userdetail = {};
+    allChatRoomDetails = {};
+  }
 }

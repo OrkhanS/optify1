@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
@@ -21,7 +22,8 @@ class AddGroupScreen extends StatefulWidget {
   static const routeName = '/social';
   var token, contactsGroupsProvider, user_id, searchFlag;
 
-  AddGroupScreen({this.token, this.contactsGroupsProvider, this.user_id, this.searchFlag});
+  AddGroupScreen(
+      {this.token, this.contactsGroupsProvider, this.user_id, this.searchFlag});
 
   @override
   _AddGroupScreenState createState() => _AddGroupScreenState();
@@ -47,7 +49,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
 
   loadMycontacts() {
     if (Provider.of<ContactsGroups>(context, listen: true).contacts.isEmpty) {
-      Provider.of<ContactsGroups>(context, listen: true).fetchAndSetMyContacts(widget.token);
+      Provider.of<ContactsGroups>(context, listen: true)
+          .fetchAndSetMyContacts(widget.token);
     }
   }
 
@@ -56,7 +59,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
 
     setState(() {
       token = extractedUserData["token"];
@@ -76,7 +80,6 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
     }
   }
 
-  
   Future getSuggestions(pattern) async {
     Provider.of<ContactsGroups>(context).isLoadingContacts = true;
     String url = Api.userslistAndSignUp + "?username=" + pattern;
@@ -99,9 +102,48 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
     });
     return _suggested;
   }
+
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future createGroup(token, title, members) async {
+    String url = Api.createGroupAndMyGroups;
+    if (title.toString().length > 105) {
+      title = title.toString().substring(0, 105);
+    }
+    title = title.join(",");
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({"name": title, "members": members}))
+        .then((response) {
+      if (response.statusCode == 200) {
+        
+        Provider.of<ContactsGroups>(context).fetchAndSetMyGroups(token);
+        Navigator.of(context).pop();
+        Flushbar(
+          title: "Done",
+          message: "Group created",
+          padding: const EdgeInsets.all(30),
+          borderRadius: 10,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      } else {
+        Flushbar(
+          title: "Error",
+          message: "'Wrong details, try again'",
+          padding: const EdgeInsets.all(30),
+          borderRadius: 10,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      }
+    });
+    return;
   }
 
   @override
@@ -114,7 +156,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
       user_id = widget.user_id;
     }
     Future _loadData() async {
-      if (nextOrderURL.toString() != "null" && nextOrderURL.toString() != "FristCall") {
+      if (nextOrderURL.toString() != "null" &&
+          nextOrderURL.toString() != "FristCall") {
         String url = nextOrderURL;
         try {
           await http.get(
@@ -142,8 +185,9 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
     //print(widget.orderstripsProvider.orders);
     return Consumer<ContactsGroups>(
       builder: (context, contactsGroupsProvider, child) {
-     if (_contacts.isEmpty && !searchFlag) {
-          if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
+        if (_contacts.isEmpty && !searchFlag) {
+          if (Provider.of<ContactsGroups>(context, listen: true).contacts !=
+              0) {
             _contacts.addAll(contactsGroupsProvider.detailsContacts["results"]);
             if (nextOrderURL == "FirstCall") {
               nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
@@ -155,8 +199,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: FloatingActionButton(
             backgroundColor: Theme.of(context).primaryColor,
-            onPressed: () => {
-              contactsGroupsProvider.createGroup(token, titleOfGroup, memberListToCreateGroup)
+            onPressed: () {
+              createGroup(token, titleOfGroup, memberListToCreateGroup);
             },
             child: Icon(Icons.subdirectory_arrow_right),
           ),
@@ -175,7 +219,9 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
             centerTitle: true,
             title: Text(
               "New Group",
-              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
             ),
             elevation: 1,
           ),
@@ -208,27 +254,31 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                           onPressed: () {
                             this._typeAheadController.text = '';
                             _typeAheadController.clear();
-                               setState(() {
-                                  searchFlag = false;
-                                  _contacts.clear();
-                                });
+                            setState(() {
+                              searchFlag = false;
+                              _contacts.clear();
+                            });
                           },
                         ),
                       ),
                       onFieldSubmitted: (value) {
-                        searchFlag=true;
+                        searchFlag = true;
                         getSuggestions(value);
                       },
                     ),
                   ),
                   Expanded(
-                    child: contactsGroupsProvider.notLoadingContacts || user_id == null
+                    child: contactsGroupsProvider.notLoadingContacts ||
+                            user_id == null
                         ? Center(child: CircularProgressIndicator())
                         : contactsGroupsProvider.contacts.isEmpty
                             ? Center(child: Text("No contacts"))
                             : NotificationListener<ScrollNotification>(
-                                onNotification: (ScrollNotification scrollInfo) {
-                                  if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                                onNotification:
+                                    (ScrollNotification scrollInfo) {
+                                  if (!_isfetchingnew &&
+                                      scrollInfo.metrics.pixels ==
+                                          scrollInfo.metrics.maxScrollExtent) {
                                     // start loading data
                                     setState(() {
                                       _isfetchingnew = true;
@@ -243,7 +293,8 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                                       children: <Widget>[
                                         ContactCard(
                                           title: titleOfGroup,
-                                          memberListToCreateGroup: memberListToCreateGroup,
+                                          memberListToCreateGroup:
+                                              memberListToCreateGroup,
                                           searchFlag: searchFlag,
                                           contacts: _contacts,
                                           i: i,
@@ -277,7 +328,14 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
 class ContactCard extends StatefulWidget {
   final contacts, i, token, userId, searchFlag, memberListToCreateGroup, title;
 
-  ContactCard({@required this.memberListToCreateGroup, @required this.searchFlag, @required this.contacts, @required this.i, @required this.token, @required this.userId, @required this.title});
+  ContactCard(
+      {@required this.memberListToCreateGroup,
+      @required this.searchFlag,
+      @required this.contacts,
+      @required this.i,
+      @required this.token,
+      @required this.userId,
+      @required this.title});
 
   @override
   _ContactCardState createState() => _ContactCardState();
@@ -289,28 +347,34 @@ class _ContactCardState extends State<ContactCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.searchFlag == false) {   
-      if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
+    if (widget.searchFlag == false) {
+      if (widget.contacts[widget.i]["requester"]["id"].toString() ==
+          widget.userId.toString()) {
         contactsDetails = widget.contacts[widget.i]["reciever"];
       } else {
         contactsDetails = widget.contacts[widget.i]["requester"];
       }
-    }else {
+    } else {
       contactsDetails = widget.contacts[widget.i];
     }
-    var nameSur = contactsDetails["first_name"].toString() + " " + contactsDetails["last_name"].toString();
+    var nameSur = contactsDetails["first_name"].toString() +
+        " " +
+        contactsDetails["last_name"].toString();
     if (nameSur == " ") nameSur = "Hidden Name";
     return CheckboxListTile(
       value: check,
-      title: Text(nameSur, style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold)),
-      subtitle: Text(contactsDetails["username"].toString(), style: TextStyle(color: Colors.grey[600])),
-      onChanged: (val)
-      { 
-        if(widget.memberListToCreateGroup.contains(contactsDetails["id"])){
+      title: Text(nameSur,
+          style: TextStyle(
+              fontSize: 20,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.bold)),
+      subtitle: Text(contactsDetails["username"].toString(),
+          style: TextStyle(color: Colors.grey[600])),
+      onChanged: (val) {
+        if (widget.memberListToCreateGroup.contains(contactsDetails["id"])) {
           widget.memberListToCreateGroup.remove(contactsDetails["id"]);
           widget.title.remove(contactsDetails["username"].toString());
-        }
-        else {
+        } else {
           widget.memberListToCreateGroup.add(contactsDetails["id"]);
           widget.title.add(contactsDetails["username"].toString());
         }
@@ -318,16 +382,21 @@ class _ContactCardState extends State<ContactCard> {
       },
       secondary: Image(
         height: 80,
-        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+        frameBuilder: (BuildContext context, Widget child, int frame,
+            bool wasSynchronouslyLoaded) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 1.0),
             child: child,
           );
         },
-        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+        loadingBuilder: (BuildContext context, Widget child,
+            ImageChunkEvent loadingProgress) {
           if (loadingProgress == null) return child;
           return CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes : null,
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes
+                : null,
           );
         },
         image: NetworkImage(

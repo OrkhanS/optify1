@@ -162,7 +162,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                     ? Container(height: isSwitched ? 20 : 0, child: Text("No Activity"))
                     : AnimatedContainer(
                         duration: Duration(milliseconds: 300),
-                        height: isSwitched ? MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 25 : 0,
+                        height: isSwitched ? MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 32 : 0,
                         child: ListView.builder(
                           itemBuilder: (context, int i) {
                             return Padding(
@@ -431,7 +431,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 300),
-                  height: isSwitched ? 0 : MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 25,
+                  height: isSwitched ? 0 : MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 32,
                   child: Stack(
                     children: <Widget>[
                       ListView.builder(

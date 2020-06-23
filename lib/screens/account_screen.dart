@@ -42,16 +42,15 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  bool isLoading = true;
   @override
   void initState() {
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    widget.auth.fetchAndSetUserDetails();
-
+  Widget build(BuildContext context) {   
+    return Consumer<Auth>(
+      builder: (context, auth, child) {  
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -63,20 +62,13 @@ class _AccountPageState extends State<AccountPage> {
         elevation: 1,
       ),
       body:
-//          todo remove
-//      widget.auth.isNotLoading
-//          ? Center(child: CircularProgressIndicator()):
-          Center(
+      widget.auth.isNotLoadingUserDetails && widget.auth.userdetail.isEmpty
+         ? Center(child: CircularProgressIndicator())
+         : Center(
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               InkWell(
-//                onTap: () {
-//                  Navigator.push(
-//                    context,
-//                    MaterialPageRoute(builder: (__) => ProfileScreen(auth: widget.auth.userdetail)),
-//                  );
-//                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Row(
@@ -90,22 +82,6 @@ class _AccountPageState extends State<AccountPage> {
                         backgroundImage: NetworkImage(
                             // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
                             "https://robohash.org/" + Provider.of<Auth>(context, listen: false).myUserId.toString()), //Todo: UserPic
-//                  child: Image.network(
-//                    'https://images-na.ssl-images-amazon.com/images/I/81NIli1PuqL._AC_SL1500_.jpg',
-//                    fit: BoxFit.cover,
-//                    loadingBuilder: (BuildContext context, Widget child,
-//                        ImageChunkEvent loadingProgress) {
-//                      if (loadingProgress == null) return child;
-//                      return Center(
-//                        child: CircularProgressIndicator(
-//                          value: loadingProgress.expectedTotalBytes != null
-//                              ? loadingProgress.cumulativeBytesLoaded /
-//                                  loadingProgress.expectedTotalBytes
-//                              : null,
-//                        ),
-//                      );
-//                    },
-//                  ),
                       ),
                       Column(
                         children: <Widget>[
@@ -256,6 +232,8 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
       ),
+    );
+  },
     );
   }
 }

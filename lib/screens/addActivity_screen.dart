@@ -546,8 +546,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     _start = new DateTime(_dateTimeStart.year, _dateTimeStart.month, _dateTimeStart.day, _timeStart.hour, _timeStart.minute);
 
     _end = new DateTime(_dateTimeEnd.year, _dateTimeEnd.month, _dateTimeEnd.day, _timeEnd.hour, _timeEnd.minute);
-    print("Start:" + _start.toString());
-    print("End:" + _end.toString());
+
     String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
     http
         .post(url,
@@ -578,7 +577,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           duration: Duration(seconds: 5),
         )..show(context);
       } else {
-        print(response.body);
         Flushbar(
           title: "Error",
           message: "'Wrong details, try again'",
