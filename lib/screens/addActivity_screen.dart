@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -11,6 +12,7 @@ import 'package:optifyapp/providers/activities.dart';
 import 'package:optifyapp/providers/contactsgroups.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_socket_channel/io.dart';
 import '../models/api.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,6 +38,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   bool _modeAI = false;
   var categoryValue = 'Routine';
   var defPrivacy = 'Friends';
+  Duration _duration;
 
   Future getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -90,7 +93,13 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           ],
         ),
         onPressed: () {
-          post();
+          if(_modeAI == true){
+             initCommunication();
+            //postAI();
+          }else{
+           post();
+          }
+          
         },
       ),
       body: SafeArea(
@@ -387,7 +396,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                                 minuteInterval: 5,
                                 onTimerDurationChanged: (time) {
                                   setState(() {
-                                    //_duration = time;
+                                    _duration = time;
                                   });
                                 })),
                       ],
@@ -601,4 +610,129 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       }
     });
   }
+  
+  ObserverList<Function> _listeners = new ObserverList<Function>();
+  bool enableButton = false;
+  bool _isOn = false;
+  IOWebSocketChannel _channelRoom;
+  IOWebSocketChannel alertChannel;
+
+  initCommunication() async {
+    reset();
+    try {
+      _channelRoom =
+          new IOWebSocketChannel.connect(Api.aiSocket + '?token=' + token.toString());
+      _channelRoom.stream.listen(_onReceptionOfMessageFromServer);
+      print("Room Socket Connected");
+      handleSendMessage();
+    } catch (e) {}
+  }
+
+  addListener(Function callback) {
+    _listeners.add(callback);
+  }
+
+  removeListener(Function callback) {
+    _listeners.remove(callback);
+  }
+
+  _onReceptionOfMessageFromServer(message) {
+    print(message);
+    _isOn = true;
+    _listeners.forEach((Function callback) {
+      callback(message);
+    });
+  }
+
+  reset() {
+    if (_channelRoom != null) {
+      if (_channelRoom.sink != null) {
+        _channelRoom.sink.close();
+        _isOn = false;
+      }
+    }
+  }
+
+  void handleSendMessage() {
+    var message ={};
+    _start = new DateTime(_dateTimeStart.year, _dateTimeStart.month, _dateTimeStart.day);
+    _end = new DateTime(_dateTimeEnd.year, _dateTimeEnd.month, _dateTimeEnd.day);
+
+    message["command"] = "best_timeslot";
+    message["start_date"] = _start.toString();
+    message["end_date"] = _end.toString();
+    message["title"] = _ActivityName.toString();
+    message["duration"] = (_duration.inMinutes~/60).toString();
+    message["members"] = Provider.of<ContactsGroups>(context).activityMembers;
+
+    if (_channelRoom != null) {
+      if (_channelRoom.sink != null) {
+        _channelRoom.sink.add(jsonEncode(message).toString());
+      }
+    }
+  }
+
+
+
+  Future postAI() async {
+    if (schedule_id == null || token == null) {
+      final prefs = await SharedPreferences.getInstance();
+      if (!prefs.containsKey('userData')) {
+        return false;
+      }
+      final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+      token = extractedUserData['token'];
+      schedule_id = extractedUserData['schedule_id'].toString();
+    }
+    _start = new DateTime(_dateTimeStart.year, _dateTimeStart.month, _dateTimeStart.day, _timeStart.hour, _timeStart.minute);
+
+    _end = new DateTime(_dateTimeEnd.year, _dateTimeEnd.month, _dateTimeEnd.day, _timeEnd.hour, _timeEnd.minute);
+
+    String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
+    var members = Provider.of<ContactsGroups>(context).activityMembers;
+    http
+        .post(url,
+            headers: {
+              "Authorization": "Token " + token,
+              HttpHeaders.CONTENT_TYPE: "application/json",
+            },
+            body: json.encode({
+              "activity": {
+                "title": _ActivityName,
+                "start_times": [_start.toString()],
+                "end_times": [_end.toString()],
+                "weekdays": ["Monday"],
+              },
+              "category": categoryValue,
+              "priority": _discreteValue.toInt(),
+              "privacy": {"privacy": defPrivacy.toLowerCase(),},
+              "members": members,
+
+            }))
+        .then((response) {
+        Provider.of<ContactsGroups>(context).activityMembers = [];  
+      if (response.statusCode == 201) {
+        
+        Provider.of<Activities>(context).addActivityFromPostRequest(json.decode(response.body));
+        Navigator.pop(context);
+        Flushbar(
+          title: "Done",
+          message: "Activity added",
+          padding: const EdgeInsets.all(30),
+          borderRadius: 10,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      } else {
+        Flushbar(
+          title: "Error",
+          message: "'Wrong details, try again'",
+          padding: const EdgeInsets.all(30),
+          borderRadius: 10,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      }
+    });
+    
+  }
+
 }
