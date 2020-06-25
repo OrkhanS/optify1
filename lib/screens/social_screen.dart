@@ -176,112 +176,94 @@ class _SocialScreenState extends State<SocialScreen> {
               ],
             ),
           ),
-          body: GestureDetector(
-            child: SingleChildScrollView(
-              child: Container(
-                height: MediaQuery.of(context).size.height * .9,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: _typeAheadController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          prefixIcon: Icon(
-                            Icons.search,
-                          ),
-                          labelText: 'Search',
-                          hintText: 'Username',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
-                          suffixIcon: IconButton(
-                            padding: EdgeInsets.only(
-                              top: 5,
-                            ),
-                            icon: Icon(
-                              Icons.close,
-                              size: 15,
-                            ),
-                            onPressed: () {
-                              _typeAheadController.clear();
-                              setState(() {
-                                searchFlag = false;
-                                requestSent = [];
-                                _contacts.clear();
-                              });
-                            },
-                          ),
+          body: Container(
+            height: MediaQuery.of(context).size.height * .9,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: _typeAheadController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      prefixIcon: Icon(
+                        Icons.search,
+                      ),
+                      labelText: 'Search',
+                      hintText: 'Username',
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      suffixIcon: IconButton(
+                        padding: EdgeInsets.only(
+                          top: 5,
                         ),
-                        onFieldSubmitted: (value) {
-                          getSuggestions(value);
-                        },
-                        onChanged: (value) {
-                          //todo rasul
-                          if (value == "") {
-                            setState(() {
-                              searchFlag = false;
-                              requestSent = [];
-                            });
-                          }
+                        icon: Icon(
+                          Icons.close,
+                          size: 15,
+                        ),
+                        onPressed: () {
+                          _typeAheadController.clear();
+                          setState(() {
+                            searchFlag = false;
+                            requestSent = [];
+                            _contacts.clear();
+                          });
                         },
                       ),
                     ),
-                    Expanded(
-                      child: contactsGroupsProvider.notLoadingContacts || user_id == null
-                          ? Center(child: CircularProgressIndicator())
-                          : _combinedList.isEmpty
-                              ? Center(child: Text("No contacts"))
-                              : SingleChildScrollView(
-                                  child: NotificationListener<ScrollNotification>(
-                                    onNotification: (ScrollNotification scrollInfo) {
-                                      if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                                        setState(() {
-                                          _isfetchingnew = true;
-                                        });
-                                        _loadData();
-                                      }
-                                    },
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          height: contactsGroupsProvider.lengthLists * 100.0,
-                                          child: ListView.builder(
-                                            itemCount: contactsGroupsProvider.lengthLists,
-                                            padding: EdgeInsets.all(20),
-                                            itemBuilder: (context, int i) {
-                                              return Column(
-                                                children: <Widget>[
-                                                  _combinedList[i]["requester"] != null
-                                                      ? ContactCard(
-                                                          requestSent: requestSent,
-                                                          searchFlag: searchFlag,
-                                                          contacts: _combinedList,
-                                                          i: i,
-                                                          token: token,
-                                                          userId: user_id,
-                                                        )
-                                                      : GroupCard(groups: _combinedList, i: i, token: token, provider: contactsGroupsProvider,),
-                                                  SizedBox(height: 3),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                    ),
-                    Container(
-                      height: _isfetchingnew ? 50.0 : 0.0,
-                      color: Colors.transparent,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ],
+                    onFieldSubmitted: (value) {
+                      getSuggestions(value);
+                    },
+                    onChanged: (value) {
+                      //todo rasul
+                      if (value == "") {
+                        setState(() {
+                          searchFlag = false;
+                          requestSent = [];
+                        });
+                      }
+                    },
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: contactsGroupsProvider.notLoadingContacts || user_id == null
+                      ? Center(child: CircularProgressIndicator())
+                      : _combinedList.isEmpty
+                          ? Center(child: Text("No contacts"))
+                          : ListView.builder(
+                              itemCount: contactsGroupsProvider.lengthLists,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              itemBuilder: (context, int i) {
+                                return Column(
+                                  children: <Widget>[
+                                    _combinedList[i]["requester"] != null
+                                        ? ContactCard(
+                                            requestSent: requestSent,
+                                            searchFlag: searchFlag,
+                                            contacts: _combinedList,
+                                            i: i,
+                                            token: token,
+                                            userId: user_id,
+                                          )
+                                        : GroupCard(
+                                            groups: _combinedList,
+                                            i: i,
+                                            token: token,
+                                            provider: contactsGroupsProvider,
+                                          ),
+                                    Divider(),
+                                  ],
+                                );
+                              },
+                            ),
+                ),
+                Container(
+                  height: _isfetchingnew ? 50.0 : 0.0,
+                  color: Colors.transparent,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -321,296 +303,294 @@ class _ContactCardState extends State<ContactCard> {
 
     var nameSur = contactsDetails["first_name"].toString() + " " + contactsDetails["last_name"].toString();
     if (nameSur == " ") nameSur = "Hidden Name";
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 7,
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ContactScreen(contact: contactsDetails)),
-              );
-            },
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Image.network(
-                    "https://robohash.org/" + contactsDetails["username"].toString() + "?set=set5",
-                    fit: BoxFit.cover,
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          nameSur,
-                          style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.alternate_email,
-                              size: 10,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            Text(
-                              contactsDetails["username"].toString(),
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        )
-                      ],
+    return Container(
+      height: 60,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 7,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ContactScreen(contact: contactsDetails)),
+                );
+              },
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Image.network(
+                      "https://robohash.org/" + contactsDetails["username"].toString() + "?set=set5",
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            nameSur,
+                            style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.alternate_email,
+                                size: 10,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              Text(
+                                contactsDetails["username"].toString(),
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        SizedBox(width: 10, height: 80),
-        Expanded(
-          flex: 3,
-          child: Padding(
-              //If I sent friend request
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-              child: // If another person hasn't accepted my request yet.
-                  OutlineButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                // If I want to cancel my Pending
-                onPressed: () {
-                  if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
-                    if (widget.contacts[widget.i]["state"].toString() == "req") {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          content: Text(
-                            "Do you want to cancel Request?",
+          Expanded(
+            flex: 3,
+            child: Padding(
+                //If I sent friend request
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: // If another person hasn't accepted my request yet.
+                    OutlineButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  // If I want to cancel my Pending
+                  onPressed: () {
+                    if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
+                      if (widget.contacts[widget.i]["state"].toString() == "req") {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            content: Text(
+                              "Do you want to cancel Request?",
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No.'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes!',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                    )),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                },
+                              ),
+                            ],
                           ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('No.'),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            content: Text(
+                              "Do you want to remove Request?",
                             ),
-                            FlatButton(
-                              child: Text('Yes!',
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                  )),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No.'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes!',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                    )),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          content: Text(
-                            "Do you want to remove Request?",
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('No.'),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
+                      if (widget.contacts[widget.i]["state"].toString() == "req") {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            content: Text(
+                              "Do you want to Accept or Remove the request?",
                             ),
-                            FlatButton(
-                              child: Text('Yes!',
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                  )),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  } else {
-                    if (widget.contacts[widget.i]["state"].toString() == "req") {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          content: Text(
-                            "Do you want to Accept or Remove the request?",
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Accept.'),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                Provider.of<ContactsGroups>(context).acceptContactRequest(widget.i, widget.token);
-                                setState(
-                                  () {
-                                    widget.contacts[widget.i]["state"] = "acc";
-                                  },
-                                );
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Remove.',
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                  )),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          content: Text(
-                            "Do you want to remove Contact?",
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('No.'),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Yes!',
-                                  style: TextStyle(
-                                    color: Colors.redAccent,
-                                  )),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  }
-                },
-                child: widget.searchFlag == false
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()
-                            ? (widget.contacts[widget.i]["state"].toString() == "req")
-                                ? Text(
-                                    "Pending",
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  )
-                                : Text(
-                                    "Remove",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  )
-                            : widget.contacts[widget.i]["state"].toString() == "req"
-                                ? Text(
-                                    "Respond",
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  )
-                                : Text(
-                                    "Remove",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ))
-                    : widget.contacts[widget.i]["contact_status"] == null
-                        ? !widget.requestSent.contains(widget.i)
-                            ? InkWell(
-                                onTap: () {
-                                  Provider.of<ContactsGroups>(context)
-                                      .requestContact(widget.contacts[widget.i]["id"], Provider.of<Auth>(context).myToken);
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Accept.'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  Provider.of<ContactsGroups>(context).acceptContactRequest(widget.i, widget.token);
                                   setState(
                                     () {
-                                      widget.requestSent.add(widget.i);
+                                      widget.contacts[widget.i]["state"] = "acc";
                                     },
                                   );
                                 },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.add,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      "Add",
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : InkWell(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      content: Text(
-                                        "Do you want to remove Request?",
-                                      ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text('No.'),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text('Yes!',
-                                              style: TextStyle(
-                                                color: Colors.redAccent,
-                                              )),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                            setState(
-                                              () {
-                                                widget.requestSent.remove(widget.i);
-                                              },
-                                            );
-                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                              ),
+                              FlatButton(
+                                child: Text('Remove.',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                    )),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
                                 },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            content: Text(
+                              "Do you want to remove Contact?",
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No.'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes!',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                    )),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: widget.searchFlag == false
+                      ? widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()
+                          ? (widget.contacts[widget.i]["state"].toString() == "req")
+                              ? Text(
+                                  "Pending",
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )
+                              : Text(
+                                  "Remove",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                )
+                          : widget.contacts[widget.i]["state"].toString() == "req"
+                              ? Text(
+                                  "Respond",
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )
+                              : Text(
+                                  "Remove",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                )
+                      : widget.contacts[widget.i]["contact_status"] == null
+                          ? !widget.requestSent.contains(widget.i)
+                              ? InkWell(
+                                  onTap: () {
+                                    Provider.of<ContactsGroups>(context)
+                                        .requestContact(widget.contacts[widget.i]["id"], Provider.of<Auth>(context).myToken);
+                                    setState(
+                                      () {
+                                        widget.requestSent.add(widget.i);
+                                      },
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.add,
+                                        color: Theme.of(context).primaryColor,
+                                        size: 20,
+                                      ),
+                                      Text(
+                                        "Add",
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        content: Text(
+                                          "Do you want to remove Request?",
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('No.'),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('Yes!',
+                                                style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                )),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                              setState(
+                                                () {
+                                                  widget.requestSent.remove(widget.i);
+                                                },
+                                              );
+                                              Provider.of<ContactsGroups>(context)
+                                                  .removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -628,94 +608,96 @@ class _ContactCardState extends State<ContactCard> {
                                       )
                                     ],
                                   ),
-                                ),
-                              )
-                        : widget.contacts[widget.i]["contact_status"] == "acc"
-                            ? InkWell(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      content: Text(
-                                        "Do you want to remove Request?",
+                                )
+                          : widget.contacts[widget.i]["contact_status"] == "acc"
+                              ? InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        content: Text(
+                                          "Do you want to remove Request?",
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('No.'),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('Yes!',
+                                                style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                )),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                              setState(
+                                                () {
+                                                  widget.requestSent.remove(widget.i);
+                                                },
+                                              );
+                                              Provider.of<ContactsGroups>(context)
+                                                  .removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text('No.'),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text('Yes!',
-                                              style: TextStyle(
-                                                color: Colors.redAccent,
-                                              )),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                            setState(
-                                              () {
-                                                widget.requestSent.remove(widget.i);
-                                              },
-                                            );
-                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-                                          },
-                                        ),
-                                      ],
+                                    );
+                                  },
+                                  child: Text(
+                                    "Remove",
+                                    style: TextStyle(
+                                      color: Colors.red,
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  "Remove",
-                                  style: TextStyle(
-                                    color: Colors.red,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        content: Text(
+                                          "Do you want to remove Request?",
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('No.'),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('Yes!',
+                                                style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                )),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                              setState(
+                                                () {
+                                                  widget.requestSent.remove(widget.i);
+                                                },
+                                              );
+                                              Provider.of<ContactsGroups>(context)
+                                                  .removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Sent",
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
                                   ),
                                 ),
-                              )
-                            : InkWell(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      content: Text(
-                                        "Do you want to remove Request?",
-                                      ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text('No.'),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text('Yes!',
-                                              style: TextStyle(
-                                                color: Colors.redAccent,
-                                              )),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                            setState(
-                                              () {
-                                                widget.requestSent.remove(widget.i);
-                                              },
-                                            );
-                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "Sent",
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-              )),
-        ),
-      ],
+                )),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -732,418 +714,95 @@ class GroupCard extends StatefulWidget {
 class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 7,
-          child: InkWell(
-            onTap: () {
-              widget.provider.fetchAndSetGroupActivities(widget.token,widget.groups[widget.i]["schedule"]["id"]);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GroupScreen(group: widget.groups[widget.i], provider:widget.provider)),
-              );
-            },
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Image.network(
-                    "https://robohash.org/" + widget.groups[widget.i]["name"].toString(),
-                    fit: BoxFit.cover,
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 2),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.groups[widget.i]["name"].toString(),
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          widget.groups[widget.i]["groupmembers"][0]["member"]["username"].toString() +
-                              "," +
-                              widget.groups[widget.i]["groupmembers"][1]["member"]["username"].toString(),
-//                              contactsDetails["usern6ame"].toString(),
-
-                          overflow: TextOverflow.clip,
-                          maxLines: 2,
-                          softWrap: true,
-                          style: TextStyle(color: Colors.grey[600]),
-                        )
-                      ],
+    return Container(
+      height: 60,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 7,
+            child: InkWell(
+              onTap: () {
+                widget.provider.fetchAndSetGroupActivities(widget.token, widget.groups[widget.i]["schedule"]["id"]);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GroupScreen(group: widget.groups[widget.i], provider: widget.provider)),
+                );
+              },
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Image.network(
+                      "https://robohash.org/" + widget.groups[widget.i]["name"].toString(),
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
+                        );
+                      },
                     ),
                   ),
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.groups[widget.i]["name"].toString(),
+                            maxLines: 1,
+                            style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "@" + widget.groups[widget.i]["groupmembers"][0]["member"]["username"].toString(),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          if (widget.groups[widget.i]["groupmembers"][1]["member"]["username"] != null)
+                            Text(
+                              "@" + widget.groups[widget.i]["groupmembers"][1]["member"]["username"].toString(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 10, height: 60),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: OutlineButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(width: 10, height: 80),
-        Expanded(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-            child: OutlineButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () {},
-              child: Text(
-                "View Schedule",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.blue),
+                onPressed: () {},
+                child: Text(
+                  "View Schedule",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.blue),
+                ),
               ),
             ),
           ),
-        ),
-//        Expanded(
-//          flex: 3,
-//          child: Padding(
-//              //If I sent friend request
-//              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-//              child: // If another person hasn't accepted my request yet.
-//                  OutlineButton(
-//                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//                // If I want to cancel my Pending
-//                onPressed: () {
-//                  if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
-//                    if (widget.contacts[widget.i]["state"].toString() == "req") {
-//                      showDialog(
-//                        context: context,
-//                        builder: (ctx) => AlertDialog(
-//                          content: Text(
-//                            "Do you want to cancel Request?",
-//                          ),
-//                          actions: <Widget>[
-//                            FlatButton(
-//                              child: Text('No.'),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                              },
-//                            ),
-//                            FlatButton(
-//                              child: Text('Yes!',
-//                                  style: TextStyle(
-//                                    color: Colors.redAccent,
-//                                  )),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-//                              },
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    } else {
-//                      showDialog(
-//                        context: context,
-//                        builder: (ctx) => AlertDialog(
-//                          content: Text(
-//                            "Do you want to remove Request?",
-//                          ),
-//                          actions: <Widget>[
-//                            FlatButton(
-//                              child: Text('No.'),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                              },
-//                            ),
-//                            FlatButton(
-//                              child: Text('Yes!',
-//                                  style: TextStyle(
-//                                    color: Colors.redAccent,
-//                                  )),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-//                              },
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    }
-//                  } else {
-//                    if (widget.contacts[widget.i]["state"].toString() == "req") {
-//                      showDialog(
-//                        context: context,
-//                        builder: (ctx) => AlertDialog(
-//                          content: Text(
-//                            "Do you want to Accept or Remove the request?",
-//                          ),
-//                          actions: <Widget>[
-//                            FlatButton(
-//                              child: Text('Accept.'),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                                Provider.of<ContactsGroups>(context).acceptContactRequest(widget.i, widget.token);
-//                                setState(
-//                                  () {
-//                                    widget.contacts[widget.i]["state"] = "acc";
-//                                  },
-//                                );
-//                              },
-//                            ),
-//                            FlatButton(
-//                              child: Text('Remove.',
-//                                  style: TextStyle(
-//                                    color: Colors.redAccent,
-//                                  )),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-//                              },
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    } else {
-//                      showDialog(
-//                        context: context,
-//                        builder: (ctx) => AlertDialog(
-//                          content: Text(
-//                            "Do you want to remove Contact?",
-//                          ),
-//                          actions: <Widget>[
-//                            FlatButton(
-//                              child: Text('No.'),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                              },
-//                            ),
-//                            FlatButton(
-//                              child: Text('Yes!',
-//                                  style: TextStyle(
-//                                    color: Colors.redAccent,
-//                                  )),
-//                              onPressed: () {
-//                                Navigator.of(ctx).pop();
-//                                Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, widget.token);
-//                              },
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    }
-//                  }
-//                },
-//                child: widget.searchFlag == false
-//                    ? Padding(
-//                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-//                        child: widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()
-//                            ? (widget.contacts[widget.i]["state"].toString() == "req")
-//                                ? Text(
-//                                    "Pending",
-//                                    style: TextStyle(
-//                                      color: Theme.of(context).primaryColor,
-//                                    ),
-//                                  )
-//                                : Text(
-//                                    "Remove",
-//                                    style: TextStyle(
-//                                      color: Colors.red,
-//                                    ),
-//                                  )
-//                            : widget.contacts[widget.i]["state"].toString() == "req"
-//                                ? Text(
-//                                    "Respond",
-//                                    style: TextStyle(
-//                                      color: Theme.of(context).primaryColor,
-//                                    ),
-//                                  )
-//                                : Text(
-//                                    "Remove",
-//                                    style: TextStyle(
-//                                      color: Colors.red,
-//                                    ),
-//                                  ))
-//                    : widget.contacts[widget.i]["contact_status"] == null
-//                        ? !widget.requestSent.contains(widget.i)
-//                            ? InkWell(
-//                                onTap: () {
-//                                  Provider.of<ContactsGroups>(context)
-//                                      .requestContact(widget.contacts[widget.i]["id"], Provider.of<Auth>(context).myToken);
-//                                  setState(
-//                                    () {
-//                                      widget.requestSent.add(widget.i);
-//                                    },
-//                                  );
-//                                },
-//                                child: Row(
-//                                  mainAxisSize: MainAxisSize.max,
-//                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                                  children: <Widget>[
-//                                    Icon(
-//                                      Icons.add,
-//                                      color: Theme.of(context).primaryColor,
-//                                      size: 20,
-//                                    ),
-//                                    Text(
-//                                      "Add",
-//                                      style: TextStyle(
-//                                        color: Theme.of(context).primaryColor,
-//                                      ),
-//                                    ),
-//                                  ],
-//                                ),
-//                              )
-//                            : InkWell(
-//                                onTap: () {
-//                                  showDialog(
-//                                    context: context,
-//                                    builder: (ctx) => AlertDialog(
-//                                      content: Text(
-//                                        "Do you want to remove Request?",
-//                                      ),
-//                                      actions: <Widget>[
-//                                        FlatButton(
-//                                          child: Text('No.'),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                          },
-//                                        ),
-//                                        FlatButton(
-//                                          child: Text('Yes!',
-//                                              style: TextStyle(
-//                                                color: Colors.redAccent,
-//                                              )),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                            setState(
-//                                              () {
-//                                                widget.requestSent.remove(widget.i);
-//                                              },
-//                                            );
-//                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-//                                          },
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  );
-//                                },
-//                                child: Padding(
-//                                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-//                                  child: Row(
-//                                    mainAxisSize: MainAxisSize.max,
-//                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                                    children: <Widget>[
-//                                      Icon(
-//                                        Icons.done,
-//                                        color: Theme.of(context).primaryColor,
-//                                        size: 20,
-//                                      ),
-//                                      Text(
-//                                        "Sent",
-//                                        style: TextStyle(
-//                                          color: Theme.of(context).primaryColor,
-//                                        ),
-//                                      )
-//                                    ],
-//                                  ),
-//                                ),
-//                              )
-//                        : widget.contacts[widget.i]["contact_status"] == "acc"
-//                            ? InkWell(
-//                                onTap: () {
-//                                  showDialog(
-//                                    context: context,
-//                                    builder: (ctx) => AlertDialog(
-//                                      content: Text(
-//                                        "Do you want to remove Request?",
-//                                      ),
-//                                      actions: <Widget>[
-//                                        FlatButton(
-//                                          child: Text('No.'),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                          },
-//                                        ),
-//                                        FlatButton(
-//                                          child: Text('Yes!',
-//                                              style: TextStyle(
-//                                                color: Colors.redAccent,
-//                                              )),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                            setState(
-//                                              () {
-//                                                widget.requestSent.remove(widget.i);
-//                                              },
-//                                            );
-//                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-//                                          },
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  );
-//                                },
-//                                child: Text(
-//                                  "Remove",
-//                                  style: TextStyle(
-//                                    color: Colors.red,
-//                                  ),
-//                                ),
-//                              )
-//                            : InkWell(
-//                                onTap: () {
-//                                  showDialog(
-//                                    context: context,
-//                                    builder: (ctx) => AlertDialog(
-//                                      content: Text(
-//                                        "Do you want to remove Request?",
-//                                      ),
-//                                      actions: <Widget>[
-//                                        FlatButton(
-//                                          child: Text('No.'),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                          },
-//                                        ),
-//                                        FlatButton(
-//                                          child: Text('Yes!',
-//                                              style: TextStyle(
-//                                                color: Colors.redAccent,
-//                                              )),
-//                                          onPressed: () {
-//                                            Navigator.of(ctx).pop();
-//                                            setState(
-//                                              () {
-//                                                widget.requestSent.remove(widget.i);
-//                                              },
-//                                            );
-//                                            Provider.of<ContactsGroups>(context).removeContactOrRequest(widget.i, Provider.of<Auth>(context).myToken);
-//                                          },
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  );
-//                                },
-//                                child: Text(
-//                                  "Sent",
-//                                  style: TextStyle(
-//                                    color: Theme.of(context).primaryColor,
-//                                  ),
-//                                ),
-//                              ),
-//              )),
-//        ),
-      ],
+        ],
+      ),
     );
   }
 }

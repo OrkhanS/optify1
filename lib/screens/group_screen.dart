@@ -55,44 +55,49 @@ class _GroupScreenState extends State<GroupScreen> {
 //                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.group["name"].toString(),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                softWrap: true,
+                                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Theme.of(context).primaryColor),
+                              ),
+                              for (var x in widget.group["groupmembers"])
+                                Text(
+                                  "@" + x["member"]["username"].toString(),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                         CircleAvatar(
                           radius: 40,
                           backgroundColor: Colors.white,
                           backgroundImage: NetworkImage("https://robohash.org/" + widget.group["name"].toString()), //Todo
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                            ),
-                            Text(
-                              widget.group["name"].toString(),
-                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Theme.of(context).primaryColor),
-                            ),
-                            for (var x in widget.group["groupmembers"])
-                              Text(
-                                "@" + x["member"]["username"].toString(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                          ],
-                        ),
                       ],
-                    ),
-                    Divider(
-                      color: Colors.grey[600],
-                      height: 50,
                     ),
                   ],
                 ),
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width*0.8,
+              child: Text(
+                "Schedule",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+            Expanded(
+//              width: MediaQuery.of(context).size.width * 0.8,
               child: Card(
                 margin: EdgeInsets.symmetric(horizontal: 7),
                 elevation: 1,
@@ -120,7 +125,7 @@ class _GroupScreenState extends State<GroupScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Text(
-                                "Month", //todo: Month
+                                "July", //todo: Month
                                 style: TextStyle(
                                   color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.bold,
@@ -145,10 +150,10 @@ class _GroupScreenState extends State<GroupScreen> {
                         weekDay(day: "Sun"),
                       ],
                     ),
-                   FullTime(
-                     activityList: widget.provider.groupActivity,
-                     modePriority: true,
-                   ),
+                    FullTime(
+                      activityList: widget.provider.groupActivity,
+                      modePriority: true,
+                    ),
                   ],
                 ),
               ),
@@ -158,148 +163,6 @@ class _GroupScreenState extends State<GroupScreen> {
       ),
     );
   }
-
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final myFakeDesktopData = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
-
-    var myFakeTabletData = [
-      new LinearSales(0, 10),
-      new LinearSales(1, 50),
-      new LinearSales(2, 200),
-      new LinearSales(3, 150),
-    ];
-
-    var myFakeMobileData = [
-      new LinearSales(0, 15),
-      new LinearSales(1, 75),
-      new LinearSales(2, 300),
-      new LinearSales(3, 225),
-    ];
-
-    return [
-      new charts.Series<LinearSales, int>(
-        id: 'Desktop',
-        // colorFn specifies that the line will be blue.
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light blue.
-        areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeDesktopData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Tablet',
-        // colorFn specifies that the line will be red.
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light red.
-        areaColorFn: (_, __) => charts.MaterialPalette.red.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeTabletData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Mobile',
-        // colorFn specifies that the line will be green.
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light green.
-        areaColorFn: (_, __) => charts.MaterialPalette.green.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeMobileData,
-      ),
-    ];
-  }
-}
-
-class StackedAreaCustomColorLineChart extends StatelessWidget {
-  final List<charts.Series> seriesList;
-  final bool animate;
-
-  StackedAreaCustomColorLineChart(this.seriesList, {this.animate});
-
-  /// Creates a [LineChart] with sample data and no transition.
-  factory StackedAreaCustomColorLineChart.withSampleData() {
-    return new StackedAreaCustomColorLineChart(
-      _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new charts.LineChart(seriesList, defaultRenderer: new charts.LineRendererConfig(includeArea: true, stacked: true), animate: animate);
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final myFakeDesktopData = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
-
-    var myFakeTabletData = [
-      new LinearSales(0, 10),
-      new LinearSales(1, 50),
-      new LinearSales(2, 200),
-      new LinearSales(3, 150),
-    ];
-
-    var myFakeMobileData = [
-      new LinearSales(0, 15),
-      new LinearSales(1, 75),
-      new LinearSales(2, 300),
-      new LinearSales(3, 225),
-    ];
-
-    return [
-      new charts.Series<LinearSales, int>(
-        id: 'Desktop',
-        // colorFn specifies that the line will be blue.
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light blue.
-        areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeDesktopData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Tablet',
-        // colorFn specifies that the line will be red.
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light red.
-        areaColorFn: (_, __) => charts.MaterialPalette.red.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeTabletData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Mobile',
-        // colorFn specifies that the line will be green.
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light green.
-        areaColorFn: (_, __) => charts.MaterialPalette.green.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeMobileData,
-      ),
-    ];
-  }
-}
-
-/// Sample linear data type.
-class LinearSales {
-  final int year;
-  final int sales;
-
-  LinearSales(this.year, this.sales);
 }
 
 class FullTime extends StatefulWidget {

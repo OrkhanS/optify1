@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/providers/auth.dart';
+import 'package:optifyapp/widgets/activityBox.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
@@ -96,189 +97,220 @@ class _ContactScreenState extends State<ContactScreen> {
                     ),
                     Center(
                       child: Text(
-                        "Utilization",
+                        "Schedule",
                         style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
                       ),
                     ),
-                    Container(
-                      height: 200,
-                      child: charts.LineChart(
-                        _createSampleData(),
-                        defaultRenderer: new charts.LineRendererConfig(includeArea: true, stacked: true),
-                        // Disable animations for image tests.
-                        animate: false,
+                    Expanded(
+//              width: MediaQuery.of(context).size.width * 0.8,
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 7),
+                        elevation: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        width: 1.0,
+                                        color: Colors.grey[100],
+                                      ),
+                                      right: BorderSide(
+                                        width: 1.0,
+                                        color: Colors.grey[100],
+                                      ),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Text(
+                                        "July", //todo: Month
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "15 - 21", //todo :Range
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+//                                                fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                weekDay(day: "Mon"),
+                                weekDay(day: "Tue"),
+                                weekDay(day: "Wed"),
+                                weekDay(day: "Thu"),
+                                weekDay(day: "Fri"),
+                                weekDay(day: "Sat"),
+                                weekDay(day: "Sun"),
+                              ],
+                            ),
+//                            FullTime(
+//                              activityList: widget.provider.groupActivity,
+//                              modePriority: true,
+//                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Container(height: 8, width: 8, color: Colors.lightBlue),
-                          Text("Work"),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(height: 8, width: 8, color: Colors.redAccent),
-                          Text("Social"),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(height: 8, width: 8, color: Colors.lightGreen),
-                          Text("Education"),
-                        ],
-                      ),
-                    ),
+                    )
                   ],
                 ),
               ),
             ),
-            //todo chart
           ],
         ),
       ),
     );
   }
-
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final myFakeDesktopData = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
-
-    var myFakeTabletData = [
-      new LinearSales(0, 10),
-      new LinearSales(1, 50),
-      new LinearSales(2, 200),
-      new LinearSales(3, 150),
-    ];
-
-    var myFakeMobileData = [
-      new LinearSales(0, 15),
-      new LinearSales(1, 75),
-      new LinearSales(2, 300),
-      new LinearSales(3, 225),
-    ];
-
-    return [
-      new charts.Series<LinearSales, int>(
-        id: 'Desktop',
-        // colorFn specifies that the line will be blue.
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light blue.
-        areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeDesktopData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Tablet',
-        // colorFn specifies that the line will be red.
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light red.
-        areaColorFn: (_, __) => charts.MaterialPalette.red.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeTabletData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Mobile',
-        // colorFn specifies that the line will be green.
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light green.
-        areaColorFn: (_, __) => charts.MaterialPalette.green.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeMobileData,
-      ),
-    ];
-  }
 }
 
-class StackedAreaCustomColorLineChart extends StatelessWidget {
-  final List<charts.Series> seriesList;
-  final bool animate;
+class FullTime extends StatefulWidget {
+  final List activityList;
+  final bool modePriority;
+  FullTime({
+    Key key,
+    @required this.activityList,
+    @required this.modePriority,
+  }) : super(key: key);
+  @override
+  FullTimeState createState() => FullTimeState();
+}
 
-  StackedAreaCustomColorLineChart(this.seriesList, {this.animate});
+class FullTimeState extends State<FullTime> {
+  double scaleHeight = 40;
+  double check = 40;
 
-  /// Creates a [LineChart] with sample data and no transition.
-  factory StackedAreaCustomColorLineChart.withSampleData() {
-    return new StackedAreaCustomColorLineChart(
-      _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
-    );
-  }
-
+  final _scrollController = ScrollController(initialScrollOffset: 800);
   @override
   Widget build(BuildContext context) {
-    return new charts.LineChart(seriesList, defaultRenderer: new charts.LineRendererConfig(includeArea: true, stacked: true), animate: animate);
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final myFakeDesktopData = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
-
-    var myFakeTabletData = [
-      new LinearSales(0, 10),
-      new LinearSales(1, 50),
-      new LinearSales(2, 200),
-      new LinearSales(3, 150),
-    ];
-
-    var myFakeMobileData = [
-      new LinearSales(0, 15),
-      new LinearSales(1, 75),
-      new LinearSales(2, 300),
-      new LinearSales(3, 225),
-    ];
-
-    return [
-      new charts.Series<LinearSales, int>(
-        id: 'Desktop',
-        // colorFn specifies that the line will be blue.
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light blue.
-        areaColorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeDesktopData,
+    return Flexible(
+      child: GestureDetector(
+        onScaleUpdate: (ScaleUpdateDetails scaleDetails) {
+          check = ((scaleHeight * scaleDetails.scale / 100).round()).toDouble();
+          if (check > 30 && check < 150) {
+            setState(() {
+              scaleHeight = check;
+            });
+          } else {
+            check = scaleHeight;
+          }
+        },
+        child: Container(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Center(
+              child: Stack(
+                children: [
+                  Column(
+                    children: <Widget>[
+                      for (var i = 0; i < 24; i++)
+                        if (i > 9)
+                          hourRow(time: "${i.toString()}:00", vertical: scaleHeight)
+                        else
+                          hourRow(time: "0${i.toString()}:00", vertical: scaleHeight),
+                    ],
+                  ),
+                  if (widget.activityList != null && widget.activityList.length != 0)
+                    for (var x = widget.activityList.length - 1; x >= 0; x--)
+                      ActivityBox(
+                          context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i: x),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-      new charts.Series<LinearSales, int>(
-        id: 'Tablet',
-        // colorFn specifies that the line will be red.
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light red.
-        areaColorFn: (_, __) => charts.MaterialPalette.red.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeTabletData,
-      ),
-      new charts.Series<LinearSales, int>(
-        id: 'Mobile',
-        // colorFn specifies that the line will be green.
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-        // areaColorFn specifies that the area skirt will be light green.
-        areaColorFn: (_, __) => charts.MaterialPalette.green.shadeDefault.lighter,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: myFakeMobileData,
-      ),
-    ];
+    );
   }
 }
 
-/// Sample linear data type.
-class LinearSales {
-  final int year;
-  final int sales;
+Widget weekDay({@required final String day}) {
+  return Expanded(
+    flex: 1,
+    child: Container(
+      height: 50,
+      width: 47,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 2.0, color: Colors.grey[100]),
+          right: BorderSide(width: 2.0, color: Colors.grey[100]),
+          top: BorderSide(width: 2.0, color: Colors.grey[100]),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          day,
+          style: TextStyle(fontSize: 15),
+        ),
+      ),
+    ),
+  );
+}
 
-  LinearSales(this.year, this.sales);
+Widget hourRow({@required final String time, @required final double vertical}) {
+  return Container(
+    decoration: BoxDecoration(
+      border: const Border(
+        bottom: const BorderSide(
+          width: 1.0,
+          color: Color(0xFFE0E0E0),
+        ),
+      ),
+    ),
+    child: Row(
+      children: [
+        Container(
+          height: vertical,
+          width: 50,
+          decoration: BoxDecoration(
+            border: const Border(
+              right: const BorderSide(
+                width: 1.0,
+                color: Color(0xFFE0E0E0),
+              ),
+            ),
+          ),
+          child: Center(
+            child: Text(time),
+          ),
+        ),
+        for (var m = 0; m < 7; m++) PlaceHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+//        placeHolder(vertical: vertical),
+      ],
+    ),
+  );
+}
+
+class PlaceHolder extends StatelessWidget {
+  PlaceHolder({@required this.vertical});
+  final vertical;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: Container(
+      height: vertical,
+      decoration: const BoxDecoration(
+        border: const Border(
+          right: const BorderSide(
+            width: 1.0,
+            color: const Color(0xFFE0E0E0),
+          ),
+        ),
+      ),
+    ));
+  }
 }

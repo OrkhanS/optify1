@@ -96,13 +96,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: Colors.grey[600],
                               ),
                             ),
-                            Text(
-                              "Phone: +73625587623",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey[600],
-                              ),
-                            ),
                           ],
                         ),
                       ],
