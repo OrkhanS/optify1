@@ -60,7 +60,6 @@ class _ActivityBoxState extends State<ActivityBox> {
       child: InkWell(
         onTap: () {
           setState(() => tapped = !tapped);
-          print(widget.myActivity.toString());
         },
         child: tapped
             ? Container(

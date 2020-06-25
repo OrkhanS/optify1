@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:optifyapp/providers/activities.dart';
+import 'package:optifyapp/providers/contactsgroups.dart';
+import 'package:optifyapp/providers/messages.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +19,7 @@ class Auth with ChangeNotifier {
   String _userId;
   Map user;
   bool isLoadingUser = true;
+  bool isLoadingUserDetails = true;
 
   String myTokenFromStorage;
   String myScheduleidFromStorage;
@@ -27,7 +30,8 @@ class Auth with ChangeNotifier {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
     myTokenFromStorage = extractedUserData["token"];
     myUseridFromStorage = extractedUserData['user_id'].toString();
     myScheduleidFromStorage = extractedUserData['schedule_id'].toString();
@@ -62,7 +66,9 @@ class Auth with ChangeNotifier {
   }
 
   String get token {
-    if (_expiryDate != null && _expiryDate.isAfter(DateTime.now()) && _token != null) {
+    if (_expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now()) &&
+        _token != null) {
       return _token;
     }
     return null;
@@ -84,12 +90,17 @@ class Auth with ChangeNotifier {
     return isLoadingUser;
   }
 
+  bool get isNotLoadingUserDetails {
+    return isLoadingUserDetails;
+  }
+  
+
   Future fetchAndSetUserDetails() async {
-   if(user == null){
-        if (myToken == null) {
+    if (user == null || user.isEmpty) {
+      if (myToken == null) {
         return;
       }
-      
+
       const url = Api.address + "api/users/me/";
       try {
         await http.get(
@@ -101,33 +112,32 @@ class Auth with ChangeNotifier {
         ).then((response) {
           final dataOrders = json.decode(response.body) as Map<String, dynamic>;
           user = dataOrders;
-          isLoadingUser = false;
+          isLoadingUserDetails = false;
           notifyListeners();
         });
       } catch (e) {
         return;
       }
-   }
+    }
   }
 
-  Future<void> signup(String email, String password, String firstname, String lastname, String username, String deviceID
-      ) async {
+  Future<void> signup(String email, String password, String firstname,
+      String lastname, String username, String deviceID) async {
     //return _authenticate(email, password, 'signupNewUser');
     const url = Api.userslistAndSignUp;
     try {
       final response = await http.post(url,
           headers: {HttpHeaders.CONTENT_TYPE: "application/json"},
           body: json.encode({
-            "username": username, 
+            "username": username,
             "password": password,
-            "deviceToken": deviceID, 
+            "deviceToken": deviceID,
             "first_name": firstname,
             "last_name": lastname,
             "email": email,
           }));
       final responseData = json.decode(response.body);
 //      final responseData = response.body;
-      print("Token: $responseData");
 //      if (responseData['error'] != null) {
 //        throw HttpException(responseData['error']['message']);
 //      }
@@ -172,21 +182,28 @@ class Auth with ChangeNotifier {
             "password": password,
             "deviceToken": '', //todo orxan
           }));
+      if (response.statusCode == 400)
+        throw HttpException;
+      else {
+        final responseData = json.decode(response.body);
+        _token = responseData["token"];
+        myToken = responseData["token"];
+        myUserId = responseData["user_id"].toString();
+        myScheduleId = responseData["schedule_id"].toString();
+        notifyListeners();
 
-      final responseData = json.decode(response.body);
-      _token = responseData["token"];
-      myToken = responseData["token"];
-      myUserId = responseData["user_id"].toString();
-      myScheduleId = responseData["schedule_id"].toString();
-      notifyListeners();
+        final prefs = await SharedPreferences.getInstance();
+        final userData = json.encode(
+          {
+            'token': _token,
+            'user_id': responseData["user_id"],
+            'schedule_id': responseData["schedule_id"]
+          },
+        );
 
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode(
-        {'token': _token, 'user_id': responseData["user_id"], 'schedule_id': responseData["schedule_id"]},
-      );
-
-      prefs.setString('userData', userData);
-      fetchAndSetUserDetails();
+        prefs.setString('userData', userData);
+        fetchAndSetUserDetails();
+      }
     } catch (error) {
       throw error;
     }
@@ -197,7 +214,8 @@ class Auth with ChangeNotifier {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
 
     _token = extractedUserData['token'];
     myTokenFromStorage = extractedUserData["token"];
@@ -209,7 +227,6 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> logout(context) async {
-    print(_token);
     const url = Api.login;
     http.patch(url,
         headers: {
@@ -225,16 +242,21 @@ class Auth with ChangeNotifier {
     prefs.commit();
     prefs.clear();
     Provider.of<Activities>(context).removeAllDataOfProvider();
-    Provider.of<Activities>(context).removeAllDataOfProvider();
+    Provider.of<ContactsGroups>(context).removeAllDataOfProvider();
+    Provider.of<Messages>(context).removeAllDataOfProvider();
+
     removeAllDataOfProvider();
 
     notifyListeners();
   }
 
   removeAllDataOfProvider() {
+    _expiryDate = null;
+    _userId = null;
     _token = null;
-    user = null;
+    user = {};
     isLoadingUser = true;
+    isLoadingUserDetails=true;
     myTokenFromStorage = null;
     myScheduleidFromStorage = null;
     myUseridFromStorage = null;

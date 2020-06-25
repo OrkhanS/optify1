@@ -147,10 +147,8 @@ class ActivityAIPage extends State<ActivityAI> {
                           }))
                       .timeout(const Duration(seconds: 10))
                       .then((response) {
-                    print((response.body));
                     _start_times = json.decode(response.body)["start_time"];
                     _end_times = json.decode(response.body)["end_time"];
-                    print(_start_times);
                     final body = json.encode({
                       "activity": {
                         "title": "AI Helper",
@@ -162,8 +160,6 @@ class ActivityAIPage extends State<ActivityAI> {
                       "priority": 50,
                       "privacy": {"privacy": "personal"}
                     });
-                    print(body);
-                    print("0-----------------------------0");
                     const url1 = 'http://optify-dev.us-west-2.elasticbeanstalk.com/api/schedules/1/activities/';
 
                     http
@@ -178,7 +174,6 @@ class ActivityAIPage extends State<ActivityAI> {
                         snackBar = SnackBar(content: Text('Added Successfully'));
                         //navigateToActivity(context);
                       } else {
-                        print(response.statusCode);
                         snackBar = SnackBar(content: Text('Wrong creditentials, try again'));
                       }
                     });

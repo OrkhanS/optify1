@@ -16,16 +16,12 @@ class FirebaseMessagingState extends State<FirebaseMessagingDemo> {
 
   _getToken() {
     _firebaseMessaging.getToken().then((deviceToken) {
-      print("Token is: $deviceToken");
     });
   }
 
   _configureFirebaseListerners() {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("I AM HERE");
-        print('onMessage: $message[\'notification\'][\'title\']');
-
         // showOngoingNotification(notifications,
         //             title: "ELAVE", body: "TEST");
       },

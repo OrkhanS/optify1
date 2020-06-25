@@ -54,7 +54,6 @@ class _AuthCardState extends State<AuthCard> {
     _firebaseMessaging.getToken().then((device) {
       deviceToken = device;
     });
-    print(deviceToken);
   }
 
   @override

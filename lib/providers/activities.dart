@@ -38,13 +38,15 @@ class Activities with ChangeNotifier {
   }
 
   List activities(index) {
-    if(index == middle || index == middle-1 || index == middle+1) fetchCallCountInitialBuild++;
-    if(fetchCallCountInitialBuild >= 3){
+    if (index == middle || index == middle - 1 || index == middle + 1)
+      fetchCallCountInitialBuild++;
+    if (fetchCallCountInitialBuild >= 3) {
       fetchCallCountInitialBuild = 2;
-      return _activites[index];}
+      return _activites[index];
+    }
     var offset;
-    if(index != middle) {
-      offset = index-middle;
+    if (index != middle) {
+      offset = index - middle;
       isLoadingPrevOrNext = true;
       fetchAndSetNextOrPrev(index, offset, token, scheduleId);
     }
@@ -90,7 +92,10 @@ class Activities with ChangeNotifier {
   Future fetchAndSetNextOrPrev(id, offset, myToken, schedule_id) async {
     var token = myToken;
     if (token != null && token != "null") {
-      String url = Api.myActivities + schedule_id.toString() + "/activities/?offset=" + offset.toString();
+      String url = Api.myActivities +
+          schedule_id.toString() +
+          "/activities/?offset=" +
+          offset.toString();
       http.get(
         url,
         headers: {
@@ -115,9 +120,12 @@ class Activities with ChangeNotifier {
     }
   }
 
-  Future removeActivity(schedule_id, id, i, token){
-    String url =
-        Api.myActivities + schedule_id.toString() + "/activities/" + id.toString() + "/";
+  Future removeActivity(schedule_id, id, i, token) {
+    String url = Api.myActivities +
+        schedule_id.toString() +
+        "/activities/" +
+        id.toString() +
+        "/";
     http.delete(
       url,
       headers: {
@@ -129,38 +137,53 @@ class Activities with ChangeNotifier {
     //Todo send index
 
     _activites[middle].removeAt(i);
+    _activites[middle].add({});
+    _activites[middle].removeLast();
     _activites[middle].insert(0, {});
     _activites[middle].removeAt(0);
-    // _activites[middle].sort((a,b) {
-    //       return a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
-    // });
-
+    
+    _activites[middle] = sortForActivities(_activites[middle]);
     notifyListeners();
+  }
+
+  sortForActivities(list) {
+    if (list == null || list.length == 0) return;
+    int n = list.length;
+    int i, step;
+    for (step = 0; step < n; step++) {
+      for (i = 0; i < n - step - 1; i++) {
+        if (DateTime.parse(list[i]["activity"]["start_times"][0]).compareTo(
+                DateTime.parse(list[i + 1]["activity"]["start_times"][0])) >
+            0) {
+          var temp = list[i];
+          list[i] = list[i + 1];
+          list[i + 1] = temp;
+        }
+      }
+    }
+    return list;
   }
 
   addActivityFromPostRequest(newactivity) {
     var date = DateTime.now();
-    var date2 = date.add(Duration(days: 7 - date.weekday, hours: 23 - date.hour, minutes: 59 - date.minute));
-    var newActivityDate = DateTime.parse(newactivity["activity"]["start_times"][0].toString());
+    var date2 = date.add(Duration(
+        days: 7 - date.weekday,
+        hours: 23 - date.hour,
+        minutes: 59 - date.minute));
+    var newActivityDate =
+        DateTime.parse(newactivity["activity"]["start_times"][0].toString());
     int difference = newActivityDate.difference(date2).inDays;
 
     if (difference > 0) {
       difference = (difference ~/ 7);
-      if (_activites[difference + middle + 1] == null) _activites[difference + middle + 1] = [];
-      _activites[difference + middle + 1].insert(0,newactivity);
-      // _activites[difference + middle + 1].sort((a,b) {
-      //       return a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
-      // });
+      if (_activites[difference + middle + 1] == null)
+        _activites[difference + middle + 1] = [];
+      _activites[difference + middle + 1].insert(0, newactivity);
     } else {
       difference = (difference ~/ 7);
-      if (_activites[difference + middle] == null) _activites[difference + middle] = [];
-      _activites[difference + middle].insert(0,newactivity);
-      // _activites[difference + middle]..sort((a,b) {
-      //       print("Salam");
-      //       print(a);
-      //       var list = a["activity"]["start_times"][0].compareTo(b["activity"]["start_times"][0]);
-      //       return list;
-      // });
+      if (_activites[difference + middle] == null)
+        _activites[difference + middle] = [];
+      _activites[difference + middle].insert(0, newactivity);
     }
     notifyListeners();
   }

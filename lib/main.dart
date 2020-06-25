@@ -69,7 +69,6 @@ class _MyAppState extends State<MyApp> {
 
   _getTokenOfDevice() {
     _firebaseMessaging.getToken().then((deviceToken) {
-      print("Token is: $deviceToken");
       deviceToken = deviceToken;
     });
   }
@@ -242,6 +241,8 @@ class _MyAppState extends State<MyApp> {
         }
         if (contactsGroupsProvider.isLoadingContacts == true) {
           contactsGroupsProvider.fetchAndSetMyContacts(auth.myToken);
+          contactsGroupsProvider.fetchAndSetMyGroups(auth.myToken);
+          
         }
 
         if (auth.isAuth) auth.fetchAndSetUserDetails();
