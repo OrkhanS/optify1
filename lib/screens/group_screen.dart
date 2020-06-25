@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 
 class GroupScreen extends StatefulWidget {
   static const routeName = '/group';
-  GroupScreen({@required this.group});
-  final group;
+  var group, provider;
+  GroupScreen({@required this.group, @required this.provider});
 
   @override
   _GroupScreenState createState() => _GroupScreenState();
@@ -92,7 +92,7 @@ class _GroupScreenState extends State<GroupScreen> {
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width*0.8,
               child: Card(
                 margin: EdgeInsets.symmetric(horizontal: 7),
                 elevation: 1,
@@ -145,10 +145,10 @@ class _GroupScreenState extends State<GroupScreen> {
                         weekDay(day: "Sun"),
                       ],
                     ),
-//                    FullTime(
-//                      activityList: widget.group["schedule"]["id"],
-//                      modePriority: true,
-//                    ),
+                   FullTime(
+                     activityList: widget.provider.groupActivity,
+                     modePriority: true,
+                   ),
                   ],
                 ),
               ),
@@ -349,7 +349,7 @@ class FullTimeState extends State<FullTime> {
                     ],
                   ),
 
-                  if (widget.activityList != null)
+                  if (widget.activityList != null && widget.activityList.length != 0)
                     for (var x = widget.activityList.length - 1; x >= 0; x--)
                       ActivityBox(
                           context: context, myActivity: widget.activityList[x], height: scaleHeight / 60, modePriority: widget.modePriority, i: x),

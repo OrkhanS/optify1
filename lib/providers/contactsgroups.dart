@@ -17,6 +17,8 @@ class ContactsGroups with ChangeNotifier {
   List _groups = [];
   Map combinedList = {};
   bool isLoadingGroups = true;
+  Map groupActivityDetails = {};
+  List groupActivities = [];
 
   bool get notLoadingContacts {
     return isLoadingContacts;
@@ -166,4 +168,42 @@ class ContactsGroups with ChangeNotifier {
   get lengthLists{
     return combinedList["groups"]["results"].length+combinedList["contacts"]["results"].length;
   }
+
+  Future fetchAndSetGroupActivities(myToken, id) async {
+    var token = myToken;
+    if (token != null && token != "null") {
+      String url = Api.myActivities+id.toString()+"/activities/";
+      http.get(
+        url,
+        headers: {
+          HttpHeaders.CONTENT_TYPE: "application/json",
+          "Authorization": "Token " + token,
+        },
+      ).then((onValue) {
+        if (onValue.statusCode == 200) {
+          final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
+          groupActivities = dataOrders["results"];
+          groupActivityDetails = dataOrders;
+          isLoadingGroups = false;
+          notifyListeners();
+        } else {
+          groupActivities = [];
+          groupActivityDetails = {};
+          isLoadingGroups = false;
+          notifyListeners();
+        }
+      });
+    }
+  }
+
+  Map get allGroupActivityDetails{
+    return groupActivityDetails;
+  }
+
+  List get groupActivity{
+    return groupActivities;
+  }
+
+
+
 }

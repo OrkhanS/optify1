@@ -260,7 +260,7 @@ class _SocialScreenState extends State<SocialScreen> {
                                                           token: token,
                                                           userId: user_id,
                                                         )
-                                                      : GroupCard(groups: _combinedList, i: i),
+                                                      : GroupCard(groups: _combinedList, i: i, token: token, provider: contactsGroupsProvider,),
                                                   SizedBox(height: 3),
                                                 ],
                                               );
@@ -721,9 +721,9 @@ class _ContactCardState extends State<ContactCard> {
 }
 
 class GroupCard extends StatefulWidget {
-  final groups, i;
+  final groups, i, token, provider;
 
-  GroupCard({@required this.groups, @required this.i});
+  GroupCard({@required this.groups, @required this.i, @required this.token, @required this.provider});
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -738,9 +738,10 @@ class _GroupCardState extends State<GroupCard> {
           flex: 7,
           child: InkWell(
             onTap: () {
+              widget.provider.fetchAndSetGroupActivities(widget.token,widget.groups[widget.i]["schedule"]["id"]);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => GroupScreen(group: widget.groups[widget.i])),
+                MaterialPageRoute(builder: (context) => GroupScreen(group: widget.groups[widget.i], provider:widget.provider)),
               );
             },
             child: Row(
