@@ -82,7 +82,8 @@ class _ActivityBoxState extends State<ActivityBox> {
                                     child: Text(
                                       widget.myActivity["activity"]["title"],
                                       overflow: TextOverflow.fade,
-                                      maxLines: 2,
+                                      
+                                      
                                       style: TextStyle(fontSize: 19, color: Colors.grey[800], fontWeight: FontWeight.w600),
                                     ),
                                   ),

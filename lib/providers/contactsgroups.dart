@@ -15,6 +15,7 @@ class ContactsGroups with ChangeNotifier {
   Map tempContactDetails = {};
   Map allGroupsDetails = {};
   List _groups = [];
+  Map combinedList = {};
   bool isLoadingGroups = true;
 
   bool get notLoadingContacts {
@@ -43,12 +44,14 @@ class ContactsGroups with ChangeNotifier {
         if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
           _contacts = dataOrders["results"];
+          combinedList["contacts"] = dataOrders;
           allContactsDetails = dataOrders;
           isLoadingContacts = false;
           notifyListeners();
         } else {
           _contacts = [];
           allContactsDetails = {};
+          combinedList["contacts"] = {};
           isLoadingContacts = false;
           notifyListeners();
         }
@@ -133,16 +136,34 @@ class ContactsGroups with ChangeNotifier {
         if (onValue.statusCode == 200) {
           final dataOrders = json.decode(onValue.body) as Map<String, dynamic>;
           _groups = dataOrders["results"];
+          combinedList["groups"] = dataOrders;
           allGroupsDetails = dataOrders;
           isLoadingGroups = false;
           notifyListeners();
         } else {
           _groups = [];
           allGroupsDetails = {};
+          combinedList["groups"] = {};
           isLoadingGroups = false;
           notifyListeners();
         }
       });
     }
+  }
+
+  Map get detailsGroup{
+    return allGroupsDetails;
+  }
+
+  List get groups{
+    return _groups;
+  }
+
+  Map get combinedLists{
+    return combinedList;
+  }
+
+  get lengthLists{
+    return combinedList["groups"]["results"].length+combinedList["contacts"]["results"].length;
   }
 }

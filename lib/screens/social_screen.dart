@@ -43,6 +43,7 @@ class _SocialScreenState extends State<SocialScreen> {
   String token, user_id;
   Map _contactsDetails = {};
   List requestSent = [];
+  List _combinedList = [];
 
   loadMycontacts() {
     if (Provider.of<ContactsGroups>(context, listen: true).contacts.isEmpty) {
@@ -142,8 +143,11 @@ class _SocialScreenState extends State<SocialScreen> {
     return Consumer<ContactsGroups>(
       builder: (context, contactsGroupsProvider, child) {
         if (_contacts.isEmpty && !searchFlag) {
-          if (Provider.of<ContactsGroups>(context, listen: true).contacts != 0) {
-            _contacts.addAll(contactsGroupsProvider.detailsContacts["results"]);
+          if (_combinedList.isEmpty) {
+            _combinedList.addAll(contactsGroupsProvider.combinedList["contacts"]["results"]);
+            _combinedList.addAll(contactsGroupsProvider.combinedList["groups"]["results"]);
+
+           // _combinedList.shuffle();
             if (nextOrderURL == "FirstCall") {
               nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
             }
@@ -174,7 +178,7 @@ class _SocialScreenState extends State<SocialScreen> {
           body: GestureDetector(
             child: SingleChildScrollView(
               child: Container(
-                height: MediaQuery.of(context).size.height * .83,
+                height: MediaQuery.of(context).size.height * .9,
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -224,7 +228,7 @@ class _SocialScreenState extends State<SocialScreen> {
                     Expanded(
                       child: contactsGroupsProvider.notLoadingContacts || user_id == null
                           ? Center(child: CircularProgressIndicator())
-                          : _contacts.isEmpty
+                          : _combinedList.isEmpty
                               ? Center(child: Text("No contacts"))
                               : SingleChildScrollView(
                                   child: NotificationListener<ScrollNotification>(
@@ -239,43 +243,29 @@ class _SocialScreenState extends State<SocialScreen> {
                                     child: Column(
                                       children: <Widget>[
                                         Container(
-                                          height: 50.0, //_groups.length *100.0
+                                          height: contactsGroupsProvider.lengthLists*100.0,
                                           child: ListView.builder(
-                                            itemCount: _contacts.length,
+                                            itemCount: contactsGroupsProvider.lengthLists,
                                             padding: EdgeInsets.all(20),
                                             itemBuilder: (context, int i) {
                                               return Column(
                                                 children: <Widget>[
-                                                  GroupCard(),
+                                                  _combinedList[i]["requester"] != null ? ContactCard(
+                                                    requestSent: requestSent,
+                                                    searchFlag: searchFlag,
+                                                    contacts: _combinedList,
+                                                    i: i,
+                                                    token: token,
+                                                    userId: user_id,
+                                                  ) :
+                                                  GroupCard(groups:_combinedList,i: i),
                                                   SizedBox(height: 3),
                                                 ],
                                               );
                                             },
                                           ),
                                         ),
-                                        Container(
-                                          height: _contacts.length * 100.0,
-                                          child: ListView.builder(
-                                            itemCount: _contacts.length,
-                                            padding: EdgeInsets.all(20),
-                                            itemBuilder: (context, int i) {
-                                              return Column(
-                                                children: <Widget>[
-                                                  ContactCard(
-                                                    requestSent: requestSent,
-                                                    searchFlag: searchFlag,
-                                                    contacts: _contacts,
-                                                    i: i,
-                                                    token: token,
-                                                    userId: user_id,
-                                                  ),
-                                                  SizedBox(height: 3)
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
+                                        ],
                                     ),
                                   ),
                                 ),
@@ -729,54 +719,37 @@ class _ContactCardState extends State<ContactCard> {
 }
 
 class GroupCard extends StatefulWidget {
-  final contacts, i, token, userId, searchFlag, requestSent;
+  final groups, i;
 
   GroupCard({
-    @required this.requestSent,
-    @required this.contacts,
-    @required this.i,
-    @required this.token,
-    @required this.userId,
-    @required this.searchFlag,
-  });
+    @required this.groups,
+    @required this.i
+    });
 
   @override
   _GroupCardState createState() => _GroupCardState();
 }
 
 class _GroupCardState extends State<GroupCard> {
-  var contactsDetails;
   @override
   Widget build(BuildContext context) {
-//    if (widget.searchFlag == false) {
-//      if (widget.contacts[widget.i]["requester"]["id"].toString() == widget.userId.toString()) {
-//        contactsDetails = widget.contacts[widget.i]["reciever"];
-//      } else {
-//        contactsDetails = widget.contacts[widget.i]["requester"];
-//      }
-//    } else {
-//      contactsDetails = widget.contacts[widget.i];
-//    }
-//
-//    var nameSur = contactsDetails["first_name"].toString() + " " + contactsDetails["last_name"].toString();
-//    if (nameSur == " ") nameSur = "Hidden Name";
     return Row(
       children: <Widget>[
         Expanded(
           flex: 7,
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ContactScreen(contact: contactsDetails)),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => ContactScreen(contact: contactsDetails)),
+              // );
             },
             child: Row(
               children: <Widget>[
                 Expanded(
                   flex: 1,
                   child: Image.network(
-                    "https://robohash.org/" + "group", //todo fix
+                    "https://robohash.org/" + widget.groups[widget.i]["name"].toString(),
                     fit: BoxFit.cover,
                     loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
                       if (loadingProgress == null) return child;
@@ -799,22 +772,18 @@ class _GroupCardState extends State<GroupCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "nameSur",
+                          "Group "+ widget.groups[widget.i]["id"].toString(),
+                          
                           style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
                         ),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.alternate_email,
-                              size: 10,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            Text(
-                              "title",
-//                              contactsDetails["username"].toString(),
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
+                        Text(
+                          widget.groups[widget.i]["groupmembers"][0]["member"]["username"].toString()+","+widget.groups[widget.i]["groupmembers"][1]["member"]["username"].toString(),
+//                              contactsDetails["usern6ame"].toString(),
+
+                          overflow: TextOverflow.clip,
+                          maxLines: 2,
+                          softWrap: true,
+                          style: TextStyle(color: Colors.grey[600]),
                         )
                       ],
                     ),
@@ -825,6 +794,11 @@ class _GroupCardState extends State<GroupCard> {
           ),
         ),
         SizedBox(width: 10, height: 80),
+        Expanded(flex: 3,child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+              child: // If another person hasn't accepted my request yet.
+                  OutlineButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),),
 //        Expanded(
 //          flex: 3,
 //          child: Padding(
