@@ -637,7 +637,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   }
 
   _onReceptionOfMessageFromServer(message) {
-    print(message);
+    if(json.decode(message)["status"].toString() == "2"){
+      postAI(json.decode(message)["data"]);
+    }
     _isOn = true;
     _listeners.forEach((Function callback) {
       callback(message);
@@ -674,7 +676,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
 
 
 
-  Future postAI() async {
+  Future postAI(data) async {
     if (schedule_id == null || token == null) {
       final prefs = await SharedPreferences.getInstance();
       if (!prefs.containsKey('userData')) {
@@ -684,54 +686,56 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       token = extractedUserData['token'];
       schedule_id = extractedUserData['schedule_id'].toString();
     }
+
+
     _start = new DateTime(_dateTimeStart.year, _dateTimeStart.month, _dateTimeStart.day, _timeStart.hour, _timeStart.minute);
 
     _end = new DateTime(_dateTimeEnd.year, _dateTimeEnd.month, _dateTimeEnd.day, _timeEnd.hour, _timeEnd.minute);
 
     String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
     var members = Provider.of<ContactsGroups>(context).activityMembers;
-    http
-        .post(url,
-            headers: {
-              "Authorization": "Token " + token,
-              HttpHeaders.CONTENT_TYPE: "application/json",
-            },
-            body: json.encode({
-              "activity": {
-                "title": _ActivityName,
-                "start_times": [_start.toString()],
-                "end_times": [_end.toString()],
-                "weekdays": ["Monday"],
-              },
-              "category": categoryValue,
-              "priority": _discreteValue.toInt(),
-              "privacy": {"privacy": defPrivacy.toLowerCase(),},
-              "members": members,
+    // http
+    //     .post(url,
+    //         headers: {
+    //           "Authorization": "Token " + token,
+    //           HttpHeaders.CONTENT_TYPE: "application/json",
+    //         },
+    //         body: json.encode({
+    //           "activity": {
+    //             "title": _ActivityName,
+    //             "start_times": [_start.toString()],
+    //             "end_times": [_end.toString()],
+    //             "weekdays": ["Monday"],
+    //           },
+    //           "category": categoryValue,
+    //           "priority": _discreteValue.toInt(),
+    //           "privacy": {"privacy": defPrivacy.toLowerCase(),},
+    //           "members": members,
 
-            }))
-        .then((response) {
-        Provider.of<ContactsGroups>(context).activityMembers = [];  
-      if (response.statusCode == 201) {
+    //         }))
+    //     .then((response) {
+    //     Provider.of<ContactsGroups>(context).activityMembers = [];  
+    //   if (response.statusCode == 201) {
         
-        Provider.of<Activities>(context).addActivityFromPostRequest(json.decode(response.body));
-        Navigator.pop(context);
-        Flushbar(
-          title: "Done",
-          message: "Activity added",
-          padding: const EdgeInsets.all(30),
-          borderRadius: 10,
-          duration: Duration(seconds: 5),
-        )..show(context);
-      } else {
-        Flushbar(
-          title: "Error",
-          message: "'Wrong details, try again'",
-          padding: const EdgeInsets.all(30),
-          borderRadius: 10,
-          duration: Duration(seconds: 5),
-        )..show(context);
-      }
-    });
+    //     Provider.of<Activities>(context).addActivityFromPostRequest(json.decode(response.body));
+    //     Navigator.pop(context);
+    //     Flushbar(
+    //       title: "Done",
+    //       message: "Activity added",
+    //       padding: const EdgeInsets.all(30),
+    //       borderRadius: 10,
+    //       duration: Duration(seconds: 5),
+    //     )..show(context);
+    //   } else {
+    //     Flushbar(
+    //       title: "Error",
+    //       message: "'Wrong details, try again'",
+    //       padding: const EdgeInsets.all(30),
+    //       borderRadius: 10,
+    //       duration: Duration(seconds: 5),
+    //     )..show(context);
+    //   }
+    // });
     
   }
 
