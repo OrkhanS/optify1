@@ -226,61 +226,62 @@ class _SocialScreenState extends State<SocialScreen> {
                           ? Center(child: CircularProgressIndicator())
                           : _contacts.isEmpty
                               ? Center(child: Text("No contacts"))
-                              : NotificationListener<ScrollNotification>(
-                                  onNotification: (ScrollNotification scrollInfo) {
-                                    if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                                      setState(() {
-                                        _isfetchingnew = true;
-                                      });
-                                      _loadData();
-                                    }
-                                  },
-                                  child: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: _contacts.length,
-                                          padding: EdgeInsets.all(20),
-                                          itemBuilder: (context, int i) {
-                                            return Column(
-                                              children: <Widget>[
-                                                ContactCard(
-                                                  requestSent: requestSent,
-                                                  searchFlag: searchFlag,
-                                                  contacts: _contacts,
-                                                  i: i,
-                                                  token: token,
-                                                  userId: user_id,
-                                                ),
-                                                SizedBox(height: 3)
-                                              ],
-                                            );
-                                          },
+                              : SingleChildScrollView(
+                                  child: NotificationListener<ScrollNotification>(
+                                    onNotification: (ScrollNotification scrollInfo) {
+                                      if (!_isfetchingnew && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                                        setState(() {
+                                          _isfetchingnew = true;
+                                        });
+                                        _loadData();
+                                      }
+                                    },
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 50.0, //_groups.length *100.0
+                                          child: ListView.builder(
+                                            itemCount: _contacts.length,
+                                            padding: EdgeInsets.all(20),
+                                            itemBuilder: (context, int i) {
+                                              return Column(
+                                                children: <Widget>[
+                                                  // ContactCard(
+                                                  //   contacts: [],
+                                                  //   i: i,
+                                                  //   token: token,
+                                                  //   userId: user_id,
+                                                  // ),
+                                                  SizedBox(height: 3)
+                                                ],
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                      Center(
-                                        child: Text("My Groups"),
-                                      ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: _contacts.length,
-                                          padding: EdgeInsets.all(20),
-                                          itemBuilder: (context, int i) {
-                                            return Column(
-                                              children: <Widget>[
-                                                // ContactCard(
-                                                //   contacts: [],
-                                                //   i: i,
-                                                //   token: token,
-                                                //   userId: user_id,
-                                                // ),
-                                                SizedBox(height: 3)
-                                              ],
-                                            );
-                                          },
+                                        Container(
+                                          height: _contacts.length * 100.0,
+                                          child: ListView.builder(
+                                            itemCount: _contacts.length,
+                                            padding: EdgeInsets.all(20),
+                                            itemBuilder: (context, int i) {
+                                              return Column(
+                                                children: <Widget>[
+                                                  ContactCard(
+                                                    requestSent: requestSent,
+                                                    searchFlag: searchFlag,
+                                                    contacts: _contacts,
+                                                    i: i,
+                                                    token: token,
+                                                    userId: user_id,
+                                                  ),
+                                                  SizedBox(height: 3)
+                                                ],
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                     ),
