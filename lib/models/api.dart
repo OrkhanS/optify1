@@ -1,5 +1,5 @@
 class Api {
-  static const String address = "http://35.239.244.88/";
+  static const String address = "http://34.69.198.10/";
   static const roomSocket = "ws://35.239.244.88/chat/";
   static const createRoom = address + "api/chat/";
   static const chatRoomsList = address + "api/chats/";

@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CircleAvatar(
                           radius: 70,
                           backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage("https://robohash.org/" + auth.myUserId.toString()), //Todo
+                          backgroundImage: NetworkImage("https://robohash.org/" + auth.userdetail["username"].toString() + "?set=set5"), //Todo
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

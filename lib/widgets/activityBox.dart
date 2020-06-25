@@ -63,7 +63,7 @@ class _ActivityBoxState extends State<ActivityBox> {
         },
         child: tapped
             ? Container(
-                height: duration * (widget.height) < 100 ? 100 : duration * (widget.height),
+                height: duration * (widget.height) < 100 ? 115 : duration * (widget.height),
                 width: 200,
                 child: Card(
                   elevation: 3,

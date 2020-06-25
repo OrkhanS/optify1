@@ -58,7 +58,7 @@ class _ContactScreenState extends State<ContactScreen> {
                         CircleAvatar(
                           radius: 70,
                           backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage("https://robohash.org/" + widget.contact["id"].toString()), //Todo
+                          backgroundImage: NetworkImage("https://robohash.org/" + widget.contact["username"].toString() + "?set=set5"), //Todo
                         ),
                         Column(
 //                          mainAxisSize: MainAxisSize.max,
