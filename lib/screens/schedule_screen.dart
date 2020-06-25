@@ -164,6 +164,7 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                         duration: Duration(milliseconds: 300),
                         height: isSwitched ? MediaQuery.of(context).size.longestSide - kBottomNavigationBarHeight - 50 - 32 : 0,
                         child: ListView.builder(
+                          itemCount: activitiesProvider.getActivities == null ? 0 : activitiesProvider.getActivities[20].length,
                           itemBuilder: (context, int i) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -426,7 +427,6 @@ class ScheduleScreenState extends State<ScheduleScreen> {
                               ),
                             );
                           },
-                          itemCount: activitiesProvider.getActivities == null ? 0 : activitiesProvider.getActivities[20].length,
                         ),
                       ),
                 AnimatedContainer(

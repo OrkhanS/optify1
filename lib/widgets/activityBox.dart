@@ -47,6 +47,8 @@ class _ActivityBoxState extends State<ActivityBox> {
   @override
   void didChangeDependencies() {
     boxColor = widget.modePriority ? Colors.lightGreen[(priority * 9 - (priority * 9) % 100)] : routineColor[widget.myActivity["category"]];
+    horiz = MediaQuery.of(context).size.width / 8.0;
+    left = (MediaQuery.of(context).size.width / 8.0 - 1.8) * weekDay;
     super.didChangeDependencies();
   }
 
@@ -174,8 +176,9 @@ class _ActivityBoxState extends State<ActivityBox> {
                   overflow: TextOverflow.fade,
                   softWrap: true,
                   style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: fontSize,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: fontSize * 0.8,
                   ),
                 ),
               ),
