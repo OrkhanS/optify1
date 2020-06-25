@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_group.dart';
 import 'contact_screen.dart';
+import 'group_screen.dart';
 
 class SocialScreen extends StatefulWidget {
   static const routeName = '/social';
@@ -147,7 +148,7 @@ class _SocialScreenState extends State<SocialScreen> {
             _combinedList.addAll(contactsGroupsProvider.combinedList["contacts"]["results"]);
             _combinedList.addAll(contactsGroupsProvider.combinedList["groups"]["results"]);
 
-           // _combinedList.shuffle();
+            // _combinedList.shuffle();
             if (nextOrderURL == "FirstCall") {
               nextOrderURL = contactsGroupsProvider.detailsContacts["next"];
             }
@@ -243,29 +244,30 @@ class _SocialScreenState extends State<SocialScreen> {
                                     child: Column(
                                       children: <Widget>[
                                         Container(
-                                          height: contactsGroupsProvider.lengthLists*100.0,
+                                          height: contactsGroupsProvider.lengthLists * 100.0,
                                           child: ListView.builder(
                                             itemCount: contactsGroupsProvider.lengthLists,
                                             padding: EdgeInsets.all(20),
                                             itemBuilder: (context, int i) {
                                               return Column(
                                                 children: <Widget>[
-                                                  _combinedList[i]["requester"] != null ? ContactCard(
-                                                    requestSent: requestSent,
-                                                    searchFlag: searchFlag,
-                                                    contacts: _combinedList,
-                                                    i: i,
-                                                    token: token,
-                                                    userId: user_id,
-                                                  ) :
-                                                  GroupCard(groups:_combinedList,i: i),
+                                                  _combinedList[i]["requester"] != null
+                                                      ? ContactCard(
+                                                          requestSent: requestSent,
+                                                          searchFlag: searchFlag,
+                                                          contacts: _combinedList,
+                                                          i: i,
+                                                          token: token,
+                                                          userId: user_id,
+                                                        )
+                                                      : GroupCard(groups: _combinedList, i: i),
                                                   SizedBox(height: 3),
                                                 ],
                                               );
                                             },
                                           ),
                                         ),
-                                        ],
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -721,10 +723,7 @@ class _ContactCardState extends State<ContactCard> {
 class GroupCard extends StatefulWidget {
   final groups, i;
 
-  GroupCard({
-    @required this.groups,
-    @required this.i
-    });
+  GroupCard({@required this.groups, @required this.i});
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -739,10 +738,10 @@ class _GroupCardState extends State<GroupCard> {
           flex: 7,
           child: InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ContactScreen(contact: contactsDetails)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GroupScreen(group: widget.groups[widget.i])),
+              );
             },
             child: Row(
               children: <Widget>[
@@ -772,12 +771,14 @@ class _GroupCardState extends State<GroupCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Group "+ widget.groups[widget.i]["id"].toString(),
-                          
+                          widget.groups[widget.i]["name"].toString(),
+                          maxLines: 2,
                           style: TextStyle(fontSize: 20, color: Colors.grey[600], fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          widget.groups[widget.i]["groupmembers"][0]["member"]["username"].toString()+","+widget.groups[widget.i]["groupmembers"][1]["member"]["username"].toString(),
+                          widget.groups[widget.i]["groupmembers"][0]["member"]["username"].toString() +
+                              "," +
+                              widget.groups[widget.i]["groupmembers"][1]["member"]["username"].toString(),
 //                              contactsDetails["usern6ame"].toString(),
 
                           overflow: TextOverflow.clip,
@@ -794,11 +795,23 @@ class _GroupCardState extends State<GroupCard> {
           ),
         ),
         SizedBox(width: 10, height: 80),
-        Expanded(flex: 3,child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
-              child: // If another person hasn't accepted my request yet.
-                  OutlineButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),),
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
+            child: OutlineButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              onPressed: () {},
+              child: Text(
+                "View Schedule",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ),
+        ),
 //        Expanded(
 //          flex: 3,
 //          child: Padding(

@@ -695,18 +695,3 @@ class PlaceHolder extends StatelessWidget {
     ));
   }
 }
-
-Widget placeHolder({@required double vertical}) {
-  return Expanded(
-      child: Container(
-    height: vertical,
-    decoration: const BoxDecoration(
-      border: const Border(
-        right: const BorderSide(
-          width: 1.0,
-          color: const Color(0xFFE0E0E0),
-        ),
-      ),
-    ),
-  ));
-}
