@@ -8,10 +8,13 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:optifyapp/providers/activities.dart';
+import 'package:optifyapp/providers/contactsgroups.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api.dart';
 import 'package:http/http.dart' as http;
+
+import 'managepar_screen.dart';
 
 class AddActivityScreen extends StatefulWidget {
   final token;
@@ -467,7 +470,10 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                       ),
                       Expanded(child: SizedBox()),
                       OutlineButton(
-                        onPressed: () {},
+                        onPressed: () {
+                                        Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ManageParticipants(token:widget.token)));
+                        },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -499,7 +505,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                                 childAspectRatio: 5,
                                 crossAxisCount: 2,
                                 children: <Widget>[
-                                  for (var i = 0; i < 1; i++) //todo Orxan list members
+                                  for (var i = 0; i < Provider.of<ContactsGroups>(context,listen: true).activityMembers.length; i++) 
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).primaryColorLight,
@@ -509,10 +515,13 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                                         children: <Widget>[
                                           CircleAvatar(
                                             backgroundColor: Colors.grey.shade100,
-                                            child: Text("RA"),
+                                            child: Text(
+                                              Provider.of<ContactsGroups>(context).activityMembers[i]["name"].toString().substring(0,1)+
+                                              Provider.of<ContactsGroups>(context).activityMembers[i]["name"].toString().split(" ")[1].substring(0,1)
+                                            ),
                                           ),
                                           SizedBox(width: 10),
-                                          Text("Rasul Aliyev"),
+                                          Text(Provider.of<ContactsGroups>(context).activityMembers[i]["name"].toString()),
                                         ],
                                       ),
                                     ),
@@ -548,6 +557,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     _end = new DateTime(_dateTimeEnd.year, _dateTimeEnd.month, _dateTimeEnd.day, _timeEnd.hour, _timeEnd.minute);
 
     String url = Api.newActivityPersonal + schedule_id.toString() + "/activities/";
+    var members = Provider.of<ContactsGroups>(context).activityMembers;
     http
         .post(url,
             headers: {
@@ -563,10 +573,14 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               },
               "category": categoryValue,
               "priority": _discreteValue.toInt(),
-              "privacy": {"privacy": defPrivacy.toLowerCase()}
+              "privacy": {"privacy": defPrivacy.toLowerCase(),},
+              "members": members,
+
             }))
         .then((response) {
+        Provider.of<ContactsGroups>(context).activityMembers = [];  
       if (response.statusCode == 201) {
+        
         Provider.of<Activities>(context).addActivityFromPostRequest(json.decode(response.body));
         Navigator.pop(context);
         Flushbar(

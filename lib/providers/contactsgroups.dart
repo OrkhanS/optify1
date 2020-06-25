@@ -19,6 +19,12 @@ class ContactsGroups with ChangeNotifier {
   bool isLoadingGroups = true;
   Map groupActivityDetails = {};
   List groupActivities = [];
+  List activityMembers = [];
+
+  set activityMemberList(List a){
+    activityMembers = a;
+    notifyListeners();
+  }
 
   bool get notLoadingContacts {
     return isLoadingContacts;
