@@ -48,192 +48,221 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   @override
-  Widget build(BuildContext context) {   
+  Widget build(BuildContext context) {
     return Consumer<Auth>(
-      builder: (context, auth, child) {  
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "Account",
-          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 1,
-      ),
-      body:
-      widget.auth.isNotLoadingUserDetails && widget.auth.userdetail.isEmpty
-         ? Center(child: CircularProgressIndicator())
-         : Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              InkWell(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context, auth, child) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Text(
+              "Account",
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            elevation: 1,
+          ),
+          body: widget.auth.isNotLoadingUserDetails &&
+                  widget.auth.userdetail.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        InkWell(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: 50,
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
 
-                        backgroundImage: NetworkImage(
-                            // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
-                            "https://robohash.org/" + Provider.of<Auth>(context, listen: false).myUserId.toString()), //Todo: UserPic
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            widget.auth.userdetail["first_name"].toString() + " " + widget.auth.userdetail["last_name"].toString(),
-                            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Theme.of(context).primaryColor),
-                          ),
-                          Text(widget.auth.userdetail["email"].toString(), style: TextStyle(fontSize: 15)),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                  backgroundImage: NetworkImage(
+                                      // "https://briddgy.herokuapp.com/media/" + _user["avatarpic"].toString() +"/"
+                                      "https://robohash.org/" +
+                                          Provider.of<Auth>(context,
+                                                  listen: false)
+                                              .myUserId
+                                              .toString()), //Todo: UserPic
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      widget.auth.userdetail["first_name"]
+                                              .toString() +
+                                          " " +
+                                          widget.auth.userdetail["last_name"]
+                                              .toString(),
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w700,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    Text(
+                                        widget.auth.userdetail["email"]
+                                            .toString(),
+                                        style: TextStyle(fontSize: 15)),
+                                  ],
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(25)),
 //                                color: Theme.of(context).primaryColor,
-                          color: Colors.grey[200],
-                        ),
-                        child: Icon(
-                          Icons.navigate_next,
-                          color: Colors.grey[600],
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                child: Divider(
-                  color: Colors.grey[600],
-                  height: 40,
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                elevation: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ListTile(
-                      leading: Icon(MdiIcons.accountMultiplePlus),
-                      title: Text(
-                        "Invite Friends",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Share.share("Join to the Briddgy Family https://briddgy.com");
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.faceAgent),
-                      title: Text(
-                        "Customer Support",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (__) => CustomerSupport()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.star_border),
-                      title: Text(
-                        "Rate/Leave suggestion", //Todo: App Rating
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.logoutVariant),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-//                          title: Text(''),
-                            content: Text(
-                              "Are you sure you want to Log out?",
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Icon(
+                                    Icons.navigate_next,
+                                    color: Colors.grey[600],
+                                    size: 30,
+                                  ),
+                                ),
+                              ],
                             ),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('No.'),
-                                onPressed: () {
-                                  Navigator.of(ctx).pop();
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: Divider(
+                            color: Colors.grey[600],
+                            height: 40,
+                          ),
+                        ),
+                        Card(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              ListTile(
+                                leading: Icon(MdiIcons.accountMultiplePlus),
+                                title: Text(
+                                  "Invite Friends",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                trailing: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Icon(Icons.navigate_next)),
+                                onTap: () {
+                                  Share.share(
+                                      "Join to the Briddgy Family https://briddgy.com");
                                 },
                               ),
-                              FlatButton(
-                                child: Text('Yes, let me out!',
-                                    style: TextStyle(
-                                      color: Colors.redAccent,
-                                    )),
-                                onPressed: () {
-                                  Provider.of<Auth>(context, listen: false).logout(context);
+                              ListTile(
+                                leading: Icon(MdiIcons.faceAgent),
+                                title: Text(
+                                  "Customer Support",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                trailing: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Icon(Icons.navigate_next)),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (__) => CustomerSupport()),
+                                  );
                                 },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.star_border),
+                                title: Text(
+                                  "Rate/Leave suggestion", //Todo: App Rating
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                trailing: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Icon(Icons.navigate_next)),
+                              ),
+                              ListTile(
+                                leading: Icon(MdiIcons.logoutVariant),
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+//                          title: Text(''),
+                                      content: Text(
+                                        "Are you sure you want to Log out?",
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text('No.'),
+                                          onPressed: () {
+                                            Navigator.of(ctx).pop();
+                                          },
+                                        ),
+                                        FlatButton(
+                                          child: Text('Yes, let me out!',
+                                              style: TextStyle(
+                                                color: Colors.redAccent,
+                                              )),
+                                          onPressed: () {
+                                            Provider.of<Auth>(context,
+                                                    listen: false)
+                                                .logout(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                title: Text(
+                                  "Logout",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                trailing: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Icon(Icons.navigate_next)),
                               ),
                             ],
                           ),
-                        );
-                      },
-                      title: Text(
-                        "Logout",
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[600],
                         ),
-                      ),
-                      trailing: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            color: Colors.grey[200],
-                          ),
-                          child: Icon(Icons.navigate_next)),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  },
+        );
+      },
     );
   }
 }

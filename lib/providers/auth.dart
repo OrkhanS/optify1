@@ -93,7 +93,6 @@ class Auth with ChangeNotifier {
   bool get isNotLoadingUserDetails {
     return isLoadingUserDetails;
   }
-  
 
   Future fetchAndSetUserDetails() async {
     if (user == null || user.isEmpty) {
@@ -182,6 +181,7 @@ class Auth with ChangeNotifier {
             "password": password,
             "deviceToken": '', //todo orxan
           }));
+      print(response);
       if (response.statusCode == 400)
         throw HttpException;
       else {
@@ -256,7 +256,7 @@ class Auth with ChangeNotifier {
     _token = null;
     user = {};
     isLoadingUser = true;
-    isLoadingUserDetails=true;
+    isLoadingUserDetails = true;
     myTokenFromStorage = null;
     myScheduleidFromStorage = null;
     myUseridFromStorage = null;

@@ -27,7 +27,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:badges/badges.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:optifyapp/screens/auth_screen.dart';
-
 import 'package:optifyapp/screens/schedule_screen.dart';
 import 'package:optifyapp/screens/social_screen.dart';
 import 'package:optifyapp/providers/activities.dart';
@@ -38,7 +37,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  final StreamController<String> streamController = StreamController<String>.broadcast();
+  final StreamController<String> streamController =
+      StreamController<String>.broadcast();
   IOWebSocketChannel _channel;
   ObserverList<Function> _listeners = new ObserverList<Function>();
   var button = ChatsScreen();
@@ -63,8 +63,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    if(deviceToken==null)_getTokenOfDevice();
-    if(tokenforROOM == null) getToken();
+    if (deviceToken == null) _getTokenOfDevice();
+    if (tokenforROOM == null) getToken();
   }
 
   _getTokenOfDevice() {
@@ -72,16 +72,17 @@ class _MyAppState extends State<MyApp> {
       deviceToken = deviceToken;
     });
   }
+
   _configureFirebaseListerners(newmessage) {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        addMessages.add( message);
+        addMessages.add(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        addMessages.add( message);
+        addMessages.add(message);
       },
       onResume: (Map<String, dynamic> message) async {
-        addMessages.add( message);
+        addMessages.add(message);
       },
     );
   }
@@ -91,7 +92,8 @@ class _MyAppState extends State<MyApp> {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
     tokenforROOM = extractedUserData['token'];
     user_id = extractedUserData['user_id'].toString();
     schedule_id = extractedUserData['schedule_id'].toString();
@@ -197,7 +199,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  static List<Widget> currentScreen = [ScheduleScreen(), SocialScreen(), ChatsScreen(), ProfileScreen()];
+  static List<Widget> currentScreen = [
+    ScheduleScreen(),
+    SocialScreen(),
+    ChatsScreen(),
+    ProfileScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +229,6 @@ class _MyAppState extends State<MyApp> {
         contactsGroupsProvider,
         _,
       ) {
-        
         // if (socketConnected == false) {
         //   initCommunication(auth, newmessage);
         // }
@@ -237,12 +243,12 @@ class _MyAppState extends State<MyApp> {
         }
 
         if (activitiesProvider.isLoadingActivities) {
-          activitiesProvider.fetchAndSetMyActivities(auth.myToken, auth.myScheduleId);
+          activitiesProvider.fetchAndSetMyActivities(
+              auth.myToken, auth.myScheduleId);
         }
         if (contactsGroupsProvider.isLoadingContacts == true) {
           contactsGroupsProvider.fetchAndSetMyContacts(auth.myToken);
           contactsGroupsProvider.fetchAndSetMyGroups(auth.myToken);
-          
         }
 
         if (auth.isAuth) auth.fetchAndSetUserDetails();
@@ -276,7 +282,10 @@ class _MyAppState extends State<MyApp> {
             const Locale('en'), // English
             // ... other locales the app supports
           ],
-          builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
+          builder: (context, child) => MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child),
           home: auth.isAuth
               ? SafeArea(
                   child: Scaffold(
@@ -296,9 +305,12 @@ class _MyAppState extends State<MyApp> {
             ProfileScreen.routeName: (ctx) => ProfileScreen(),
             MyItems.routeName: (ctx) => MyItems(),
             MyTrips.routeName: (ctx) => MyTrips(),
-            AccountScreen.routeName: (ctx) => AccountScreen(token: auth.myToken, orderstripsProvider: activitiesProvider),
-            SocialScreen.routeName: (ctx) =>
-                SocialScreen(token: auth.myToken, contactsGroupsProvider: contactsGroupsProvider, user_id: auth.myUserId),
+            AccountScreen.routeName: (ctx) => AccountScreen(
+                token: auth.myToken, orderstripsProvider: activitiesProvider),
+            SocialScreen.routeName: (ctx) => SocialScreen(
+                token: auth.myToken,
+                contactsGroupsProvider: contactsGroupsProvider,
+                user_id: auth.myUserId),
             GlobalSearchScreen.routeName: (ctx) => GlobalSearchScreen(),
             ActivityScreen.routeName: (ctx) => ActivityScreen(),
           },
